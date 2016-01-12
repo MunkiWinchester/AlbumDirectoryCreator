@@ -178,8 +178,8 @@
             this.dataTreeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataTreeListView.EmptyListMsg = "No Files Read In";
             this.dataTreeListView.FullRowSelect = true;
-            this.dataTreeListView.HighlightBackgroundColor = System.Drawing.Color.Empty;
-            this.dataTreeListView.HighlightForegroundColor = System.Drawing.Color.Empty;
+            this.dataTreeListView.SelectedBackColor = System.Drawing.Color.Empty;
+            this.dataTreeListView.SelectedForeColor = System.Drawing.Color.Empty;
             this.dataTreeListView.Location = new System.Drawing.Point(3, 3);
             this.dataTreeListView.Name = "dataTreeListView";
             this.dataTreeListView.RootKeyValueString = "";

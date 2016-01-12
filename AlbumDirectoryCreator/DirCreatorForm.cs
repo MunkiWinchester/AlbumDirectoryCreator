@@ -81,7 +81,8 @@ namespace AlbumDirectoryCreator
                     if (performerHash == 0 && performerAlbumHash.Key == 0)
                     {
                         artistList.TryAdd(performerHash, string.Empty);
-                        _treeViewHash.Add(new TreeMp3(idForTree, 1, string.Empty, string.Empty, string.Empty, fileInfo));
+                        albumList.TryAdd(performerAlbumHash.Key, string.Empty);
+                        _treeViewHash.Add(new TreeMp3(idForTree, 1, tagInf.FirstPerformer, tagInf.Album, tagInf.Title, fileInfo));
                         withoutInfo++;
                         path = "00Music without Artist and Album\\";
                     }
@@ -98,9 +99,8 @@ namespace AlbumDirectoryCreator
                         if (artistList.ContainsKey(performerHash) && !albumList.ContainsKey(performerAlbumHash.Key))
                         {
                             var artistKvP = artistList.First(a => a.Value.Equals(tagInf.FirstPerformer));
-                            var hashKvp = taglibFile.GetPerformerAlbumHashKvP();
-                            albumList.TryAdd(hashKvp.Key, hashKvp.Value);
-                            _treeViewHash.Add(new TreeMp3(hashKvp.Key, artistKvP.Key, tagInf.FirstPerformer,
+                            albumList.TryAdd(performerAlbumHash.Key, performerAlbumHash.Value);
+                            _treeViewHash.Add(new TreeMp3(performerAlbumHash.Key, artistKvP.Key, tagInf.FirstPerformer,
                                 tagInf.Album, string.Empty, string.Empty));
                         }
                         if (artistList.ContainsKey(performerHash) && albumList.ContainsKey(performerAlbumHash.Key))
@@ -149,7 +149,7 @@ namespace AlbumDirectoryCreator
             },
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount
+                    MaxDegreeOfParallelism = 1
                 });
 
             // Dateien durchgehen
@@ -160,7 +160,7 @@ namespace AlbumDirectoryCreator
 
             _stopwatch.Start();
             readMetaDates.Complete();
-            readMetaDates.Completion.Wait(TimeSpan.FromSeconds(30));
+            readMetaDates.Completion.Wait(TimeSpan.FromMinutes(1));
             _stopwatch.Stop();
 
             var result = DialogResult.Cancel;
@@ -202,15 +202,13 @@ namespace AlbumDirectoryCreator
             bindingSourceFiles.DataSource = _treeViewHash.Where(t => t != null)
                 .Where(a => !string.IsNullOrWhiteSpace(a.Path)).OrderBy(x => x.Artist).ThenBy(x => x.Album).ToList();
             // todo: Fight against Stackoverflow in TreeView
-            //bindingSourceTree.DataSource =
-            //    _treeViewHash.Where(t => t != null).GroupBy(t => t.Id).Select(g => g.First()).ToList();
+            bindingSourceTree.DataSource =
+                _treeViewHash.Where(t => t != null).GroupBy(t => t.Id).Select(g => g.First()).ToList();
             dataTreeListView.Sort(olvColumnArtist);
 
             // Attach current changed event
             bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
             bindingSourceTree.CurrentChanged += bindingSourceTree_CurrentChanged;
-            bindingSourceFiles.MoveLast();
-            bindingSourceFiles.MoveFirst();
         }
 
         private void CreateFolderEtc()
