@@ -103,14 +103,7 @@ namespace AlbumDirectoryCreator
                             _treeViewHash.Add(new TreeMp3(performerAlbumHash.Key, artistKvP.Key, tagInf.FirstPerformer,
                                 tagInf.Album, string.Empty, string.Empty));
                         }
-                        if (artistList.ContainsKey(performerHash) && albumList.ContainsKey(performerAlbumHash.Key))
-                        {
-                            var hash = (string.IsNullOrWhiteSpace(tagInf.Album))
-                                ? artistList.First(a => a.Value.Equals(tagInf.FirstPerformer))
-                                : albumList.First(a => a.Key.Equals(performerAlbumHash.Key));
-                            _treeViewHash.Add(new TreeMp3(idForTree, hash.Key, tagInf.Performers.ToNormalizedString(),
-                                tagInf.Album, tagInf.Title, fileInfo));
-                        }
+                        // Artist und Album hinzufügen
                         if (!artistList.ContainsKey(performerHash) && !albumList.ContainsKey(performerAlbumHash.Key))
                         {
                             artistList.TryAdd(performerHash, tagInf.FirstPerformer);
@@ -120,6 +113,15 @@ namespace AlbumDirectoryCreator
                                 tagInf.Album, string.Empty, string.Empty));
                             _treeViewHash.Add(new TreeMp3(idForTree, performerHash,
                                 tagInf.Performers.ToNormalizedString(),
+                                tagInf.Album, tagInf.Title, fileInfo));
+                        }
+                        // Artist und Album vorhanden, Song hinzufügen
+                        if (artistList.ContainsKey(performerHash) && albumList.ContainsKey(performerAlbumHash.Key))
+                        {
+                            var hash = (string.IsNullOrWhiteSpace(tagInf.Album))
+                                ? artistList.First(a => a.Value.Equals(tagInf.FirstPerformer))
+                                : albumList.First(a => a.Key.Equals(performerAlbumHash.Key));
+                            _treeViewHash.Add(new TreeMp3(idForTree, hash.Key, tagInf.Performers.ToNormalizedString(),
                                 tagInf.Album, tagInf.Title, fileInfo));
                         }
 
@@ -178,9 +180,10 @@ namespace AlbumDirectoryCreator
                         $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) read recursiveliv in from \"{_pathIn}\"");
                     _logger.Info($"{_fileInfos.Count} files analyzed within {_stopwatch.Elapsed}");
                     _stopwatch.Reset();
-                    _logger.Info($"{withoutInfo} files that don't have tags / couldn't be read in");
+                    _logger.Info($"{withoutInfo} files that don't have an artist");
                     _logger.Info($"{withException} files that triggered an exception and are ignored");
-                    _logger.Info($"{_oldAndNewKvPs.Count} files that are successfully read in");
+                    var percentage = (float)_oldAndNewKvPs.Count / (_fileInfos.Count - withException) * 100;
+                    _logger.Info($"{_oldAndNewKvPs.Count} files that are successfully read in ({percentage}%)");
                     // Show the stuff on the UI
                     BindAndSort();
                     buttonCreate.Enabled = true;
