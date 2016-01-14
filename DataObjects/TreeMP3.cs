@@ -1,22 +1,41 @@
-﻿namespace DataObjects
+﻿using Business;
+using System.Linq;
+
+namespace DataObjects
 {
     public class TreeMp3
     {
-        public int Id { get; set; }
-        public int ParentId { get; set; }
-        public string Artist { get; set; }
-        public string Album { get; set; }
-        public string Title { get; set; }
-        public string Path { get; set; }
+        public string Artist { get; }
+        public string Album { get; }
+        public string Title { get; }
+        public string FileInfo { get; }
 
-        public TreeMp3(int id, int parentId, string artist, string album, string title, string path)
+        public string NewPath { get; }
+
+        public TreeMp3()
         {
-            Id = id;
-            ParentId = parentId;
+        }
+
+        public TreeMp3(string artist, string album, string title, string fileInfo)
+        {
             Artist = artist;
             Album = album;
             Title = title;
-            Path = path;
+            FileInfo = fileInfo;
+
+            var path = "00Without Artist\\";
+            // Pfad erstellen
+            if (!string.IsNullOrWhiteSpace(artist) &&
+                !string.IsNullOrWhiteSpace(album))
+            {
+                path =
+                    $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
+            }
+            else if (!string.IsNullOrWhiteSpace(artist))
+            {
+                path = $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\";
+            }
+            NewPath = path;
         }
     }
 }

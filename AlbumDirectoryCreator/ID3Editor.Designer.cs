@@ -267,7 +267,7 @@ namespace AlbumDirectoryCreator
             this.labelPath.Name = "labelPath";
             this.labelPath.Size = new System.Drawing.Size(32, 13);
             this.labelPath.TabIndex = 17;
-            this.labelPath.Text = "Path:";
+            this.labelPath.Text = "FileInfo:";
             // 
             // textBoxPath
             // 

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirCreatorForm));
             this.textBoxPathOrigins = new System.Windows.Forms.TextBox();
             this.buttonSearch = new System.Windows.Forms.Button();
@@ -37,41 +36,39 @@
             this.textBoxPathDestiny = new System.Windows.Forms.TextBox();
             this.buttonCreate = new System.Windows.Forms.Button();
             this.backgroundWorkerCreate = new System.ComponentModel.BackgroundWorker();
-            this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPageTreeview = new System.Windows.Forms.TabPage();
-            this.dataTreeListView = new BrightIdeasSoftware.DataTreeListView();
-            this.olvColumnArtist = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumnId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumnParentId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumnAlbum = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumnTitle = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumnPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.bindingSourceTree = new System.Windows.Forms.BindingSource(this.components);
-            this.tabPageDatagridview = new System.Windows.Forms.TabPage();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
             this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
-            this.ColumnArtist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnAlbum = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnTitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.advancedDataGridView1 = new ADGV.AdvancedDataGridView();
+            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
+            this.artistDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.albumDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.titleDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pathDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
+            this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMovePreviousItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorPositionItem = new System.Windows.Forms.ToolStripTextBox();
+            this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
+            this.bindingNavigatorSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorMoveNextItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
-            this.tabControl.SuspendLayout();
-            this.tabPageTreeview.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataTreeListView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceTree)).BeginInit();
-            this.tabPageDatagridview.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).BeginInit();
+            this.bindingNavigator.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxPathOrigins
@@ -134,69 +131,6 @@
             this.backgroundWorkerCreate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerCreate_DoWork);
             this.backgroundWorkerCreate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerCreate_RunWorkerCompleted);
             // 
-            // tabControl
-            // 
-            this.tabControl.Controls.Add(this.tabPageTreeview);
-            this.tabControl.Controls.Add(this.tabPageDatagridview);
-            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl.Location = new System.Drawing.Point(0, 0);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(778, 578);
-            this.tabControl.TabIndex = 10;
-            // 
-            // tabPageTreeview
-            // 
-            this.tabPageTreeview.Controls.Add(this.dataTreeListView);
-            this.tabPageTreeview.Location = new System.Drawing.Point(4, 22);
-            this.tabPageTreeview.Name = "tabPageTreeview";
-            this.tabPageTreeview.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTreeview.Size = new System.Drawing.Size(770, 552);
-            this.tabPageTreeview.TabIndex = 2;
-            this.tabPageTreeview.Text = "Treeview";
-            this.tabPageTreeview.UseVisualStyleBackColor = true;
-            // 
-            // dataTreeListView
-            // 
-            this.dataTreeListView.AllColumns.Add(this.olvColumnArtist);
-            this.dataTreeListView.AllColumns.Add(this.olvColumnId);
-            this.dataTreeListView.AllColumns.Add(this.olvColumnParentId);
-            this.dataTreeListView.AllColumns.Add(this.olvColumnAlbum);
-            this.dataTreeListView.AllColumns.Add(this.olvColumnTitle);
-            this.dataTreeListView.AllColumns.Add(this.olvColumnPath);
-            this.dataTreeListView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.dataTreeListView.BackColor = System.Drawing.SystemColors.Control;
-            this.dataTreeListView.CellEditUseWholeCell = false;
-            this.dataTreeListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumnArtist,
-            this.olvColumnAlbum,
-            this.olvColumnTitle,
-            this.olvColumnPath});
-            this.dataTreeListView.Cursor = System.Windows.Forms.Cursors.Default;
-            this.dataTreeListView.DataMember = null;
-            this.dataTreeListView.DataSource = this.bindingSourceTree;
-            this.dataTreeListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataTreeListView.EmptyListMsg = "No Files Read In";
-            this.dataTreeListView.FullRowSelect = true;
-            this.dataTreeListView.SelectedBackColor = System.Drawing.Color.Empty;
-            this.dataTreeListView.SelectedForeColor = System.Drawing.Color.Empty;
-            this.dataTreeListView.Location = new System.Drawing.Point(3, 3);
-            this.dataTreeListView.Name = "dataTreeListView";
-            this.dataTreeListView.RootKeyValueString = "";
-            this.dataTreeListView.ShowGroups = false;
-            this.dataTreeListView.ShowKeyColumns = false;
-            this.dataTreeListView.Size = new System.Drawing.Size(764, 546);
-            this.dataTreeListView.TabIndex = 2;
-            this.dataTreeListView.UseCompatibleStateImageBehavior = false;
-            this.dataTreeListView.View = System.Windows.Forms.View.Details;
-            this.dataTreeListView.VirtualMode = true;
-            // 
-            // olvColumnArtist
-            // 
-            this.olvColumnArtist.AspectName = "Artist";
-            this.olvColumnArtist.Text = "Artist";
-            this.olvColumnArtist.Width = 200;
-            // 
             // olvColumnId
             // 
             this.olvColumnId.AspectName = "Id";
@@ -212,74 +146,6 @@
             this.olvColumnParentId.IsVisible = false;
             this.olvColumnParentId.Text = "ParentId";
             // 
-            // olvColumnAlbum
-            // 
-            this.olvColumnAlbum.AspectName = "Album";
-            this.olvColumnAlbum.Text = "Album";
-            this.olvColumnAlbum.Width = 200;
-            // 
-            // olvColumnTitle
-            // 
-            this.olvColumnTitle.AspectName = "Title";
-            this.olvColumnTitle.Text = "Title";
-            this.olvColumnTitle.Width = 250;
-            // 
-            // olvColumnPath
-            // 
-            this.olvColumnPath.AspectName = "Path";
-            this.olvColumnPath.Text = "Path";
-            this.olvColumnPath.Width = 300;
-            // 
-            // bindingSourceTree
-            // 
-            this.bindingSourceTree.CurrentChanged += new System.EventHandler(this.bindingSourceTree_CurrentChanged);
-            // 
-            // tabPageDatagridview
-            // 
-            this.tabPageDatagridview.Controls.Add(this.dataGridView);
-            this.tabPageDatagridview.Location = new System.Drawing.Point(4, 22);
-            this.tabPageDatagridview.Name = "tabPageDatagridview";
-            this.tabPageDatagridview.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDatagridview.Size = new System.Drawing.Size(770, 552);
-            this.tabPageDatagridview.TabIndex = 0;
-            this.tabPageDatagridview.Text = "Datagridview";
-            this.tabPageDatagridview.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView
-            // 
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.AllowUserToResizeRows = false;
-            this.dataGridView.AutoGenerateColumns = false;
-            this.dataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ColumnArtist,
-            this.ColumnAlbum,
-            this.ColumnTitle,
-            this.ColumnPath});
-            this.dataGridView.DataSource = this.bindingSourceFiles;
-            this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView.MultiSelect = false;
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView.RowHeadersVisible = false;
-            this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView.Size = new System.Drawing.Size(764, 546);
-            this.dataGridView.TabIndex = 0;
-            // 
-            // bindingSourceFiles
-            // 
-            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
-            // 
             // splitContainer
             // 
             this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -290,7 +156,8 @@
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.tabControl);
+            this.splitContainer.Panel1.Controls.Add(this.advancedDataGridView1);
+            this.splitContainer.Panel1.Controls.Add(this.bindingNavigator);
             // 
             // splitContainer.Panel2
             // 
@@ -344,38 +211,170 @@
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
             // 
-            // ColumnArtist
+            // advancedDataGridView1
             // 
-            this.ColumnArtist.DataPropertyName = "Artist";
-            this.ColumnArtist.HeaderText = "Artist";
-            this.ColumnArtist.Name = "ColumnArtist";
-            this.ColumnArtist.ReadOnly = true;
-            this.ColumnArtist.Width = 200;
+            this.advancedDataGridView1.AllowUserToAddRows = false;
+            this.advancedDataGridView1.AllowUserToDeleteRows = false;
+            this.advancedDataGridView1.AllowUserToResizeRows = false;
+            this.advancedDataGridView1.AutoGenerateColumns = false;
+            this.advancedDataGridView1.AutoGenerateContextFilters = true;
+            this.advancedDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.advancedDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.artistDataGridViewTextBoxColumn1,
+            this.albumDataGridViewTextBoxColumn1,
+            this.titleDataGridViewTextBoxColumn1,
+            this.pathDataGridViewTextBoxColumn1});
+            this.advancedDataGridView1.DataSource = this.bindingSourceFiles;
+            this.advancedDataGridView1.DateWithTime = false;
+            this.advancedDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.advancedDataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.advancedDataGridView1.Name = "advancedDataGridView1";
+            this.advancedDataGridView1.RowHeadersVisible = false;
+            this.advancedDataGridView1.Size = new System.Drawing.Size(778, 553);
+            this.advancedDataGridView1.TabIndex = 0;
+            this.advancedDataGridView1.TimeFilter = false;
+            this.advancedDataGridView1.SortStringChanged += new System.EventHandler(this.advancedDataGridView1_SortStringChanged);
+            this.advancedDataGridView1.FilterStringChanged += new System.EventHandler(this.advancedDataGridView1_FilterStringChanged);
             // 
-            // ColumnAlbum
+            // bindingSourceFiles
             // 
-            this.ColumnAlbum.DataPropertyName = "Album";
-            this.ColumnAlbum.HeaderText = "Album";
-            this.ColumnAlbum.Name = "ColumnAlbum";
-            this.ColumnAlbum.ReadOnly = true;
-            this.ColumnAlbum.Width = 200;
+            this.bindingSourceFiles.DataSource = typeof(DataObjects.TreeMp3);
+            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
             // 
-            // ColumnTitle
+            // artistDataGridViewTextBoxColumn1
             // 
-            this.ColumnTitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.ColumnTitle.DataPropertyName = "Title";
-            this.ColumnTitle.HeaderText = "Title";
-            this.ColumnTitle.Name = "ColumnTitle";
-            this.ColumnTitle.ReadOnly = true;
-            this.ColumnTitle.Width = 250;
+            this.artistDataGridViewTextBoxColumn1.DataPropertyName = "Artist";
+            this.artistDataGridViewTextBoxColumn1.HeaderText = "Artist";
+            this.artistDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.artistDataGridViewTextBoxColumn1.Name = "artistDataGridViewTextBoxColumn1";
+            this.artistDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.artistDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.artistDataGridViewTextBoxColumn1.Width = 200;
             // 
-            // ColumnPath
+            // albumDataGridViewTextBoxColumn1
             // 
-            this.ColumnPath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ColumnPath.DataPropertyName = "Path";
-            this.ColumnPath.HeaderText = "Path";
-            this.ColumnPath.Name = "ColumnPath";
-            this.ColumnPath.ReadOnly = true;
+            this.albumDataGridViewTextBoxColumn1.DataPropertyName = "Album";
+            this.albumDataGridViewTextBoxColumn1.HeaderText = "Album";
+            this.albumDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.albumDataGridViewTextBoxColumn1.Name = "albumDataGridViewTextBoxColumn1";
+            this.albumDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.albumDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.albumDataGridViewTextBoxColumn1.Width = 200;
+            // 
+            // titleDataGridViewTextBoxColumn1
+            // 
+            this.titleDataGridViewTextBoxColumn1.DataPropertyName = "Title";
+            this.titleDataGridViewTextBoxColumn1.HeaderText = "Title";
+            this.titleDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.titleDataGridViewTextBoxColumn1.Name = "titleDataGridViewTextBoxColumn1";
+            this.titleDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.titleDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.titleDataGridViewTextBoxColumn1.Width = 200;
+            // 
+            // pathDataGridViewTextBoxColumn1
+            // 
+            this.pathDataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.pathDataGridViewTextBoxColumn1.DataPropertyName = "FileInfo";
+            this.pathDataGridViewTextBoxColumn1.HeaderText = "FileInfo";
+            this.pathDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.pathDataGridViewTextBoxColumn1.Name = "pathDataGridViewTextBoxColumn1";
+            this.pathDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.pathDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            // 
+            // bindingNavigator
+            // 
+            this.bindingNavigator.AddNewItem = null;
+            this.bindingNavigator.BindingSource = this.bindingSourceFiles;
+            this.bindingNavigator.CountItem = this.bindingNavigatorCountItem;
+            this.bindingNavigator.DeleteItem = null;
+            this.bindingNavigator.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.bindingNavigator.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bindingNavigatorMoveFirstItem,
+            this.bindingNavigatorMovePreviousItem,
+            this.bindingNavigatorSeparator,
+            this.bindingNavigatorPositionItem,
+            this.bindingNavigatorCountItem,
+            this.bindingNavigatorSeparator1,
+            this.bindingNavigatorMoveNextItem,
+            this.bindingNavigatorMoveLastItem,
+            this.bindingNavigatorSeparator2});
+            this.bindingNavigator.Location = new System.Drawing.Point(0, 553);
+            this.bindingNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
+            this.bindingNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
+            this.bindingNavigator.MoveNextItem = this.bindingNavigatorMoveNextItem;
+            this.bindingNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
+            this.bindingNavigator.Name = "bindingNavigator";
+            this.bindingNavigator.PositionItem = this.bindingNavigatorPositionItem;
+            this.bindingNavigator.Size = new System.Drawing.Size(778, 25);
+            this.bindingNavigator.TabIndex = 1;
+            this.bindingNavigator.Text = "bindingNavigator1";
+            // 
+            // bindingNavigatorMoveFirstItem
+            // 
+            this.bindingNavigatorMoveFirstItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveFirstItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveFirstItem.Image")));
+            this.bindingNavigatorMoveFirstItem.Name = "bindingNavigatorMoveFirstItem";
+            this.bindingNavigatorMoveFirstItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveFirstItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveFirstItem.Text = "Move first";
+            // 
+            // bindingNavigatorMovePreviousItem
+            // 
+            this.bindingNavigatorMovePreviousItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMovePreviousItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMovePreviousItem.Image")));
+            this.bindingNavigatorMovePreviousItem.Name = "bindingNavigatorMovePreviousItem";
+            this.bindingNavigatorMovePreviousItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMovePreviousItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMovePreviousItem.Text = "Move previous";
+            // 
+            // bindingNavigatorSeparator
+            // 
+            this.bindingNavigatorSeparator.Name = "bindingNavigatorSeparator";
+            this.bindingNavigatorSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorPositionItem
+            // 
+            this.bindingNavigatorPositionItem.AccessibleName = "Position";
+            this.bindingNavigatorPositionItem.AutoSize = false;
+            this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
+            this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(50, 23);
+            this.bindingNavigatorPositionItem.Text = "0";
+            this.bindingNavigatorPositionItem.ToolTipText = "Current position";
+            // 
+            // bindingNavigatorCountItem
+            // 
+            this.bindingNavigatorCountItem.Name = "bindingNavigatorCountItem";
+            this.bindingNavigatorCountItem.Size = new System.Drawing.Size(35, 22);
+            this.bindingNavigatorCountItem.Text = "of {0}";
+            this.bindingNavigatorCountItem.ToolTipText = "Total number of items";
+            // 
+            // bindingNavigatorSeparator1
+            // 
+            this.bindingNavigatorSeparator1.Name = "bindingNavigatorSeparator";
+            this.bindingNavigatorSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorMoveNextItem
+            // 
+            this.bindingNavigatorMoveNextItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveNextItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveNextItem.Image")));
+            this.bindingNavigatorMoveNextItem.Name = "bindingNavigatorMoveNextItem";
+            this.bindingNavigatorMoveNextItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveNextItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveNextItem.Text = "Move next";
+            // 
+            // bindingNavigatorMoveLastItem
+            // 
+            this.bindingNavigatorMoveLastItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveLastItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveLastItem.Image")));
+            this.bindingNavigatorMoveLastItem.Name = "bindingNavigatorMoveLastItem";
+            this.bindingNavigatorMoveLastItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveLastItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveLastItem.Text = "Move last";
+            // 
+            // bindingNavigatorSeparator2
+            // 
+            this.bindingNavigatorSeparator2.Name = "bindingNavigatorSeparator";
+            this.bindingNavigatorSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // iD3Editor
             // 
@@ -404,18 +403,17 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DirCreatorForm";
             this.Text = "Directory Kreator";
-            this.tabControl.ResumeLayout(false);
-            this.tabPageTreeview.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataTreeListView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceTree)).EndInit();
-            this.tabPageDatagridview.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).EndInit();
             this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
             this.splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
+            this.bindingNavigator.ResumeLayout(false);
+            this.bindingNavigator.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -429,19 +427,9 @@
         private System.Windows.Forms.TextBox textBoxPathDestiny;
         private System.Windows.Forms.Button buttonCreate;
         private System.ComponentModel.BackgroundWorker backgroundWorkerCreate;
-        private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.TabPage tabPageDatagridview;
         private System.Windows.Forms.BindingSource bindingSourceFiles;
-        private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.TabPage tabPageTreeview;
-        private BrightIdeasSoftware.DataTreeListView dataTreeListView;
-        private System.Windows.Forms.BindingSource bindingSourceTree;
         private BrightIdeasSoftware.OLVColumn olvColumnId;
         private BrightIdeasSoftware.OLVColumn olvColumnParentId;
-        private BrightIdeasSoftware.OLVColumn olvColumnArtist;
-        private BrightIdeasSoftware.OLVColumn olvColumnAlbum;
-        private BrightIdeasSoftware.OLVColumn olvColumnTitle;
-        private BrightIdeasSoftware.OLVColumn olvColumnPath;
         private Id3Editor iD3Editor;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Button buttonSearchOriginPath;
@@ -449,10 +437,23 @@
         private System.Windows.Forms.FolderBrowserDialog folderDialogOrigins;
         private System.Windows.Forms.FolderBrowserDialog folderDialogDestiny;
         private System.Windows.Forms.LinkLabel linkLabelLog;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPath;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTitle;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAlbum;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnArtist;
+        private ADGV.AdvancedDataGridView advancedDataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn parentIdDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pathDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn titleDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn albumDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn artistDataGridViewTextBoxColumn1;
+        private System.Windows.Forms.BindingNavigator bindingNavigator;
+        private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMovePreviousItem;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator;
+        private System.Windows.Forms.ToolStripTextBox bindingNavigatorPositionItem;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveNextItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveLastItem;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator2;
     }
 }
 

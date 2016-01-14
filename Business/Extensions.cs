@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -83,6 +84,44 @@ namespace Business
                 returnString.Append($"{item}, ");
             }
             return returnString.ToString().TrimEnd(',', ' ');
+        }
+
+        /// <summary>
+        /// Verwurstet eine Collection vom Typ IEnumerable (also Liste, IEnumerable, ArrayList what ever... zu einer DataTable
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static DataTable ToDataTable<T>(this IEnumerable<T> collection)
+        {
+            var dataTable = new DataTable();
+
+            var sourceItems = collection as IList<T> ?? collection.ToList();
+
+            if (sourceItems.Count > 0)
+            {
+                foreach (var property in sourceItems.First().GetType().GetProperties())
+                {
+                    dataTable.Columns.Add(property.Name, Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType);
+                }
+
+                foreach (var sourceItem in sourceItems)
+                {
+                    var newDataTableRow = dataTable.NewRow();
+                    foreach (var propertyInfo in sourceItem.GetType().GetProperties())
+                    {
+                        var value = sourceItem.GetType().GetProperty(propertyInfo.Name).GetValue(sourceItem, null);
+                        if (value == null)
+                            newDataTableRow[propertyInfo.Name] = DBNull.Value;
+                        else
+                        {
+                            newDataTableRow[propertyInfo.Name] = value;
+                        }
+                    }
+                    dataTable.Rows.Add(newDataTableRow);
+                }
+            }
+            return dataTable;
         }
     }
 }

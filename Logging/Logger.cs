@@ -29,38 +29,15 @@ namespace Logging
         }
 
         /// <summary>
-        /// Logs a debug message
+        /// Logs a warn message
         /// </summary>
         /// <param name="message">The message</param>
-        public void Debug(string message)
+        public void Warn(string message)
         {
             var log = new LogEventInfo
             {
                 Message = message,
-                Level = LogLevel.Debug
-            };
-            LogEventInfos(log);
-        }
-
-        /// <summary>
-        /// Logs the LogEventInfo to the specified "location"
-        /// </summary>
-        /// <param name="log"></param>
-        private void LogEventInfos(LogEventInfo log)
-        {
-            _nLogger.Log(log);
-        }
-
-        /// <summary>
-        /// Logs an error message
-        /// </summary>
-        /// <param name="message">The message</param>
-        public void Error(string message)
-        {
-            var log = new LogEventInfo
-            {
-                Message = message,
-                Level = LogLevel.Error
+                Level = LogLevel.Warn
             };
             LogEventInfos(log);
         }
@@ -79,6 +56,15 @@ namespace Logging
                 Exception = ex
             };
             LogEventInfos(log);
+        }
+
+        /// <summary>
+        /// Logs the LogEventInfo to the specified "location"
+        /// </summary>
+        /// <param name="log"></param>
+        private void LogEventInfos(LogEventInfo log)
+        {
+            _nLogger.Log(log);
         }
     }
 }

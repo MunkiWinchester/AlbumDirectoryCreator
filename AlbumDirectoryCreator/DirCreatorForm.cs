@@ -5,6 +5,7 @@ using Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -23,16 +24,14 @@ namespace AlbumDirectoryCreator
         private string _pathOut;
         private readonly Stopwatch _stopwatch = new Stopwatch();
         private readonly List<string> _fileInfos = new List<string>();
-        private HashSet<TreeMp3> _treeViewHash = new HashSet<TreeMp3>();
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
-        private readonly List<KeyValuePair<string, string>> _oldAndNewKvPs = new List<KeyValuePair<string, string>>();
+        private ConcurrentDictionary<string, TreeMp3> _hashSet = new ConcurrentDictionary<string, TreeMp3>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
         private Form _form;
 
         public DirCreatorForm()
         {
             InitializeComponent();
-            InitializeDataTable();
             _logger.Info("_________________________________________________________________");
             _logger.Info("AlbumDirectoryCreator is opened!");
             textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
@@ -44,7 +43,7 @@ namespace AlbumDirectoryCreator
             _fileInfos.Clear();
             _fileInfos.AddRange(
                 Directory.EnumerateFiles(_pathIn, "*.*", SearchOption.AllDirectories)
-                    .Where(file => _extensions.Contains(file.Split('.').Last()))
+                    .Where(file => _extensions.Contains(file.Split('.').Last().ToLower()))
                     .ToList());
 
             Invoke((MethodInvoker)ReadMetaDatesTpl);
@@ -55,15 +54,9 @@ namespace AlbumDirectoryCreator
             ClearBindingsEtc();
 
             // Variablen erstellen
-            var artistList = new ConcurrentDictionary<int, string>();
-            var albumList = new ConcurrentDictionary<int, string>();
-            var idForTree = 2;
             var withoutInfo = 0;
             var withException = 0;
             var errorHappened = false;
-            var path = string.Empty;
-
-            _treeViewHash.Add(new TreeMp3(1, 0, "Without Artist", string.Empty, string.Empty, string.Empty));
 
             var readMetaDates = new ActionBlock<string>(fileInfo =>
             {
@@ -73,74 +66,16 @@ namespace AlbumDirectoryCreator
                     var taglibFile = TagLib.File.Create(fileInfo);
                     var tagInf = taglibFile.Tag;
 
-                    // Artist Hash
-                    var performerHash = tagInf.FirstPerformer?.GetHashCode() ?? 0;
-                    // Album Hash
-                    var performerAlbumHash = taglibFile.GetPerformerAlbumHashKvP();
-
-                    if (performerHash == 0 && performerAlbumHash.Key == 0)
+                    if (string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
                     {
-                        artistList.TryAdd(performerHash, string.Empty);
-                        albumList.TryAdd(performerAlbumHash.Key, string.Empty);
-                        _treeViewHash.Add(new TreeMp3(idForTree, 1, tagInf.FirstPerformer, tagInf.Album, tagInf.Title, fileInfo));
+                        _hashSet.TryAdd(fileInfo, new TreeMp3(string.Empty, tagInf.Album, tagInf.Title, fileInfo));
                         withoutInfo++;
-                        path = "00Music without Artist and Album\\";
                     }
                     else
                     {
-                        // Artist hinzufügen
-                        if (!artistList.ContainsKey(performerHash))
-                        {
-                            artistList.TryAdd(performerHash, tagInf.FirstPerformer);
-                            _treeViewHash.Add(new TreeMp3(performerHash, 0, tagInf.FirstPerformer,
-                                string.Empty, string.Empty, string.Empty));
-                        }
-                        // Album des Artist hinzufügen
-                        if (artistList.ContainsKey(performerHash) && !albumList.ContainsKey(performerAlbumHash.Key))
-                        {
-                            var artistKvP = artistList.First(a => a.Value.Equals(tagInf.FirstPerformer));
-                            albumList.TryAdd(performerAlbumHash.Key, performerAlbumHash.Value);
-                            _treeViewHash.Add(new TreeMp3(performerAlbumHash.Key, artistKvP.Key, tagInf.FirstPerformer,
-                                tagInf.Album, string.Empty, string.Empty));
-                        }
-                        // Artist und Album hinzufügen
-                        if (!artistList.ContainsKey(performerHash) && !albumList.ContainsKey(performerAlbumHash.Key))
-                        {
-                            artistList.TryAdd(performerHash, tagInf.FirstPerformer);
-                            var artistKvP = artistList.First(a => a.Value.Equals(tagInf.FirstPerformer));
-                            albumList.TryAdd(tagInf.Album.GetHashCode(), tagInf.Album);
-                            _treeViewHash.Add(new TreeMp3(performerHash, artistKvP.Key, tagInf.FirstPerformer,
-                                tagInf.Album, string.Empty, string.Empty));
-                            _treeViewHash.Add(new TreeMp3(idForTree, performerHash,
-                                tagInf.Performers.ToNormalizedString(),
-                                tagInf.Album, tagInf.Title, fileInfo));
-                        }
-                        // Artist und Album vorhanden, Song hinzufügen
-                        if (artistList.ContainsKey(performerHash) && albumList.ContainsKey(performerAlbumHash.Key))
-                        {
-                            var hash = (string.IsNullOrWhiteSpace(tagInf.Album))
-                                ? artistList.First(a => a.Value.Equals(tagInf.FirstPerformer))
-                                : albumList.First(a => a.Key.Equals(performerAlbumHash.Key));
-                            _treeViewHash.Add(new TreeMp3(idForTree, hash.Key, tagInf.Performers.ToNormalizedString(),
-                                tagInf.Album, tagInf.Title, fileInfo));
-                        }
-
-                        // Pfad erstellen
-                        if (!string.IsNullOrWhiteSpace(tagInf.FirstPerformer) &&
-                            !string.IsNullOrWhiteSpace(tagInf.Album))
-                        {
-                            path = string.Format("{0}\\{1}\\",
-                                tagInf.FirstPerformer.RemoveInvalidPathCharsAndToTitleCase(),
-                                tagInf.Album.RemoveInvalidPathCharsAndToTitleCase());
-                        }
-                        else if (!string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
-                        {
-                            path = string.Format("{0}\\", tagInf.FirstPerformer.RemoveInvalidPathCharsAndToTitleCase());
-                        }
-                        idForTree++;
+                        _hashSet.TryAdd(fileInfo, new TreeMp3(tagInf.Performers.ToNormalizedString(),
+                            tagInf.Album, tagInf.Title, fileInfo));
                     }
-                    // Pfad für die Datei und Ursprungspfad der Datei
-                    _oldAndNewKvPs.Add(new KeyValuePair<string, string>(path, fileInfo));
                 }
                 catch (Exception ex)
                 {
@@ -151,16 +86,16 @@ namespace AlbumDirectoryCreator
             },
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = 1
+                    MaxDegreeOfParallelism = 10
                 });
 
+            _stopwatch.Start();
             // Dateien durchgehen
             Parallel.ForEach(_fileInfos, fileInfo =>
             {
                 readMetaDates.Post(fileInfo);
             });
 
-            _stopwatch.Start();
             readMetaDates.Complete();
             readMetaDates.Completion.Wait(TimeSpan.FromMinutes(1));
             _stopwatch.Stop();
@@ -182,8 +117,8 @@ namespace AlbumDirectoryCreator
                     _stopwatch.Reset();
                     _logger.Info($"{withoutInfo} files that don't have an artist");
                     _logger.Info($"{withException} files that triggered an exception and are ignored");
-                    var percentage = (float)_oldAndNewKvPs.Count / (_fileInfos.Count - withException) * 100;
-                    _logger.Info($"{_oldAndNewKvPs.Count} files that are successfully read in ({percentage}%)");
+                    var percentage = (float)_hashSet.Count / (_fileInfos.Count - withException) * 100;
+                    _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
                     // Show the stuff on the UI
                     BindAndSort();
                     buttonCreate.Enabled = true;
@@ -199,19 +134,17 @@ namespace AlbumDirectoryCreator
         {
             // Detach current changed event
             bindingSourceFiles.CurrentChanged -= bindingSourceFiles_CurrentChanged;
-            bindingSourceTree.CurrentChanged -= bindingSourceTree_CurrentChanged;
 
             // Sort the stuff and bind it to the binding sources
-            bindingSourceFiles.DataSource = _treeViewHash.Where(t => t != null)
-                .Where(a => !string.IsNullOrWhiteSpace(a.Path)).OrderBy(x => x.Artist).ThenBy(x => x.Album).ToList();
-            // todo: Fight against Stackoverflow in TreeView
-            bindingSourceTree.DataSource =
-                _treeViewHash.Where(t => t != null).GroupBy(t => t.Id).Select(g => g.First()).ToList();
-            dataTreeListView.Sort(olvColumnArtist);
+            bindingSourceFiles.DataSource = _hashSet.Values.ToDataTable();
+            if (_hashSet.Values.Count != 0)
+                bindingSourceFiles.Sort = $"{nameof(TreeMp3.Artist)}, {nameof(TreeMp3.Album)}";
 
             // Attach current changed event
             bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
-            bindingSourceTree.CurrentChanged += bindingSourceTree_CurrentChanged;
+
+            bindingSourceFiles.MoveNext();
+            bindingSourceFiles.MoveFirst();
         }
 
         private void CreateFolderEtc()
@@ -229,27 +162,81 @@ namespace AlbumDirectoryCreator
                 }
                 Settings.Default.pathDestiny = _pathOut;
                 Settings.Default.Save();
-                _logger.Info($"Transfering {_oldAndNewKvPs.Count} files to \"{_pathOut}\" with artist/album structure");
-                foreach (var keyValuePair in _oldAndNewKvPs)
+                _logger.Info($"Transfering {_hashSet.Count} files to \"{_pathOut}\" with artist/album structure");
+                //foreach (var keyValuePair in _hashSet)
+                //{
+                //    var path = $"{_pathOut}\\{keyValuePair.Value.NewPath}";
+                //    Directory.CreateDirectory(path);
+                //    var file = keyValuePair.Value.FileInfo.Split('\\').Last();
+
+                //    // falls die Datei schon existiert
+                //    var counter = 1;
+                //    var fileNameOnly = Path.GetFileNameWithoutExtension(file);
+                //    var fileExtension = Path.GetExtension(file);
+                //    file = Path.Combine(path, $"{fileNameOnly}{fileExtension}");
+                //    while (File.Exists(file))
+                //    {
+                //        var tempFileName = $"{fileNameOnly} ({counter++})";
+                //        file = Path.Combine(path, $"{tempFileName}{fileExtension}");
+                //    }
+
+                //    // Datei in neue Struktur kopieren
+                //    File.Move(keyValuePair.Value.FileInfo, file);
+                //}
+                var successfully = 0;
+                var withException = 0;
+
+                var moveFiles = new ActionBlock<TreeMp3>(treeMp3 =>
                 {
-                    var path = $"{_pathOut}\\{keyValuePair.Key}";
-                    Directory.CreateDirectory(path);
-                    var file = keyValuePair.Value.Split('\\').Last();
-
-                    // falls die Datei schon existiert
-                    var counter = 1;
-                    var fileNameOnly = Path.GetFileNameWithoutExtension(file);
-                    var fileExtension = Path.GetExtension(file);
-                    file = Path.Combine(path, $"{fileNameOnly}{fileExtension}");
-                    while (File.Exists(file))
+                    try
                     {
-                        var tempFileName = $"{fileNameOnly} ({counter++})";
-                        file = Path.Combine(path, $"{tempFileName}{fileExtension}");
-                    }
+                        var path = $"{_pathOut}\\{treeMp3.NewPath}";
+                        Directory.CreateDirectory(path);
+                        var file = treeMp3.FileInfo.Split('\\').Last();
 
-                    // Datei in neue Struktur kopieren
-                    File.Move(keyValuePair.Value, file);
+                        // falls die Datei schon existiert
+                        var counter = 1;
+                        var fileNameOnly = Path.GetFileNameWithoutExtension(file);
+                        var fileExtension = Path.GetExtension(file);
+                        file = Path.Combine(path, $"{fileNameOnly}{fileExtension}");
+                        while (File.Exists(file))
+                        {
+                            var tempFileName = $"{fileNameOnly} ({counter++})";
+                            file = Path.Combine(path, $"{tempFileName}{fileExtension}");
+                        }
+                        //TODO: MOVE
+                        _logger.Warn();
+                        // Datei in neue Struktur kopieren
+                        File.Move(treeMp3.FileInfo, file);
+                        successfully++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"{ex.Message} -> \"{treeMp3.FileInfo}\"", ex);
+                        withException++;
+                    }
+                },
+                new ExecutionDataflowBlockOptions
+                {
+                    MaxDegreeOfParallelism = 10
+                });
+
+                _stopwatch.Start();
+                // Dateien durchgehen
+                foreach (var treeMp3 in _hashSet.Values)
+                {
+                    moveFiles.Post(treeMp3);
                 }
+
+                moveFiles.Complete();
+                moveFiles.Completion.Wait(TimeSpan.FromMinutes(1));
+                _stopwatch.Stop();
+
+                _logger.Info($"{withException} files that triggered an exception and are ignored");
+                var percentage = (float)successfully / (_hashSet.Count - withException) * 100;
+                _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
+                _stopwatch.Reset();
+
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
                 Helper.DeleteEmptyFolders(_pathOut);
             }
@@ -257,18 +244,9 @@ namespace AlbumDirectoryCreator
 
         private void ClearBindingsEtc()
         {
+            bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
-            bindingSourceTree.DataSource = null;
-            _treeViewHash = new HashSet<TreeMp3>();
-            _oldAndNewKvPs.Clear();
-        }
-
-        private void InitializeDataTable()
-        {
-            dataTreeListView.KeyAspectName = "Id";
-            dataTreeListView.ParentKeyAspectName = "ParentId";
-            dataTreeListView.RootKeyValue = 0;
-            dataTreeListView.AutoSizeColumns();
+            _hashSet = new ConcurrentDictionary<string, TreeMp3>();
         }
 
         private void backgroundWorkerGetFiles_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -285,15 +263,12 @@ namespace AlbumDirectoryCreator
         private void backgroundWorkerCreate_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             Invoke((MethodInvoker)ShowLoadingAnimation);
-            _stopwatch.Start();
             CreateFolderEtc();
         }
 
         private void backgroundWorkerCreate_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             Invoke((MethodInvoker)_form.Close);
-            _stopwatch.Stop();
-            _logger.Info($"Transfering completed within: {_stopwatch.Elapsed}");
         }
 
         private void buttonSearch_Click(object sender, EventArgs e)
@@ -314,6 +289,7 @@ namespace AlbumDirectoryCreator
 
         private void buttonSearchOriginPath_Click(object sender, EventArgs e)
         {
+            folderDialogOrigins.SelectedPath = _pathIn;
             var result = folderDialogOrigins.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -323,6 +299,7 @@ namespace AlbumDirectoryCreator
 
         private void buttonSearchDestinyPath_Click(object sender, EventArgs e)
         {
+            folderDialogOrigins.SelectedPath = _pathOut;
             var result = folderDialogDestiny.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -344,20 +321,12 @@ namespace AlbumDirectoryCreator
             toolTip.Show(Resources.OutputHint, textBox, 0, 15, 1500);
         }
 
-        private void bindingSourceTree_CurrentChanged(object sender, EventArgs e)
-        {
-            var current = bindingSourceTree.Current as TreeMp3;
-            if (!string.IsNullOrEmpty(current?.Path))
-                EnableEditorAndSetValues(current.Path);
-            else
-                DisableEditorAndClear();
-        }
-
         private void bindingSourceFiles_CurrentChanged(object sender, EventArgs e)
         {
-            var current = bindingSourceFiles.Current as TreeMp3;
-            if (!string.IsNullOrEmpty(current?.Path))
-                EnableEditorAndSetValues(current.Path);
+            var current = bindingSourceFiles.Current as DataRowView;
+            var path = current?.Row[nameof(TreeMp3.FileInfo)]?.ToString();
+            if (!string.IsNullOrEmpty(path))
+                EnableEditorAndSetValues(path);
             else
                 DisableEditorAndClear();
         }
@@ -428,16 +397,28 @@ namespace AlbumDirectoryCreator
         private void iD3Editor_ItemSaved(object sender, EventArgs e)
         {
             var taglibFile = sender as TagLib.File;
-            var previous = _treeViewHash.First(x => taglibFile != null && x.Path.Equals(taglibFile.Name));
-            if (taglibFile != null && previous != null)
+            var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(taglibFile.Name));
+            if (taglibFile != null && previous.Value != null)
             {
-                _treeViewHash.Remove(previous);
-                _treeViewHash.Add(new TreeMp3(previous.Id, previous.ParentId,
+                var newTreeMp3 = new TreeMp3(
                     taglibFile.Tag.Performers.ToNormalizedString(), taglibFile.Tag.Album, taglibFile.Tag.Title,
-                    previous.Path));
+                    previous.Key);
+                _hashSet.AddOrUpdate(previous.Key, new TreeMp3(
+                    taglibFile.Tag.Performers.ToNormalizedString(), taglibFile.Tag.Album, taglibFile.Tag.Title,
+                    previous.Key), (s, mp3) => newTreeMp3);
 
                 BindAndSort();
             }
+        }
+
+        private void advancedDataGridView1_FilterStringChanged(object sender, EventArgs e)
+        {
+            bindingSourceFiles.Filter = advancedDataGridView1.FilterString;
+        }
+
+        private void advancedDataGridView1_SortStringChanged(object sender, EventArgs e)
+        {
+            bindingSourceFiles.Sort = advancedDataGridView1.SortString;
         }
     }
 }

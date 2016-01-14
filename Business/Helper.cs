@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Business
 {
@@ -11,14 +10,26 @@ namespace Business
             foreach (var directory in Directory.GetDirectories(startLocation))
             {
                 DeleteEmptyFolders(directory);
-                var files = Directory.EnumerateFileSystemEntries(directory).ToList();
-                var desktopIni = $"{directory}\\desktop.ini";
-                var result = files.Contains(desktopIni) && files.Count == 1;
+                var files = Directory.GetFiles(directory).ToList();
+                var hasSubdirectories = Directory.GetDirectories(directory).Any();
 
-                if (!files.Any() || result)
+                if (!hasSubdirectories)
                 {
-                    File.Delete(desktopIni);
-                    Directory.Delete(directory, false);
+                    var canBeDeleted = true;
+                    foreach (var file in files)
+                    {
+                        var attributes = File.GetAttributes(file);
+                        if ((attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                        {
+                            canBeDeleted = false;
+                            break;
+                        }
+                    }
+
+                    if (canBeDeleted)
+                    {
+                        Directory.Delete(directory, true);
+                    }
                 }
             }
         }
