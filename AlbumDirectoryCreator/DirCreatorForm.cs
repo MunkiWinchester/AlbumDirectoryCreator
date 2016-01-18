@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +25,9 @@ namespace AlbumDirectoryCreator
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, TreeMp3> _hashSet = new ConcurrentDictionary<string, TreeMp3>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
-        private Form _form;
+        private int _withoutInfo;
+        private int _withException;
+        private bool _errorHappened;
 
         public DirCreatorForm()
         {
@@ -45,68 +46,51 @@ namespace AlbumDirectoryCreator
                     .Where(file => _extensions.Contains(file.Split('.').Last().ToLower()))
                     .ToList());
 
-            Invoke((MethodInvoker)ReadMetaDatesTpl);
+            ReadMetaDatesTpl();
         }
 
-        private void ReadMetaDatesTpl()
+        private async void ReadMetaDatesTpl()
         {
             ClearBindingsEtc();
 
-            // Variablen erstellen
-            var withoutInfo = 0;
-            var withException = 0;
-            var errorHappened = false;
             progressBar.Maximum = _hashSet.Count;
+            var transformBlock = new TransformBlock<string, bool>(s => ReadMetaDatas(s),
+                new ExecutionDataflowBlockOptions
+                {
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    MaxDegreeOfParallelism = 20
+                });
 
-            var readMetaDates = new ActionBlock<string>(fileInfo =>
+            var readMetaDates = new ActionBlock<bool>(x =>
             {
-                try
-                {
-                    progressBar.PerformStep();
-                    // Auslesen
-                    var taglibFile = TagLib.File.Create(fileInfo);
-                    var tagInf = taglibFile.Tag;
-
-                    if (string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
-                    {
-                        _hashSet.TryAdd(fileInfo, new TreeMp3(string.Empty, tagInf.Album, tagInf.Title, fileInfo));
-                        withoutInfo++;
-                    }
-                    else
-                    {
-                        _hashSet.TryAdd(fileInfo, new TreeMp3(tagInf.Performers.ToNormalizedString(),
-                            tagInf.Album, tagInf.Title, fileInfo));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"{ex.Message} -> \"{fileInfo}\"", ex);
-                    withException++;
-                    errorHappened = true;
-                }
+                progressBar.PerformStep();
             },
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = 1,
                     TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
                 });
 
+            transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
+
             _stopwatch.Start();
+
+            progressBar.Maximum = _fileInfos.Count;
             // Dateien durchgehen
             Parallel.ForEach(_fileInfos, fileInfo =>
             {
-                readMetaDates.Post(fileInfo);
+                transformBlock.Post(fileInfo);
             });
 
-            readMetaDates.Complete();
-            readMetaDates.Completion.Wait(TimeSpan.FromMinutes(1));
+            transformBlock.Complete();
+            await transformBlock.Completion;
             _stopwatch.Stop();
+            //_form.Close();
 
             var result = DialogResult.Cancel;
-            if (errorHappened)
+            if (_errorHappened)
                 result =
                     MessageBox.Show(
-                        $"{Resources.ErrorOccured}\r\n{withException} files caused an exception.\r\n(Retry could be helping)",
+                        $"{Resources.ErrorOccured}\r\n{_withException} files caused an exception.\r\n(Retry could be helping)",
                         Resources.Error,
                         MessageBoxButtons.RetryCancel, MessageBoxIcon.Information);
             switch (result)
@@ -117,9 +101,9 @@ namespace AlbumDirectoryCreator
                         $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) read recursiveliv in from \"{_pathIn}\"");
                     _logger.Info($"{_fileInfos.Count} files analyzed within {_stopwatch.Elapsed}");
                     _stopwatch.Reset();
-                    _logger.Info($"{withoutInfo} files that don't have an artist");
-                    _logger.Info($"{withException} files that triggered an exception and are ignored");
-                    var percentage = (float)_hashSet.Count / (_fileInfos.Count - withException) * 100;
+                    _logger.Info($"{_withoutInfo} files that don't have an artist");
+                    _logger.Info($"{_withException} files that triggered an exception and are ignored");
+                    var percentage = (float)_hashSet.Count / (_fileInfos.Count - _withException) * 100;
                     _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
                     // Show the stuff on the UI
                     BindAndSort();
@@ -129,6 +113,38 @@ namespace AlbumDirectoryCreator
                 case DialogResult.Retry:
                     ReadMetaDatesTpl();
                     break;
+            }
+        }
+
+        private bool ReadMetaDatas(string fileInfo)
+        {
+            try
+            {
+                // Auslesen
+                var taglibFile = TagLib.File.Create(fileInfo);
+                var tagInf = taglibFile.Tag;
+
+                if (string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
+                {
+                    _withoutInfo++;
+                    return _hashSet.TryAdd(fileInfo, new TreeMp3(string.Empty, tagInf.Album, tagInf.Title, fileInfo));
+                }
+                else
+                {
+                    return _hashSet.TryAdd(fileInfo, new TreeMp3(tagInf.Performers.ToNormalizedString(),
+                        tagInf.Album, tagInf.Title, fileInfo));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"{ex.Message} -> \"{fileInfo}\"", ex);
+                _withException++;
+                _errorHappened = true;
+                return false;
+            }
+            finally
+            {
+                progressBar.PerformStep();
             }
         }
 
@@ -225,31 +241,12 @@ namespace AlbumDirectoryCreator
 
         private void ClearBindingsEtc()
         {
+            _withoutInfo = 0;
+            _errorHappened = false;
+            _withException = 0;
             bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
             _hashSet = new ConcurrentDictionary<string, TreeMp3>();
-        }
-
-        private void backgroundWorkerGetFiles_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            Invoke((MethodInvoker)ShowLoadingAnimation);
-            EnumerateFiles();
-        }
-
-        private void backgroundWorkerGetFiles_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-        {
-            Invoke((MethodInvoker)_form.Close);
-        }
-
-        private void backgroundWorkerCreate_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            Invoke((MethodInvoker)ShowLoadingAnimation);
-            CreateFolderEtc();
-        }
-
-        private void backgroundWorkerCreate_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-        {
-            Invoke((MethodInvoker)_form.Close);
         }
 
         private void buttonSearch_Click(object sender, EventArgs e)
@@ -260,15 +257,14 @@ namespace AlbumDirectoryCreator
                 Settings.Default.pathOrigin = _pathIn;
                 Settings.Default.Save();
 
-                ShowLoadingAnimation();
+                //ShowLoadingAnimation();
                 EnumerateFiles();
-                //backgroundWorkerGetFiles.RunWorkerAsync();
             }
         }
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            backgroundWorkerCreate.RunWorkerAsync();
+            CreateFolderEtc();
         }
 
         private void buttonSearchOriginPath_Click(object sender, EventArgs e)
@@ -325,32 +321,6 @@ namespace AlbumDirectoryCreator
         {
             iD3Editor.Enabled = false;
             iD3Editor.Clear();
-        }
-
-        private void ShowLoadingAnimation()
-        {
-            const int height = 75;
-            const int width = 75;
-            _form = new Form
-            {
-                Size = new Size(width, height),
-                FormBorderStyle = FormBorderStyle.None,
-                MinimizeBox = false,
-                MaximizeBox = false,
-                StartPosition = FormStartPosition.Manual,
-                Location = new Point(Location.X + (Width - width) / 2, Location.Y + (Height - height) / 2),
-                BackColor = Color.Turquoise,
-                TransparencyKey = Color.Turquoise
-            };
-            var im = Resources.LoadAnimation;
-            var pb = new PictureBox
-            {
-                Dock = DockStyle.Fill,
-                Image = im,
-                Location = new Point(0, 0)
-            };
-            _form.Controls.Add(pb);
-            _form.Show();
         }
 
         private void linkLabelLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

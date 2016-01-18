@@ -32,11 +32,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirCreatorForm));
             this.textBoxPathOrigins = new System.Windows.Forms.TextBox();
             this.buttonSearch = new System.Windows.Forms.Button();
-            this.backgroundWorkerGetFiles = new System.ComponentModel.BackgroundWorker();
             this.textBoxPathDestiny = new System.Windows.Forms.TextBox();
             this.buttonCreate = new System.Windows.Forms.Button();
-            this.backgroundWorkerCreate = new System.ComponentModel.BackgroundWorker();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.advancedDataGridView1 = new ADGV.AdvancedDataGridView();
             this.artistDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.albumDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -58,7 +57,6 @@
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -94,12 +92,6 @@
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
-            // backgroundWorkerGetFiles
-            // 
-            this.backgroundWorkerGetFiles.WorkerReportsProgress = true;
-            this.backgroundWorkerGetFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerGetFiles_DoWork);
-            this.backgroundWorkerGetFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerGetFiles_RunWorkerCompleted);
-            // 
             // textBoxPathDestiny
             // 
             this.textBoxPathDestiny.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -124,12 +116,6 @@
             this.buttonCreate.UseVisualStyleBackColor = true;
             this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
-            // backgroundWorkerCreate
-            // 
-            this.backgroundWorkerCreate.WorkerReportsProgress = true;
-            this.backgroundWorkerCreate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerCreate_DoWork);
-            this.backgroundWorkerCreate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerCreate_RunWorkerCompleted);
-            // 
             // splitContainer
             // 
             this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -151,6 +137,17 @@
             this.splitContainer.Size = new System.Drawing.Size(1061, 578);
             this.splitContainer.SplitterDistance = 778;
             this.splitContainer.TabIndex = 13;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.ForeColor = System.Drawing.Color.Lime;
+            this.progressBar.Location = new System.Drawing.Point(425, 555);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(350, 20);
+            this.progressBar.Step = 1;
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar.TabIndex = 3;
             // 
             // advancedDataGridView1
             // 
@@ -361,17 +358,6 @@
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
             // 
-            // progressBar
-            // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.ForeColor = System.Drawing.Color.Lime;
-            this.progressBar.Location = new System.Drawing.Point(208, 555);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(567, 20);
-            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar.TabIndex = 3;
-            // 
             // iD3Editor
             // 
             this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -419,10 +405,8 @@
 
         private System.Windows.Forms.TextBox textBoxPathOrigins;
         private System.Windows.Forms.Button buttonSearch;
-        private System.ComponentModel.BackgroundWorker backgroundWorkerGetFiles;
         private System.Windows.Forms.TextBox textBoxPathDestiny;
         private System.Windows.Forms.Button buttonCreate;
-        private System.ComponentModel.BackgroundWorker backgroundWorkerCreate;
         private System.Windows.Forms.BindingSource bindingSourceFiles;
         private Id3Editor iD3Editor;
         private System.Windows.Forms.SplitContainer splitContainer;
