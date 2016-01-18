@@ -36,30 +36,29 @@
             this.textBoxPathDestiny = new System.Windows.Forms.TextBox();
             this.buttonCreate = new System.Windows.Forms.Button();
             this.backgroundWorkerCreate = new System.ComponentModel.BackgroundWorker();
-            this.olvColumnId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumnParentId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.advancedDataGridView1 = new ADGV.AdvancedDataGridView();
+            this.artistDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.albumDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.titleDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pathDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
+            this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
+            this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMovePreviousItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorPositionItem = new System.Windows.Forms.ToolStripTextBox();
+            this.bindingNavigatorSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorMoveNextItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
             this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
-            this.advancedDataGridView1 = new ADGV.AdvancedDataGridView();
-            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
-            this.artistDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.albumDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.titleDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.pathDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
-            this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
-            this.bindingNavigatorMovePreviousItem = new System.Windows.Forms.ToolStripButton();
-            this.bindingNavigatorSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.bindingNavigatorPositionItem = new System.Windows.Forms.ToolStripTextBox();
-            this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
-            this.bindingNavigatorSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.bindingNavigatorMoveNextItem = new System.Windows.Forms.ToolStripButton();
-            this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
-            this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -131,21 +130,6 @@
             this.backgroundWorkerCreate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerCreate_DoWork);
             this.backgroundWorkerCreate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerCreate_RunWorkerCompleted);
             // 
-            // olvColumnId
-            // 
-            this.olvColumnId.AspectName = "Id";
-            this.olvColumnId.DisplayIndex = 3;
-            this.olvColumnId.IsVisible = false;
-            this.olvColumnId.Tag = "";
-            this.olvColumnId.Text = "Id";
-            // 
-            // olvColumnParentId
-            // 
-            this.olvColumnParentId.AspectName = "ParentId";
-            this.olvColumnParentId.DisplayIndex = 1;
-            this.olvColumnParentId.IsVisible = false;
-            this.olvColumnParentId.Text = "ParentId";
-            // 
             // splitContainer
             // 
             this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -156,6 +140,7 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.progressBar);
             this.splitContainer.Panel1.Controls.Add(this.advancedDataGridView1);
             this.splitContainer.Panel1.Controls.Add(this.bindingNavigator);
             // 
@@ -166,6 +151,171 @@
             this.splitContainer.Size = new System.Drawing.Size(1061, 578);
             this.splitContainer.SplitterDistance = 778;
             this.splitContainer.TabIndex = 13;
+            // 
+            // advancedDataGridView1
+            // 
+            this.advancedDataGridView1.AllowUserToAddRows = false;
+            this.advancedDataGridView1.AllowUserToDeleteRows = false;
+            this.advancedDataGridView1.AllowUserToResizeRows = false;
+            this.advancedDataGridView1.AutoGenerateColumns = false;
+            this.advancedDataGridView1.AutoGenerateContextFilters = true;
+            this.advancedDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.advancedDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.artistDataGridViewTextBoxColumn1,
+            this.albumDataGridViewTextBoxColumn1,
+            this.titleDataGridViewTextBoxColumn1,
+            this.pathDataGridViewTextBoxColumn1});
+            this.advancedDataGridView1.DataSource = this.bindingSourceFiles;
+            this.advancedDataGridView1.DateWithTime = false;
+            this.advancedDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.advancedDataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.advancedDataGridView1.Name = "advancedDataGridView1";
+            this.advancedDataGridView1.RowHeadersVisible = false;
+            this.advancedDataGridView1.Size = new System.Drawing.Size(778, 553);
+            this.advancedDataGridView1.TabIndex = 0;
+            this.advancedDataGridView1.TimeFilter = false;
+            this.advancedDataGridView1.SortStringChanged += new System.EventHandler(this.advancedDataGridView1_SortStringChanged);
+            this.advancedDataGridView1.FilterStringChanged += new System.EventHandler(this.advancedDataGridView1_FilterStringChanged);
+            // 
+            // artistDataGridViewTextBoxColumn1
+            // 
+            this.artistDataGridViewTextBoxColumn1.DataPropertyName = "Artist";
+            this.artistDataGridViewTextBoxColumn1.HeaderText = "Artist";
+            this.artistDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.artistDataGridViewTextBoxColumn1.Name = "artistDataGridViewTextBoxColumn1";
+            this.artistDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.artistDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.artistDataGridViewTextBoxColumn1.Width = 200;
+            // 
+            // albumDataGridViewTextBoxColumn1
+            // 
+            this.albumDataGridViewTextBoxColumn1.DataPropertyName = "Album";
+            this.albumDataGridViewTextBoxColumn1.HeaderText = "Album";
+            this.albumDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.albumDataGridViewTextBoxColumn1.Name = "albumDataGridViewTextBoxColumn1";
+            this.albumDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.albumDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.albumDataGridViewTextBoxColumn1.Width = 200;
+            // 
+            // titleDataGridViewTextBoxColumn1
+            // 
+            this.titleDataGridViewTextBoxColumn1.DataPropertyName = "Title";
+            this.titleDataGridViewTextBoxColumn1.HeaderText = "Title";
+            this.titleDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.titleDataGridViewTextBoxColumn1.Name = "titleDataGridViewTextBoxColumn1";
+            this.titleDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.titleDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.titleDataGridViewTextBoxColumn1.Width = 200;
+            // 
+            // pathDataGridViewTextBoxColumn1
+            // 
+            this.pathDataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.pathDataGridViewTextBoxColumn1.DataPropertyName = "FileInfo";
+            this.pathDataGridViewTextBoxColumn1.HeaderText = "FileInfo";
+            this.pathDataGridViewTextBoxColumn1.MinimumWidth = 22;
+            this.pathDataGridViewTextBoxColumn1.Name = "pathDataGridViewTextBoxColumn1";
+            this.pathDataGridViewTextBoxColumn1.ReadOnly = true;
+            this.pathDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            // 
+            // bindingSourceFiles
+            // 
+            this.bindingSourceFiles.DataSource = typeof(DataObjects.TreeMp3);
+            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
+            // 
+            // bindingNavigator
+            // 
+            this.bindingNavigator.AddNewItem = null;
+            this.bindingNavigator.BindingSource = this.bindingSourceFiles;
+            this.bindingNavigator.CountItem = this.bindingNavigatorCountItem;
+            this.bindingNavigator.DeleteItem = null;
+            this.bindingNavigator.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.bindingNavigator.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bindingNavigatorMoveFirstItem,
+            this.bindingNavigatorMovePreviousItem,
+            this.bindingNavigatorSeparator,
+            this.bindingNavigatorPositionItem,
+            this.bindingNavigatorCountItem,
+            this.bindingNavigatorSeparator1,
+            this.bindingNavigatorMoveNextItem,
+            this.bindingNavigatorMoveLastItem,
+            this.bindingNavigatorSeparator2});
+            this.bindingNavigator.Location = new System.Drawing.Point(0, 553);
+            this.bindingNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
+            this.bindingNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
+            this.bindingNavigator.MoveNextItem = this.bindingNavigatorMoveNextItem;
+            this.bindingNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
+            this.bindingNavigator.Name = "bindingNavigator";
+            this.bindingNavigator.PositionItem = this.bindingNavigatorPositionItem;
+            this.bindingNavigator.Size = new System.Drawing.Size(778, 25);
+            this.bindingNavigator.TabIndex = 1;
+            this.bindingNavigator.Text = "bindingNavigator1";
+            // 
+            // bindingNavigatorCountItem
+            // 
+            this.bindingNavigatorCountItem.Name = "bindingNavigatorCountItem";
+            this.bindingNavigatorCountItem.Size = new System.Drawing.Size(35, 22);
+            this.bindingNavigatorCountItem.Text = "of {0}";
+            this.bindingNavigatorCountItem.ToolTipText = "Total number of items";
+            // 
+            // bindingNavigatorMoveFirstItem
+            // 
+            this.bindingNavigatorMoveFirstItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveFirstItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveFirstItem.Image")));
+            this.bindingNavigatorMoveFirstItem.Name = "bindingNavigatorMoveFirstItem";
+            this.bindingNavigatorMoveFirstItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveFirstItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveFirstItem.Text = "Move first";
+            // 
+            // bindingNavigatorMovePreviousItem
+            // 
+            this.bindingNavigatorMovePreviousItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMovePreviousItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMovePreviousItem.Image")));
+            this.bindingNavigatorMovePreviousItem.Name = "bindingNavigatorMovePreviousItem";
+            this.bindingNavigatorMovePreviousItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMovePreviousItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMovePreviousItem.Text = "Move previous";
+            // 
+            // bindingNavigatorSeparator
+            // 
+            this.bindingNavigatorSeparator.Name = "bindingNavigatorSeparator";
+            this.bindingNavigatorSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorPositionItem
+            // 
+            this.bindingNavigatorPositionItem.AccessibleName = "Position";
+            this.bindingNavigatorPositionItem.AutoSize = false;
+            this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
+            this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(50, 23);
+            this.bindingNavigatorPositionItem.Text = "0";
+            this.bindingNavigatorPositionItem.ToolTipText = "Current position";
+            // 
+            // bindingNavigatorSeparator1
+            // 
+            this.bindingNavigatorSeparator1.Name = "bindingNavigatorSeparator1";
+            this.bindingNavigatorSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorMoveNextItem
+            // 
+            this.bindingNavigatorMoveNextItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveNextItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveNextItem.Image")));
+            this.bindingNavigatorMoveNextItem.Name = "bindingNavigatorMoveNextItem";
+            this.bindingNavigatorMoveNextItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveNextItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveNextItem.Text = "Move next";
+            // 
+            // bindingNavigatorMoveLastItem
+            // 
+            this.bindingNavigatorMoveLastItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveLastItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveLastItem.Image")));
+            this.bindingNavigatorMoveLastItem.Name = "bindingNavigatorMoveLastItem";
+            this.bindingNavigatorMoveLastItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveLastItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveLastItem.Text = "Move last";
+            // 
+            // bindingNavigatorSeparator2
+            // 
+            this.bindingNavigatorSeparator2.Name = "bindingNavigatorSeparator2";
+            this.bindingNavigatorSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // linkLabelLog
             // 
@@ -211,170 +361,16 @@
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
             // 
-            // advancedDataGridView1
+            // progressBar
             // 
-            this.advancedDataGridView1.AllowUserToAddRows = false;
-            this.advancedDataGridView1.AllowUserToDeleteRows = false;
-            this.advancedDataGridView1.AllowUserToResizeRows = false;
-            this.advancedDataGridView1.AutoGenerateColumns = false;
-            this.advancedDataGridView1.AutoGenerateContextFilters = true;
-            this.advancedDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.advancedDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.artistDataGridViewTextBoxColumn1,
-            this.albumDataGridViewTextBoxColumn1,
-            this.titleDataGridViewTextBoxColumn1,
-            this.pathDataGridViewTextBoxColumn1});
-            this.advancedDataGridView1.DataSource = this.bindingSourceFiles;
-            this.advancedDataGridView1.DateWithTime = false;
-            this.advancedDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.advancedDataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.advancedDataGridView1.Name = "advancedDataGridView1";
-            this.advancedDataGridView1.RowHeadersVisible = false;
-            this.advancedDataGridView1.Size = new System.Drawing.Size(778, 553);
-            this.advancedDataGridView1.TabIndex = 0;
-            this.advancedDataGridView1.TimeFilter = false;
-            this.advancedDataGridView1.SortStringChanged += new System.EventHandler(this.advancedDataGridView1_SortStringChanged);
-            this.advancedDataGridView1.FilterStringChanged += new System.EventHandler(this.advancedDataGridView1_FilterStringChanged);
-            // 
-            // bindingSourceFiles
-            // 
-            this.bindingSourceFiles.DataSource = typeof(DataObjects.TreeMp3);
-            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
-            // 
-            // artistDataGridViewTextBoxColumn1
-            // 
-            this.artistDataGridViewTextBoxColumn1.DataPropertyName = "Artist";
-            this.artistDataGridViewTextBoxColumn1.HeaderText = "Artist";
-            this.artistDataGridViewTextBoxColumn1.MinimumWidth = 22;
-            this.artistDataGridViewTextBoxColumn1.Name = "artistDataGridViewTextBoxColumn1";
-            this.artistDataGridViewTextBoxColumn1.ReadOnly = true;
-            this.artistDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.artistDataGridViewTextBoxColumn1.Width = 200;
-            // 
-            // albumDataGridViewTextBoxColumn1
-            // 
-            this.albumDataGridViewTextBoxColumn1.DataPropertyName = "Album";
-            this.albumDataGridViewTextBoxColumn1.HeaderText = "Album";
-            this.albumDataGridViewTextBoxColumn1.MinimumWidth = 22;
-            this.albumDataGridViewTextBoxColumn1.Name = "albumDataGridViewTextBoxColumn1";
-            this.albumDataGridViewTextBoxColumn1.ReadOnly = true;
-            this.albumDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.albumDataGridViewTextBoxColumn1.Width = 200;
-            // 
-            // titleDataGridViewTextBoxColumn1
-            // 
-            this.titleDataGridViewTextBoxColumn1.DataPropertyName = "Title";
-            this.titleDataGridViewTextBoxColumn1.HeaderText = "Title";
-            this.titleDataGridViewTextBoxColumn1.MinimumWidth = 22;
-            this.titleDataGridViewTextBoxColumn1.Name = "titleDataGridViewTextBoxColumn1";
-            this.titleDataGridViewTextBoxColumn1.ReadOnly = true;
-            this.titleDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.titleDataGridViewTextBoxColumn1.Width = 200;
-            // 
-            // pathDataGridViewTextBoxColumn1
-            // 
-            this.pathDataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.pathDataGridViewTextBoxColumn1.DataPropertyName = "FileInfo";
-            this.pathDataGridViewTextBoxColumn1.HeaderText = "FileInfo";
-            this.pathDataGridViewTextBoxColumn1.MinimumWidth = 22;
-            this.pathDataGridViewTextBoxColumn1.Name = "pathDataGridViewTextBoxColumn1";
-            this.pathDataGridViewTextBoxColumn1.ReadOnly = true;
-            this.pathDataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // bindingNavigator
-            // 
-            this.bindingNavigator.AddNewItem = null;
-            this.bindingNavigator.BindingSource = this.bindingSourceFiles;
-            this.bindingNavigator.CountItem = this.bindingNavigatorCountItem;
-            this.bindingNavigator.DeleteItem = null;
-            this.bindingNavigator.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.bindingNavigator.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bindingNavigatorMoveFirstItem,
-            this.bindingNavigatorMovePreviousItem,
-            this.bindingNavigatorSeparator,
-            this.bindingNavigatorPositionItem,
-            this.bindingNavigatorCountItem,
-            this.bindingNavigatorSeparator1,
-            this.bindingNavigatorMoveNextItem,
-            this.bindingNavigatorMoveLastItem,
-            this.bindingNavigatorSeparator2});
-            this.bindingNavigator.Location = new System.Drawing.Point(0, 553);
-            this.bindingNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
-            this.bindingNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
-            this.bindingNavigator.MoveNextItem = this.bindingNavigatorMoveNextItem;
-            this.bindingNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
-            this.bindingNavigator.Name = "bindingNavigator";
-            this.bindingNavigator.PositionItem = this.bindingNavigatorPositionItem;
-            this.bindingNavigator.Size = new System.Drawing.Size(778, 25);
-            this.bindingNavigator.TabIndex = 1;
-            this.bindingNavigator.Text = "bindingNavigator1";
-            // 
-            // bindingNavigatorMoveFirstItem
-            // 
-            this.bindingNavigatorMoveFirstItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bindingNavigatorMoveFirstItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveFirstItem.Image")));
-            this.bindingNavigatorMoveFirstItem.Name = "bindingNavigatorMoveFirstItem";
-            this.bindingNavigatorMoveFirstItem.RightToLeftAutoMirrorImage = true;
-            this.bindingNavigatorMoveFirstItem.Size = new System.Drawing.Size(23, 22);
-            this.bindingNavigatorMoveFirstItem.Text = "Move first";
-            // 
-            // bindingNavigatorMovePreviousItem
-            // 
-            this.bindingNavigatorMovePreviousItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bindingNavigatorMovePreviousItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMovePreviousItem.Image")));
-            this.bindingNavigatorMovePreviousItem.Name = "bindingNavigatorMovePreviousItem";
-            this.bindingNavigatorMovePreviousItem.RightToLeftAutoMirrorImage = true;
-            this.bindingNavigatorMovePreviousItem.Size = new System.Drawing.Size(23, 22);
-            this.bindingNavigatorMovePreviousItem.Text = "Move previous";
-            // 
-            // bindingNavigatorSeparator
-            // 
-            this.bindingNavigatorSeparator.Name = "bindingNavigatorSeparator";
-            this.bindingNavigatorSeparator.Size = new System.Drawing.Size(6, 25);
-            // 
-            // bindingNavigatorPositionItem
-            // 
-            this.bindingNavigatorPositionItem.AccessibleName = "Position";
-            this.bindingNavigatorPositionItem.AutoSize = false;
-            this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
-            this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(50, 23);
-            this.bindingNavigatorPositionItem.Text = "0";
-            this.bindingNavigatorPositionItem.ToolTipText = "Current position";
-            // 
-            // bindingNavigatorCountItem
-            // 
-            this.bindingNavigatorCountItem.Name = "bindingNavigatorCountItem";
-            this.bindingNavigatorCountItem.Size = new System.Drawing.Size(35, 22);
-            this.bindingNavigatorCountItem.Text = "of {0}";
-            this.bindingNavigatorCountItem.ToolTipText = "Total number of items";
-            // 
-            // bindingNavigatorSeparator1
-            // 
-            this.bindingNavigatorSeparator1.Name = "bindingNavigatorSeparator";
-            this.bindingNavigatorSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // bindingNavigatorMoveNextItem
-            // 
-            this.bindingNavigatorMoveNextItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bindingNavigatorMoveNextItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveNextItem.Image")));
-            this.bindingNavigatorMoveNextItem.Name = "bindingNavigatorMoveNextItem";
-            this.bindingNavigatorMoveNextItem.RightToLeftAutoMirrorImage = true;
-            this.bindingNavigatorMoveNextItem.Size = new System.Drawing.Size(23, 22);
-            this.bindingNavigatorMoveNextItem.Text = "Move next";
-            // 
-            // bindingNavigatorMoveLastItem
-            // 
-            this.bindingNavigatorMoveLastItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bindingNavigatorMoveLastItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveLastItem.Image")));
-            this.bindingNavigatorMoveLastItem.Name = "bindingNavigatorMoveLastItem";
-            this.bindingNavigatorMoveLastItem.RightToLeftAutoMirrorImage = true;
-            this.bindingNavigatorMoveLastItem.Size = new System.Drawing.Size(23, 22);
-            this.bindingNavigatorMoveLastItem.Text = "Move last";
-            // 
-            // bindingNavigatorSeparator2
-            // 
-            this.bindingNavigatorSeparator2.Name = "bindingNavigatorSeparator";
-            this.bindingNavigatorSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.ForeColor = System.Drawing.Color.Lime;
+            this.progressBar.Location = new System.Drawing.Point(208, 555);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(567, 20);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar.TabIndex = 3;
             // 
             // iD3Editor
             // 
@@ -428,8 +424,6 @@
         private System.Windows.Forms.Button buttonCreate;
         private System.ComponentModel.BackgroundWorker backgroundWorkerCreate;
         private System.Windows.Forms.BindingSource bindingSourceFiles;
-        private BrightIdeasSoftware.OLVColumn olvColumnId;
-        private BrightIdeasSoftware.OLVColumn olvColumnParentId;
         private Id3Editor iD3Editor;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Button buttonSearchOriginPath;
@@ -454,6 +448,7 @@
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveNextItem;
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveLastItem;
         private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator2;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Forms;
-using File = System.IO.File;
 using TextBox = System.Windows.Forms.TextBox;
 
 namespace AlbumDirectoryCreator
@@ -57,11 +56,13 @@ namespace AlbumDirectoryCreator
             var withoutInfo = 0;
             var withException = 0;
             var errorHappened = false;
+            progressBar.Maximum = _hashSet.Count;
 
             var readMetaDates = new ActionBlock<string>(fileInfo =>
             {
                 try
                 {
+                    progressBar.PerformStep();
                     // Auslesen
                     var taglibFile = TagLib.File.Create(fileInfo);
                     var tagInf = taglibFile.Tag;
@@ -86,7 +87,8 @@ namespace AlbumDirectoryCreator
             },
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = 10
+                    MaxDegreeOfParallelism = 1,
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
                 });
 
             _stopwatch.Start();
@@ -163,26 +165,7 @@ namespace AlbumDirectoryCreator
                 Settings.Default.pathDestiny = _pathOut;
                 Settings.Default.Save();
                 _logger.Info($"Transfering {_hashSet.Count} files to \"{_pathOut}\" with artist/album structure");
-                //foreach (var keyValuePair in _hashSet)
-                //{
-                //    var path = $"{_pathOut}\\{keyValuePair.Value.NewPath}";
-                //    Directory.CreateDirectory(path);
-                //    var file = keyValuePair.Value.FileInfo.Split('\\').Last();
 
-                //    // falls die Datei schon existiert
-                //    var counter = 1;
-                //    var fileNameOnly = Path.GetFileNameWithoutExtension(file);
-                //    var fileExtension = Path.GetExtension(file);
-                //    file = Path.Combine(path, $"{fileNameOnly}{fileExtension}");
-                //    while (File.Exists(file))
-                //    {
-                //        var tempFileName = $"{fileNameOnly} ({counter++})";
-                //        file = Path.Combine(path, $"{tempFileName}{fileExtension}");
-                //    }
-
-                //    // Datei in neue Struktur kopieren
-                //    File.Move(keyValuePair.Value.FileInfo, file);
-                //}
                 var successfully = 0;
                 var withException = 0;
 
@@ -192,22 +175,19 @@ namespace AlbumDirectoryCreator
                     {
                         var path = $"{_pathOut}\\{treeMp3.NewPath}";
                         Directory.CreateDirectory(path);
-                        var file = treeMp3.FileInfo.Split('\\').Last();
+                        var oldFileInfo = new FileInfo(treeMp3.FileInfo);
 
                         // falls die Datei schon existiert
                         var counter = 1;
-                        var fileNameOnly = Path.GetFileNameWithoutExtension(file);
-                        var fileExtension = Path.GetExtension(file);
-                        file = Path.Combine(path, $"{fileNameOnly}{fileExtension}");
-                        while (File.Exists(file))
+                        var newFileInfo = new FileInfo(Path.Combine(path, oldFileInfo.Name));
+                        var nameWithoutExtension = Path.GetFileNameWithoutExtension(oldFileInfo.Name);
+                        while (newFileInfo.Exists)
                         {
-                            var tempFileName = $"{fileNameOnly} ({counter++})";
-                            file = Path.Combine(path, $"{tempFileName}{fileExtension}");
+                            var tempFileName = $"{nameWithoutExtension} ({counter++})";
+                            newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
                         }
-                        //TODO: MOVE
-                        _logger.Warn();
                         // Datei in neue Struktur kopieren
-                        File.Move(treeMp3.FileInfo, file);
+                        oldFileInfo.MoveTo(newFileInfo.FullName);
                         successfully++;
                     }
                     catch (Exception ex)
@@ -218,7 +198,8 @@ namespace AlbumDirectoryCreator
                 },
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = 10
+                    MaxDegreeOfParallelism = 1,
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
                 });
 
                 _stopwatch.Start();
@@ -278,7 +259,10 @@ namespace AlbumDirectoryCreator
                 _pathIn = textBoxPathOrigins.Text;
                 Settings.Default.pathOrigin = _pathIn;
                 Settings.Default.Save();
-                backgroundWorkerGetFiles.RunWorkerAsync();
+
+                ShowLoadingAnimation();
+                EnumerateFiles();
+                //backgroundWorkerGetFiles.RunWorkerAsync();
             }
         }
 

@@ -44,14 +44,14 @@ namespace AlbumDirectoryCreator
             this.labelComment = new System.Windows.Forms.Label();
             this.groupBoxEditor = new System.Windows.Forms.GroupBox();
             this.dataGridViewPerformers = new System.Windows.Forms.DataGridView();
-            this.ColumnPerformer = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingSourcePerformers = new System.Windows.Forms.BindingSource(this.components);
             this.labelArstits = new System.Windows.Forms.Label();
             this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.bindingSourcePerformers = new System.Windows.Forms.BindingSource(this.components);
+            this.ColumnPerformer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxEditor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePerformers)).BeginInit();
@@ -223,17 +223,6 @@ namespace AlbumDirectoryCreator
             this.dataGridViewPerformers.TabIndex = 23;
             this.dataGridViewPerformers.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewPerformers_KeyDown);
             // 
-            // ColumnPerformer
-            // 
-            this.ColumnPerformer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ColumnPerformer.DataPropertyName = "Name";
-            this.ColumnPerformer.HeaderText = "Performer";
-            this.ColumnPerformer.Name = "ColumnPerformer";
-            // 
-            // bindingSourcePerformers
-            // 
-            this.bindingSourcePerformers.DataSource = typeof(DataObjects.Performer);
-            // 
             // labelArstits
             // 
             this.labelArstits.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -267,7 +256,7 @@ namespace AlbumDirectoryCreator
             this.labelPath.Name = "labelPath";
             this.labelPath.Size = new System.Drawing.Size(32, 13);
             this.labelPath.TabIndex = 17;
-            this.labelPath.Text = "FileInfo:";
+            this.labelPath.Text = "Path:";
             // 
             // textBoxPath
             // 
@@ -301,6 +290,17 @@ namespace AlbumDirectoryCreator
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // bindingSourcePerformers
+            // 
+            this.bindingSourcePerformers.DataSource = typeof(DataObjects.Performer);
+            // 
+            // ColumnPerformer
+            // 
+            this.ColumnPerformer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ColumnPerformer.DataPropertyName = "Name";
+            this.ColumnPerformer.HeaderText = "Performer";
+            this.ColumnPerformer.Name = "ColumnPerformer";
             // 
             // Id3Editor
             // 

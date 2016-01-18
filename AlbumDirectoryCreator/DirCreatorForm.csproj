@@ -51,16 +51,13 @@
     <StartupObject>AlbumDirectoryCreator.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdvancedDataGridView">
-      <HintPath>..\..\CMS\CMS\EMP.CMS.UI\dlls\AdvancedDataGridView.dll</HintPath>
+    <Reference Include="AdvancedDataGridView, Version=0.1.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\AdvancedDataGridView.dll</HintPath>
     </Reference>
     <Reference Include="ID3TagLib, Version=0.9.0.22997, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ID3TagLib.dll</HintPath>
-    </Reference>
-    <Reference Include="ObjectListView, Version=2.9.0.25611, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
-      <HintPath>..\packages\ObjectListView.Official.2.9.0\lib\net20\ObjectListView.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\DLLs\ID3TagLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,8 +77,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\taglib.2.1.0.0\taglib-sharp.dll</HintPath>
     </Reference>
-    <Reference Include="UltraID3Lib">
-      <HintPath>..\packages\UltraID3Lib\UltraID3Lib.dll</HintPath>
+    <Reference Include="UltraID3Lib, Version=0.9.6.8, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\UltraID3Lib\UltraID3Lib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -168,9 +166,6 @@
       <Project>{F1FD9D9A-EBDB-4BAC-83AF-2974B9D6AD26}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ID3TagLib.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
