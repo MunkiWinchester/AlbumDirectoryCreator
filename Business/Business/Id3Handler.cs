@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using TagLib;
 
-namespace Business
+namespace Business.Business
 {
     public static class Id3Handler
     {

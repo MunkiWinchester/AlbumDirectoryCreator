@@ -1,6 +1,6 @@
-﻿using Business;
+﻿using Business.Business;
 
-namespace DataObjects
+namespace Business.DataObjects
 {
     public class TreeMp3
     {
@@ -15,24 +15,24 @@ namespace DataObjects
         {
         }
 
-        public TreeMp3(string artist, string album, string title, string fileInfo, string basePath)
+        public TreeMp3(string artist, string album, string title, string fileInfo)
         {
             Artist = artist;
             Album = album;
             Title = title;
             FileInfo = fileInfo;
 
-            var path = $"{basePath}\\00Without Artist\\";
+            var path = "00Without Artist\\";
             // Pfad erstellen
             if (!string.IsNullOrWhiteSpace(artist) &&
                 !string.IsNullOrWhiteSpace(album))
             {
                 path =
-                    $"{basePath}\\{artist.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                    $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
             }
             else if (!string.IsNullOrWhiteSpace(artist))
             {
-                path = $"{basePath}\\{artist.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                path = $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\";
             }
             NewPath = path;
         }

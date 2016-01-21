@@ -1,4 +1,5 @@
-﻿using DataObjects;
+﻿using Business.Business;
+using Business.DataObjects;
 using HundredMilesSoftware.UltraID3Lib;
 using Logging;
 using System;
@@ -94,7 +95,7 @@ namespace AlbumDirectoryCreator
             file.Tag.Genres =
               (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
 
-            if (Business.Id3Handler.Save(file, _file))
+            if (Id3Handler.Save(file, _file))
                 ItemSaved?.Invoke(file, EventArgs.Empty);
         }
 

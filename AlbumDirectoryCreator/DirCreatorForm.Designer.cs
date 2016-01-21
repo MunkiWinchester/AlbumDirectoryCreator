@@ -1,4 +1,6 @@
-﻿namespace AlbumDirectoryCreator
+﻿using Business.DataObjects;
+
+namespace AlbumDirectoryCreator
 {
     partial class DirCreatorForm
     {
@@ -216,7 +218,7 @@
             // 
             // bindingSourceFiles
             // 
-            this.bindingSourceFiles.DataSource = typeof(DataObjects.TreeMp3);
+            this.bindingSourceFiles.DataSource = typeof(TreeMp3);
             this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
             // 
             // bindingNavigator

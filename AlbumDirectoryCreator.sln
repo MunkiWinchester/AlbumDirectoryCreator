@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirCreatorForm", "AlbumDirectoryCreator\DirCreatorForm.csproj", "{75FE061A-97EF-4CB0-803E-1B70377E00B2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataObjects", "DataObjects\DataObjects.csproj", "{63B6BE95-31BC-4922-96A8-430AB1C0C420}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{DBCBA7F8-3667-4182-87EF-763EFD6555A7}"
 EndProject
@@ -21,10 +19,6 @@ Global
 		{75FE061A-97EF-4CB0-803E-1B70377E00B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75FE061A-97EF-4CB0-803E-1B70377E00B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75FE061A-97EF-4CB0-803E-1B70377E00B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63B6BE95-31BC-4922-96A8-430AB1C0C420}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63B6BE95-31BC-4922-96A8-430AB1C0C420}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63B6BE95-31BC-4922-96A8-430AB1C0C420}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63B6BE95-31BC-4922-96A8-430AB1C0C420}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DBCBA7F8-3667-4182-87EF-763EFD6555A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DBCBA7F8-3667-4182-87EF-763EFD6555A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBCBA7F8-3667-4182-87EF-763EFD6555A7}.Release|Any CPU.ActiveCfg = Release|Any CPU

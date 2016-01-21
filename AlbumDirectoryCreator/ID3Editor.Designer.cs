@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AlbumDirectoryCreator
+﻿namespace AlbumDirectoryCreator
 {
     partial class Id3Editor
     {
@@ -293,7 +291,7 @@ namespace AlbumDirectoryCreator
             // 
             // bindingSourcePerformers
             // 
-            this.bindingSourcePerformers.DataSource = typeof(DataObjects.Performer);
+            this.bindingSourcePerformers.DataSource = typeof(Business.DataObjects.Performer);
             // 
             // ColumnPerformer
             // 
