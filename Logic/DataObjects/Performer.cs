@@ -1,4 +1,4 @@
-﻿namespace Business.DataObjects
+﻿namespace Logic.DataObjects
 {
     public class Performer
     {

@@ -291,7 +291,7 @@
             // 
             // bindingSourcePerformers
             // 
-            this.bindingSourcePerformers.DataSource = typeof(Business.DataObjects.Performer);
+            this.bindingSourcePerformers.DataSource = typeof(Logic.DataObjects.Performer);
             // 
             // ColumnPerformer
             // 

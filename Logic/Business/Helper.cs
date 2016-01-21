@@ -1,10 +1,10 @@
-﻿using Business.DataObjects;
+﻿using Logic.DataObjects;
 using Logging;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace Business.Business
+namespace Logic.Business
 {
     public static class Helper
     {
@@ -85,9 +85,7 @@ namespace Business.Business
             catch (Exception ex)
             {
                 Logger.Error($"{ex.Message} -> \"{fileInfo}\"", ex);
-                _withException++;
-                _errorHappened = true;
-                return false;
+                return null;
             }
         }
     }

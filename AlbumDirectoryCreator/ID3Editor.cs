@@ -1,5 +1,5 @@
-﻿using Business.Business;
-using Business.DataObjects;
+﻿using Logic.Business;
+using Logic.DataObjects;
 using HundredMilesSoftware.UltraID3Lib;
 using Logging;
 using System;
@@ -49,6 +49,7 @@ namespace AlbumDirectoryCreator
 
         private void SetValues()
         {
+            Clear();
             try
             {
                 var fileTags = _file.Tag;

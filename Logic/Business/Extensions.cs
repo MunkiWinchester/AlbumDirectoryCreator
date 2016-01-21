@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Business.Business
+namespace Logic.Business
 {
     public static class Extensions
     {

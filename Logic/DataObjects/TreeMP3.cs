@@ -1,6 +1,6 @@
-﻿using Business.Business;
+﻿using Logic.Business;
 
-namespace Business.DataObjects
+namespace Logic.DataObjects
 {
     public class TreeMp3
     {

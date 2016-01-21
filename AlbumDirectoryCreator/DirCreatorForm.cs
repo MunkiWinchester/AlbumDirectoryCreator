@@ -1,6 +1,6 @@
 ﻿using AlbumDirectoryCreator.Properties;
-using Business.Business;
-using Business.DataObjects;
+using Logic.Business;
+using Logic.DataObjects;
 using Logging;
 using System;
 using System.Collections.Concurrent;
@@ -9,7 +9,6 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Forms;
@@ -26,8 +25,6 @@ namespace AlbumDirectoryCreator
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, TreeMp3> _hashSet = new ConcurrentDictionary<string, TreeMp3>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
-        private int _withException;
-        private bool _errorHappened;
 
         public DirCreatorForm()
         {
@@ -52,29 +49,36 @@ namespace AlbumDirectoryCreator
         private async void ReadMetaDatesTpl()
         {
             ClearBindingsEtc();
-            if (_hashSet.Any())
+            if (!_hashSet.Any())
             {
+                _logger.Info($"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) being read in from \"{_pathIn}\"");
+                var errorHappened = false;
+                var withException = 0;
                 progressBar.Maximum = _hashSet.Count;
-                var transformBlock = new TransformBlock<string, bool>(s => ReadMetaDatas(s),
+                var transformBlock = new TransformBlock<string, TreeMp3>(s => Helper.ReadMetaDatas(s),
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
                         MaxDegreeOfParallelism = 20
                     });
-
-                var readMetaDates = new ActionBlock<bool>(x =>
+                var readMetaDates = new ActionBlock<TreeMp3>(treeMp3 =>
                 {
-                    PerformStep();
+                    if (treeMp3 != null)
+                        _hashSet.TryAdd(treeMp3.FileInfo, treeMp3);
+                    else
+                    {
+                        withException++;
+                        errorHappened = true;
+                    }
+                    progressBar.PerformStep();
                 },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
                     });
-
                 transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
                 _stopwatch.Start();
-
                 progressBar.Maximum = _fileInfos.Count;
                 // Dateien durchgehen
                 Parallel.ForEach(_fileInfos, fileInfo =>
@@ -88,36 +92,25 @@ namespace AlbumDirectoryCreator
                 //_form.Close();
 
                 var result = DialogResult.Cancel;
-                if (_errorHappened)
+                if (errorHappened)
                     result =
                         MessageBox.Show(
-                            $"{Resources.ErrorOccured}\r\n{_withException} files caused an exception.\r\n(Retry could be helping)",
+                            $"{Resources.ErrorOccured}\r\n{withException} files caused an exception.\r\n(View Logfile to see which files)",
                             Resources.Error,
-                            MessageBoxButtons.RetryCancel, MessageBoxIcon.Information);
-                switch (result)
-                {
-                    case DialogResult.Cancel:
-                        // Logfile schreiben
-                        _logger.Info(
-                            $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) read recursiveliv in from \"{_pathIn}\"");
-                        _logger.Info($"{_fileInfos.Count} files analyzed within {_stopwatch.Elapsed}");
-                        _stopwatch.Reset();
-                        _logger.Info($"{_withException} files that triggered an exception and are ignored");
-                        var percentage = (float)_hashSet.Count / (_fileInfos.Count - _withException) * 100;
-                        _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
-                        // Show the stuff on the UI
-                        BindAndSort();
-                        buttonCreate.Enabled = true;
-                        break;
-
-                    case DialogResult.Retry:
-                        ReadMetaDatesTpl();
-                        break;
-                }
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Logfile schreiben
+                _logger.Info($"Analyzing of {_hashSet.Count} files done within {_stopwatch.Elapsed}");
+                _stopwatch.Reset();
+                _logger.Info($"{withException} files that triggered an exception and were ignored");
+                var percentage = (float)_hashSet.Count / _fileInfos.Count * 100;
+                _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
+                // Show the stuff on the UI
+                BindAndSort();
+                buttonCreate.Enabled = true;
             }
         }
 
-        private void BindAndSort()
+        private void BindAndSort(string fileInfoOfEdited = "")
         {
             // Detach current changed event
             bindingSourceFiles.CurrentChanged -= bindingSourceFiles_CurrentChanged;
@@ -130,53 +123,45 @@ namespace AlbumDirectoryCreator
             // Attach current changed event
             bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
 
-            bindingSourceFiles.MoveNext();
-            bindingSourceFiles.MoveFirst();
+            if (string.IsNullOrWhiteSpace(fileInfoOfEdited))
+            {
+                bindingSourceFiles.MoveNext();
+                bindingSourceFiles.MoveFirst();
+            }
+            else
+                bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(TreeMp3.FileInfo), fileInfoOfEdited);
         }
 
         private async void CreateFolderEtc()
         {
-            var pathOut = textBoxPathDestiny.Text;
-            var result = Path.IsPathRooted(pathOut);
-            if (result && !pathOut.StartsWith(@"\") && _hashSet.Any())
+            if (!_pathOut.StartsWith(@"\") && _hashSet.Any())
             {
-                if (Directory.Exists(pathOut))
-                    _pathOut = pathOut;
-                else
-                {
-                    Directory.CreateDirectory(pathOut);
-                    _pathOut = pathOut;
-                }
-                Settings.Default.pathDestiny = _pathOut;
-                Settings.Default.Save();
-                _logger.Info($"Transfering {_hashSet.Count} files from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
-
-                var successfully = 0;
-                var withException = 0;
-
+                _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
+                        $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
+                
                 var transformBlock = new TransformBlock<TreeMp3, bool>(t => Helper.MoveFile(t, _pathOut),
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
                         MaxDegreeOfParallelism = 20
                     });
-
+                var successfully = 0;
+                var withException = 0;
                 var readMetaDates = new ActionBlock<bool>(x =>
                 {
                     if (x)
                         successfully++;
                     else
                         withException++;
-
-                    PerformStep();
+                    progressBar.PerformStep();
                 },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
                     });
-
                 transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
+                _stopwatch.Start();
                 progressBar.Maximum = _fileInfos.Count;
                 // Dateien durchgehen
                 Parallel.ForEach(_hashSet.Values, treeMp3 =>
@@ -195,19 +180,12 @@ namespace AlbumDirectoryCreator
 
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
                 Helper.DeleteEmptyFolders(_pathOut);
+                buttonCreate.Enabled = false;
             }
-        }
-
-        private void PerformStep()
-        {
-            Thread.Sleep(TimeSpan.FromMilliseconds(0.2));
-            progressBar.PerformStep();
         }
 
         private void ClearBindingsEtc()
         {
-            _errorHappened = false;
-            _withException = 0;
             bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
             _hashSet = new ConcurrentDictionary<string, TreeMp3>();
@@ -215,76 +193,85 @@ namespace AlbumDirectoryCreator
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(textBoxPathOrigins.Text))
+            var button = sender as Button;
+            if (button != null)
             {
-                _pathIn = textBoxPathOrigins.Text;
-                Settings.Default.pathOrigin = _pathIn;
-                Settings.Default.Save();
+                var path = button == buttonSearch ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
+                if (Directory.Exists(path))
+                {
+                    if (button == buttonSearch)
+                    {
+                        _pathIn = path;
+                        Settings.Default.pathOrigin = _pathIn;
+                        Settings.Default.Save();
 
-                //ShowLoadingAnimation();
-                EnumerateFiles();
+                        EnumerateFiles();
+                    }
+                    else if (button == buttonCreate)
+                    {
+                        _pathOut = path;
+                        var result = Path.IsPathRooted(_pathOut);
+                        if (!Directory.Exists(_pathOut))
+                            Directory.CreateDirectory(_pathOut);
+                        Settings.Default.pathDestiny = _pathOut;
+                        Settings.Default.Save();
+
+                        CreateFolderEtc();
+                    }
+                }
+                else
+                    MessageBox.Show($"Your given path (\"{path}\") is not valid!", Resources.Error, 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private void buttonCreate_Click(object sender, EventArgs e)
-        {
-            CreateFolderEtc();
-        }
-
+        
         private void buttonSearchOriginPath_Click(object sender, EventArgs e)
         {
+            var button = sender as Button;
             folderDialogOrigins.SelectedPath = _pathIn;
             var result = folderDialogOrigins.ShowDialog();
-            if (result == DialogResult.OK)
+            if (result == DialogResult.OK && button != null)
             {
-                _pathIn = textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath;
+                if(button == buttonSearchOriginPath)
+                    _pathIn = textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath;
+                else if(button == buttonSearchDestinyPath)
+                    _pathOut = textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath;
             }
         }
-
-        private void buttonSearchDestinyPath_Click(object sender, EventArgs e)
-        {
-            folderDialogOrigins.SelectedPath = _pathOut;
-            var result = folderDialogDestiny.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                _pathOut = textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath;
-            }
-        }
-
+        
         private void textBoxPathOrigins_Enter(object sender, EventArgs e)
         {
             var textBox = (TextBox)sender;
             var toolTip = new ToolTip();
-            toolTip.Show(Resources.InputHint, textBox, 0, 15, 1500);
+            if(textBox == textBoxPathOrigins)
+                toolTip.Show(Resources.InputHint, textBox, 0, 15, 1500);
+            else if(textBox == textBoxPathDestiny)
+                toolTip.Show(Resources.OutputHint, textBox, 0, 15, 1500);
         }
 
-        private void textBoxPathDestiny_Enter(object sender, EventArgs e)
-        {
-            var textBox = (TextBox)sender;
-            var toolTip = new ToolTip();
-            toolTip.Show(Resources.OutputHint, textBox, 0, 15, 1500);
-        }
-
+        // TODO: Massmanipulation
         private void bindingSourceFiles_CurrentChanged(object sender, EventArgs e)
         {
             var current = bindingSourceFiles.Current as DataRowView;
             var path = current?.Row[nameof(TreeMp3.FileInfo)]?.ToString();
             if (!string.IsNullOrEmpty(path))
-                EnableEditorAndSetValues(path);
+                SetEditorUp(path);
             else
-                DisableEditorAndClear();
+                SetEditorUp(string.Empty);
         }
-
-        private void EnableEditorAndSetValues(string path)
+        
+        private void SetEditorUp(string path)
         {
-            iD3Editor.Enabled = true;
-            iD3Editor.SetValues(path);
-        }
-
-        private void DisableEditorAndClear()
-        {
-            iD3Editor.Enabled = false;
-            iD3Editor.Clear();
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                iD3Editor.Enabled = true;
+                iD3Editor.SetValues(path);
+            }
+            else
+            {
+                iD3Editor.Enabled = false;
+                iD3Editor.Clear();
+            }
         }
 
         private void linkLabelLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -321,11 +308,9 @@ namespace AlbumDirectoryCreator
                 var newTreeMp3 = new TreeMp3(
                     taglibFile.Tag.Performers.ToNormalizedString(), taglibFile.Tag.Album, taglibFile.Tag.Title,
                     previous.Key);
-                _hashSet.AddOrUpdate(previous.Key, new TreeMp3(
-                    taglibFile.Tag.Performers.ToNormalizedString(), taglibFile.Tag.Album, taglibFile.Tag.Title,
-                    previous.Key), (s, mp3) => newTreeMp3);
+                _hashSet.AddOrUpdate(previous.Key, newTreeMp3, (s, mp3) => newTreeMp3);
 
-                BindAndSort();
+                BindAndSort(previous.Key);
             }
         }
 

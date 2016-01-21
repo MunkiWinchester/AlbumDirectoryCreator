@@ -1,4 +1,4 @@
-﻿using Business.DataObjects;
+﻿using Logic.DataObjects;
 
 namespace AlbumDirectoryCreator
 {
@@ -55,11 +55,11 @@ namespace AlbumDirectoryCreator
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
+            this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
-            this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -105,18 +105,19 @@ namespace AlbumDirectoryCreator
             this.textBoxPathDestiny.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathDestiny.TabIndex = 8;
             this.textBoxPathDestiny.Text = "G:\\Stuff\\Filme\\Musik\\Musik Geordnet";
-            this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathDestiny_Enter);
+            this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
             // 
             // buttonCreate
             // 
             this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCreate.Enabled = false;
             this.buttonCreate.Location = new System.Drawing.Point(971, 36);
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(103, 23);
             this.buttonCreate.TabIndex = 9;
             this.buttonCreate.Text = "Create Directories";
             this.buttonCreate.UseVisualStyleBackColor = true;
-            this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
+            this.buttonCreate.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // splitContainer
             // 
@@ -148,7 +149,6 @@ namespace AlbumDirectoryCreator
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(350, 20);
             this.progressBar.Step = 1;
-            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 3;
             // 
             // advancedDataGridView1
@@ -218,7 +218,7 @@ namespace AlbumDirectoryCreator
             // 
             // bindingSourceFiles
             // 
-            this.bindingSourceFiles.DataSource = typeof(TreeMp3);
+            this.bindingSourceFiles.DataSource = typeof(Logic.DataObjects.TreeMp3);
             this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
             // 
             // bindingNavigator
@@ -328,6 +328,16 @@ namespace AlbumDirectoryCreator
             this.linkLabelLog.Text = "Open Logfile";
             this.linkLabelLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLog_LinkClicked);
             // 
+            // iD3Editor
+            // 
+            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iD3Editor.Enabled = false;
+            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
+            this.iD3Editor.Name = "iD3Editor";
+            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
+            this.iD3Editor.TabIndex = 12;
+            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
+            // 
             // folderDialogOrigins
             // 
             this.folderDialogOrigins.Description = "Please select a folder from where the music files should be  loaded (Subfolders w" +
@@ -347,7 +357,7 @@ namespace AlbumDirectoryCreator
             this.buttonSearchDestinyPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchDestinyPath.TabIndex = 15;
             this.buttonSearchDestinyPath.UseVisualStyleBackColor = true;
-            this.buttonSearchDestinyPath.Click += new System.EventHandler(this.buttonSearchDestinyPath_Click);
+            this.buttonSearchDestinyPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
             // 
             // buttonSearchOriginPath
             // 
@@ -359,16 +369,6 @@ namespace AlbumDirectoryCreator
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
-            // 
-            // iD3Editor
-            // 
-            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iD3Editor.Enabled = false;
-            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
-            this.iD3Editor.Name = "iD3Editor";
-            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
-            this.iD3Editor.TabIndex = 12;
-            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
             // 
             // DirCreatorForm
             // 
@@ -418,8 +418,6 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.FolderBrowserDialog folderDialogDestiny;
         private System.Windows.Forms.LinkLabel linkLabelLog;
         private ADGV.AdvancedDataGridView advancedDataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn parentIdDataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn pathDataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn titleDataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn albumDataGridViewTextBoxColumn1;
