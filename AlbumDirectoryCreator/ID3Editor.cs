@@ -39,8 +39,11 @@ namespace AlbumDirectoryCreator
 
         public void SetValues(string fileInfo)
         {
-            _file = File.Create(fileInfo);
-            SetValues();
+            if (System.IO.File.Exists(fileInfo))
+            {
+                _file = File.Create(fileInfo);
+                SetValues();
+            }
         }
 
         private void SetValues()

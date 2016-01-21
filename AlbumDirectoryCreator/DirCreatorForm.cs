@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Forms;
@@ -25,7 +26,6 @@ namespace AlbumDirectoryCreator
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, TreeMp3> _hashSet = new ConcurrentDictionary<string, TreeMp3>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
-        private int _withoutInfo;
         private int _withException;
         private bool _errorHappened;
 
@@ -52,67 +52,68 @@ namespace AlbumDirectoryCreator
         private async void ReadMetaDatesTpl()
         {
             ClearBindingsEtc();
+            if (_hashSet.Any())
+            {
+                progressBar.Maximum = _hashSet.Count;
+                var transformBlock = new TransformBlock<string, bool>(s => ReadMetaDatas(s),
+                    new ExecutionDataflowBlockOptions
+                    {
+                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                        MaxDegreeOfParallelism = 20
+                    });
 
-            progressBar.Maximum = _hashSet.Count;
-            var transformBlock = new TransformBlock<string, bool>(s => ReadMetaDatas(s),
-                new ExecutionDataflowBlockOptions
+                var readMetaDates = new ActionBlock<bool>(x =>
                 {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                    MaxDegreeOfParallelism = 20
+                    PerformStep();
+                },
+                    new ExecutionDataflowBlockOptions
+                    {
+                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
+                    });
+
+                transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
+
+                _stopwatch.Start();
+
+                progressBar.Maximum = _fileInfos.Count;
+                // Dateien durchgehen
+                Parallel.ForEach(_fileInfos, fileInfo =>
+                {
+                    transformBlock.Post(fileInfo);
                 });
 
-            var readMetaDates = new ActionBlock<bool>(x =>
-            {
-                progressBar.PerformStep();
-            },
-                new ExecutionDataflowBlockOptions
+                transformBlock.Complete();
+                await transformBlock.Completion;
+                _stopwatch.Stop();
+                //_form.Close();
+
+                var result = DialogResult.Cancel;
+                if (_errorHappened)
+                    result =
+                        MessageBox.Show(
+                            $"{Resources.ErrorOccured}\r\n{_withException} files caused an exception.\r\n(Retry could be helping)",
+                            Resources.Error,
+                            MessageBoxButtons.RetryCancel, MessageBoxIcon.Information);
+                switch (result)
                 {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
-                });
+                    case DialogResult.Cancel:
+                        // Logfile schreiben
+                        _logger.Info(
+                            $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) read recursiveliv in from \"{_pathIn}\"");
+                        _logger.Info($"{_fileInfos.Count} files analyzed within {_stopwatch.Elapsed}");
+                        _stopwatch.Reset();
+                        _logger.Info($"{_withException} files that triggered an exception and are ignored");
+                        var percentage = (float)_hashSet.Count / (_fileInfos.Count - _withException) * 100;
+                        _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
+                        // Show the stuff on the UI
+                        BindAndSort();
+                        buttonCreate.Enabled = true;
+                        break;
 
-            transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
-
-            _stopwatch.Start();
-
-            progressBar.Maximum = _fileInfos.Count;
-            // Dateien durchgehen
-            Parallel.ForEach(_fileInfos, fileInfo =>
-            {
-                transformBlock.Post(fileInfo);
-            });
-
-            transformBlock.Complete();
-            await transformBlock.Completion;
-            _stopwatch.Stop();
-            //_form.Close();
-
-            var result = DialogResult.Cancel;
-            if (_errorHappened)
-                result =
-                    MessageBox.Show(
-                        $"{Resources.ErrorOccured}\r\n{_withException} files caused an exception.\r\n(Retry could be helping)",
-                        Resources.Error,
-                        MessageBoxButtons.RetryCancel, MessageBoxIcon.Information);
-            switch (result)
-            {
-                case DialogResult.Cancel:
-                    // Logfile schreiben
-                    _logger.Info(
-                        $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) read recursiveliv in from \"{_pathIn}\"");
-                    _logger.Info($"{_fileInfos.Count} files analyzed within {_stopwatch.Elapsed}");
-                    _stopwatch.Reset();
-                    _logger.Info($"{_withoutInfo} files that don't have an artist");
-                    _logger.Info($"{_withException} files that triggered an exception and are ignored");
-                    var percentage = (float)_hashSet.Count / (_fileInfos.Count - _withException) * 100;
-                    _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
-                    // Show the stuff on the UI
-                    BindAndSort();
-                    buttonCreate.Enabled = true;
-                    break;
-
-                case DialogResult.Retry:
-                    ReadMetaDatesTpl();
-                    break;
+                    case DialogResult.Retry:
+                        ReadMetaDatesTpl();
+                        break;
+                }
             }
         }
 
@@ -126,14 +127,10 @@ namespace AlbumDirectoryCreator
 
                 if (string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
                 {
-                    _withoutInfo++;
                     return _hashSet.TryAdd(fileInfo, new TreeMp3(string.Empty, tagInf.Album, tagInf.Title, fileInfo));
                 }
-                else
-                {
-                    return _hashSet.TryAdd(fileInfo, new TreeMp3(tagInf.Performers.ToNormalizedString(),
-                        tagInf.Album, tagInf.Title, fileInfo));
-                }
+                return _hashSet.TryAdd(fileInfo, new TreeMp3(tagInf.Performers.ToNormalizedString(),
+                    tagInf.Album, tagInf.Title, fileInfo));
             }
             catch (Exception ex)
             {
@@ -142,9 +139,33 @@ namespace AlbumDirectoryCreator
                 _errorHappened = true;
                 return false;
             }
-            finally
+        }
+
+        private bool MoveFile(TreeMp3 treeMp3)
+        {
+            try
             {
-                progressBar.PerformStep();
+                var path = $"{_pathOut}\\{treeMp3.NewPath}";
+                Directory.CreateDirectory(path);
+                var oldFileInfo = new FileInfo(treeMp3.FileInfo);
+
+                // falls die Datei schon existiert
+                var counter = 1;
+                var newFileInfo = new FileInfo(Path.Combine(path, oldFileInfo.Name));
+                var nameWithoutExtension = Path.GetFileNameWithoutExtension(oldFileInfo.Name);
+                while (newFileInfo.Exists)
+                {
+                    var tempFileName = $"{nameWithoutExtension} ({counter++})";
+                    newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
+                }
+                // Datei in neue Struktur kopieren
+                oldFileInfo.MoveTo(newFileInfo.FullName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"{ex.Message} -> \"{treeMp3.FileInfo}\"", ex);
+                return false;
             }
         }
 
@@ -165,11 +186,11 @@ namespace AlbumDirectoryCreator
             bindingSourceFiles.MoveFirst();
         }
 
-        private void CreateFolderEtc()
+        private async void CreateFolderEtc()
         {
             var pathOut = textBoxPathDestiny.Text;
             var result = Path.IsPathRooted(pathOut);
-            if (result && !pathOut.StartsWith(@"\"))
+            if (result && !pathOut.StartsWith(@"\") && _hashSet.Any())
             {
                 if (Directory.Exists(pathOut))
                     _pathOut = pathOut;
@@ -180,53 +201,43 @@ namespace AlbumDirectoryCreator
                 }
                 Settings.Default.pathDestiny = _pathOut;
                 Settings.Default.Save();
-                _logger.Info($"Transfering {_hashSet.Count} files to \"{_pathOut}\" with artist/album structure");
+                _logger.Info($"Transfering {_hashSet.Count} files from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
                 var successfully = 0;
                 var withException = 0;
 
-                var moveFiles = new ActionBlock<TreeMp3>(treeMp3 =>
-                {
-                    try
+                var transformBlock = new TransformBlock<TreeMp3, bool>(t => MoveFile(t),
+                    new ExecutionDataflowBlockOptions
                     {
-                        var path = $"{_pathOut}\\{treeMp3.NewPath}";
-                        Directory.CreateDirectory(path);
-                        var oldFileInfo = new FileInfo(treeMp3.FileInfo);
+                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                        MaxDegreeOfParallelism = 20
+                    });
 
-                        // falls die Datei schon existiert
-                        var counter = 1;
-                        var newFileInfo = new FileInfo(Path.Combine(path, oldFileInfo.Name));
-                        var nameWithoutExtension = Path.GetFileNameWithoutExtension(oldFileInfo.Name);
-                        while (newFileInfo.Exists)
-                        {
-                            var tempFileName = $"{nameWithoutExtension} ({counter++})";
-                            newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
-                        }
-                        // Datei in neue Struktur kopieren
-                        oldFileInfo.MoveTo(newFileInfo.FullName);
-                        successfully++;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error($"{ex.Message} -> \"{treeMp3.FileInfo}\"", ex);
-                        withException++;
-                    }
-                },
-                new ExecutionDataflowBlockOptions
+                var readMetaDates = new ActionBlock<bool>(x =>
                 {
-                    MaxDegreeOfParallelism = 1,
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
+                    if (x)
+                        successfully++;
+                    else
+                        withException++;
+
+                    PerformStep();
+                },
+                    new ExecutionDataflowBlockOptions
+                    {
+                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
+                    });
+
+                transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
+
+                progressBar.Maximum = _fileInfos.Count;
+                // Dateien durchgehen
+                Parallel.ForEach(_hashSet.Values, treeMp3 =>
+                {
+                    transformBlock.Post(treeMp3);
                 });
 
-                _stopwatch.Start();
-                // Dateien durchgehen
-                foreach (var treeMp3 in _hashSet.Values)
-                {
-                    moveFiles.Post(treeMp3);
-                }
-
-                moveFiles.Complete();
-                moveFiles.Completion.Wait(TimeSpan.FromMinutes(1));
+                transformBlock.Complete();
+                await transformBlock.Completion;
                 _stopwatch.Stop();
 
                 _logger.Info($"{withException} files that triggered an exception and are ignored");
@@ -239,9 +250,14 @@ namespace AlbumDirectoryCreator
             }
         }
 
+        private void PerformStep()
+        {
+            Thread.Sleep(TimeSpan.FromMilliseconds(0.2));
+            progressBar.PerformStep();
+        }
+
         private void ClearBindingsEtc()
         {
-            _withoutInfo = 0;
             _errorHappened = false;
             _withException = 0;
             bindingSourceFiles.Sort = "";
