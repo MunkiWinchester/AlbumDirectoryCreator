@@ -1,8 +1,10 @@
-﻿using Logic.DataObjects;
-using Logging;
+﻿using Logging;
+using Logic.DataObjects;
 using System;
 using System.IO;
 using System.Linq;
+using TagLib;
+using File = System.IO.File;
 
 namespace Logic.Business
 {
@@ -48,12 +50,12 @@ namespace Logic.Business
                 var oldFileInfo = new FileInfo(treeMp3.FileInfo);
 
                 // falls die Datei schon existiert
+                var newFileName = $"{treeMp3.JoinedPerformers} - {treeMp3.Title}";
+                var newFileInfo = new FileInfo(Path.Combine(path, $"{newFileName}{oldFileInfo.Extension}"));
                 var counter = 1;
-                var newFileInfo = new FileInfo(Path.Combine(path, oldFileInfo.Name));
-                var nameWithoutExtension = Path.GetFileNameWithoutExtension(oldFileInfo.Name);
                 while (newFileInfo.Exists)
                 {
-                    var tempFileName = $"{nameWithoutExtension} ({counter++})";
+                    var tempFileName = $"{newFileName} ({counter++})";
                     newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
                 }
                 // Datei in neue Struktur kopieren
@@ -72,15 +74,11 @@ namespace Logic.Business
             try
             {
                 // Auslesen
-                var taglibFile = TagLib.File.Create(fileInfo);
-                var tagInf = taglibFile.Tag;
+                var file = TagLib.File.Create(fileInfo);
+                var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
 
-                if (string.IsNullOrWhiteSpace(tagInf.FirstPerformer))
-                {
-                    return new TreeMp3(string.Empty, tagInf.Album, tagInf.Title, fileInfo);
-                }
-                return new TreeMp3(tagInf.Performers.ToNormalizedString(),
-                    tagInf.Album, tagInf.Title, fileInfo);
+                return new TreeMp3(tag.JoinedPerformers, tag.FirstPerformer,
+                    tag.Album, tag.Title, fileInfo);
             }
             catch (Exception ex)
             {

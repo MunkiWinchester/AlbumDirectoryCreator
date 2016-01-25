@@ -101,6 +101,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StarsBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StarsBox.Designer.cs">
+      <DependentUpon>StarsBox.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="DirCreatorForm.resx">
       <DependentUpon>DirCreatorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,9 +118,13 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="StarsBox.resx">
+      <DependentUpon>StarsBox.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\DataObjects.Performer.datasource" />
     <None Include="Properties\DataSources\DataObjects.TreeMp3.datasource" />
+    <None Include="Properties\DataSources\Logic.DataObjects.Performer.datasource" />
     <None Include="Properties\DataSources\TreeMP3.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -161,6 +171,12 @@
       <Project>{F1FD9D9A-EBDB-4BAC-83AF-2974B9D6AD26}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stars_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stars_1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

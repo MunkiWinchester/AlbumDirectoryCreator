@@ -1,6 +1,4 @@
-﻿using Logic.DataObjects;
-
-namespace AlbumDirectoryCreator
+﻿namespace AlbumDirectoryCreator
 {
     partial class DirCreatorForm
     {
@@ -55,11 +53,11 @@ namespace AlbumDirectoryCreator
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
-            this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
+            this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -88,7 +86,7 @@ namespace AlbumDirectoryCreator
             this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSearch.Location = new System.Drawing.Point(971, 10);
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(100, 23);
+            this.buttonSearch.Size = new System.Drawing.Size(103, 23);
             this.buttonSearch.TabIndex = 3;
             this.buttonSearch.Text = "Read Files In";
             this.buttonSearch.UseVisualStyleBackColor = true;
@@ -145,7 +143,7 @@ namespace AlbumDirectoryCreator
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.ForeColor = System.Drawing.Color.Lime;
-            this.progressBar.Location = new System.Drawing.Point(425, 555);
+            this.progressBar.Location = new System.Drawing.Point(428, 555);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(350, 20);
             this.progressBar.Step = 1;
@@ -170,6 +168,7 @@ namespace AlbumDirectoryCreator
             this.advancedDataGridView1.Location = new System.Drawing.Point(0, 0);
             this.advancedDataGridView1.Name = "advancedDataGridView1";
             this.advancedDataGridView1.RowHeadersVisible = false;
+            this.advancedDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.advancedDataGridView1.Size = new System.Drawing.Size(778, 553);
             this.advancedDataGridView1.TabIndex = 0;
             this.advancedDataGridView1.TimeFilter = false;
@@ -178,8 +177,8 @@ namespace AlbumDirectoryCreator
             // 
             // artistDataGridViewTextBoxColumn1
             // 
-            this.artistDataGridViewTextBoxColumn1.DataPropertyName = "Artist";
-            this.artistDataGridViewTextBoxColumn1.HeaderText = "Artist";
+            this.artistDataGridViewTextBoxColumn1.DataPropertyName = "joinedPerformers";
+            this.artistDataGridViewTextBoxColumn1.HeaderText = "Performers";
             this.artistDataGridViewTextBoxColumn1.MinimumWidth = 22;
             this.artistDataGridViewTextBoxColumn1.Name = "artistDataGridViewTextBoxColumn1";
             this.artistDataGridViewTextBoxColumn1.ReadOnly = true;
@@ -318,25 +317,15 @@ namespace AlbumDirectoryCreator
             // 
             // linkLabelLog
             // 
-            this.linkLabelLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabelLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelLog.AutoSize = true;
-            this.linkLabelLog.Location = new System.Drawing.Point(3, 520);
+            this.linkLabelLog.Location = new System.Drawing.Point(212, 0);
             this.linkLabelLog.Name = "linkLabelLog";
             this.linkLabelLog.Size = new System.Drawing.Size(67, 13);
             this.linkLabelLog.TabIndex = 3;
             this.linkLabelLog.TabStop = true;
             this.linkLabelLog.Text = "Open Logfile";
             this.linkLabelLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLog_LinkClicked);
-            // 
-            // iD3Editor
-            // 
-            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iD3Editor.Enabled = false;
-            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
-            this.iD3Editor.Name = "iD3Editor";
-            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
-            this.iD3Editor.TabIndex = 12;
-            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
             // 
             // folderDialogOrigins
             // 
@@ -369,6 +358,16 @@ namespace AlbumDirectoryCreator
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
+            // 
+            // iD3Editor
+            // 
+            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iD3Editor.Enabled = false;
+            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
+            this.iD3Editor.Name = "iD3Editor";
+            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
+            this.iD3Editor.TabIndex = 12;
+            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
             // 
             // DirCreatorForm
             // 

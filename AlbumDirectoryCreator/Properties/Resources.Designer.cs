@@ -136,6 +136,26 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_0 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_1 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please try again!.
         /// </summary>
         internal static string TryAgain {

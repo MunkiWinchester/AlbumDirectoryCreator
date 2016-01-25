@@ -2,14 +2,13 @@
 {
     public class Performer
     {
-        // ReSharper disable once MemberCanBePrivate.Global
-        // Changes here a bad, m'kay
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-        public string Name { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        public string Perfomer { get; set; }
 
         public Performer(string name)
         {
-            Name = name;
+            Perfomer = name;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -20,7 +19,7 @@
 
         public override string ToString()
         {
-            return Name;
+            return Perfomer;
         }
     }
 }

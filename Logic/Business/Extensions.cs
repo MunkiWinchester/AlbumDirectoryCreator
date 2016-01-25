@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Logic.DataObjects;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TagLib;
+using TagLib.Asf;
+using TagLib.Id3v2;
+using Tag = TagLib.Tag;
 
 namespace Logic.Business
 {
@@ -25,17 +30,6 @@ namespace Logic.Business
                     temp1[index] = s1.Trim();
             }
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(string.Join("", temp1));
-        }
-
-        public static KeyValuePair<int, string> GetPerformerAlbumHashKvP(this TagLib.File taglibFile)
-        {
-            if (taglibFile?.Tag?.FirstPerformer != null && taglibFile.Tag.Album != null)
-            {
-                var name = string.Format("{0} / {1}", taglibFile.Tag.FirstPerformer, taglibFile.Tag.Album);
-                var hash = name.GetHashCode();
-                return new KeyValuePair<int, string>(hash, name);
-            }
-            return new KeyValuePair<int, string>(0, string.Empty);
         }
 
         public static object GetPropertyValue(this object obj, string propertyName)
@@ -60,7 +54,7 @@ namespace Logic.Business
                     {
                         return false;
                     }
-                    return newList.All(item => oldList.Any(item.Equals));
+                    return newList.All(item => oldList.All(item.Equals));
                 }
             }
             return EqualityComparer<T>.Default.Equals(newVal, oldVal);
@@ -68,20 +62,14 @@ namespace Logic.Business
 
         public static string ToSeperatedString(this IEnumerable<string> iEnumerable)
         {
+            var list = iEnumerable.ToList();
+            if (!list.Any())
+                return "\"\"";
+
             var returnString = new StringBuilder();
-            foreach (var item in iEnumerable)
+            foreach (var item in list)
             {
                 returnString.Append($"\"{item}\", ");
-            }
-            return returnString.ToString().TrimEnd(',', ' ');
-        }
-
-        public static string ToNormalizedString(this string[] stringArray)
-        {
-            var returnString = new StringBuilder();
-            foreach (var item in stringArray)
-            {
-                returnString.Append($"{item}, ");
             }
             return returnString.ToString().TrimEnd(',', ' ');
         }
@@ -122,6 +110,50 @@ namespace Logic.Business
                 }
             }
             return dataTable;
+        }
+
+        public static PopularimeterFrame GetPopularimeterFrame(this Tag tag)
+        {
+            if (tag.TagTypes != TagTypes.Id3v2)
+                return null;
+
+            TagLib.Id3v2.Tag.DefaultVersion = 3;
+            TagLib.Id3v2.Tag.ForceDefaultVersion = true;
+
+            return PopularimeterFrame.Get((TagLib.Id3v2.Tag)tag,
+                "Windows Media Player 9 Series",
+                true);
+        }
+
+        // ReSharper disable once UnusedParameter.Global
+        public static byte SetRating(this Tag tag, Stars stars)
+        {
+            return (byte)stars;
+        }
+
+        public static Stars ToStars(this byte value)
+        {
+            switch (value)
+            {
+                case (byte)Stars.Zero:
+                    return Stars.Zero;
+
+                case (byte)Stars.One:
+                    return Stars.One;
+
+                case (byte)Stars.Two:
+                    return Stars.Two;
+
+                case (byte)Stars.Three:
+                    return Stars.Three;
+
+                case (byte)Stars.Four:
+                    return Stars.Four;
+
+                case (byte)Stars.Five:
+                    return Stars.Five;
+            }
+            return Stars.Zero;
         }
     }
 }

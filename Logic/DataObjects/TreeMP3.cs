@@ -4,7 +4,8 @@ namespace Logic.DataObjects
 {
     public class TreeMp3
     {
-        public string Artist { get; }
+        public string JoinedPerformers { get; }
+        public string FirstPerformer { get; }
         public string Album { get; }
         public string Title { get; }
         public string FileInfo { get; }
@@ -15,24 +16,25 @@ namespace Logic.DataObjects
         {
         }
 
-        public TreeMp3(string artist, string album, string title, string fileInfo)
+        public TreeMp3(string joinedPerformers, string firstPerformer, string album, string title, string fileInfo)
         {
-            Artist = artist;
+            JoinedPerformers = joinedPerformers;
+            FirstPerformer = firstPerformer;
             Album = album;
             Title = title;
             FileInfo = fileInfo;
 
             var path = "00Without Artist\\";
             // Pfad erstellen
-            if (!string.IsNullOrWhiteSpace(artist) &&
+            if (!string.IsNullOrWhiteSpace(firstPerformer) &&
                 !string.IsNullOrWhiteSpace(album))
             {
                 path =
-                    $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                    $"{firstPerformer.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
             }
-            else if (!string.IsNullOrWhiteSpace(artist))
+            else if (!string.IsNullOrWhiteSpace(firstPerformer))
             {
-                path = $"{artist.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                path = $"{firstPerformer.RemoveInvalidPathCharsAndToTitleCase()}\\";
             }
             NewPath = path;
         }

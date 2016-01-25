@@ -1,13 +1,14 @@
-﻿using Logic.Business;
-using Logic.DataObjects;
-using HundredMilesSoftware.UltraID3Lib;
+﻿using HundredMilesSoftware.UltraID3Lib;
 using Logging;
+using Logic.Business;
+using Logic.DataObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using TagLib;
+using File = TagLib.File;
 using TextBox = System.Windows.Forms.TextBox;
 
 namespace AlbumDirectoryCreator
@@ -24,6 +25,7 @@ namespace AlbumDirectoryCreator
         {
             InitializeComponent();
             var genres = new UltraID3().GenreInfos;
+            genres.RemoveAt(0);
             foreach (GenreInfo genre in genres)
             {
                 checkedListBoxGenre.Items.Add(genre.Name);
@@ -52,18 +54,19 @@ namespace AlbumDirectoryCreator
             Clear();
             try
             {
-                var fileTags = _file.Tag;
+                var tag = _file.TagTypes != TagTypes.Id3v2 ? _file.Tag : _file.GetTag(TagTypes.Id3v2);
 
-                var performers = (from object item in fileTags.Performers select new Performer(item.ToString())).ToList();
+                var performers = (from object item in tag.Performers select new Performer(item.ToString())).ToList();
                 bindingSourcePerformers.DataSource = performers;
-                textBoxAlbum.Text = fileTags.Album;
-                textBoxTitle.Text = fileTags.Title;
-                textBoxTitleNr.Text = fileTags.Track.ToString();
-                textBoxYear.Text = fileTags.Year.ToString();
-                textBoxComment.Text = fileTags.Comment;
+                textBoxAlbum.Text = tag.Album;
+                textBoxTitle.Text = tag.Title;
+                textBoxTitleNr.Text = tag.Track.ToString();
+                textBoxYear.Text = tag.Year.ToString();
+                textBoxComment.Text = tag.Comment;
                 textBoxPath.Text = _file.Name;
+                starsBox1.SetStars(tag.GetPopularimeterFrame()?.Rating.ToStars());
 
-                foreach (var genre in fileTags.Genres)
+                foreach (var genre in tag.Genres)
                 {
                     var index = checkedListBoxGenre.Items.IndexOf(genre);
                     if (index == -1)
@@ -85,15 +88,21 @@ namespace AlbumDirectoryCreator
         private void buttonSave_Click(object sender, EventArgs e)
         {
             var file = File.Create(_file.Name);
+
+            var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
+            var rating = tag.GetPopularimeterFrame();
+            if (rating != null)
+                rating.Rating = tag.SetRating(starsBox1.GetStars());
+
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
             if (performers != null)
-                file.Tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
-            file.Tag.Album = textBoxAlbum.Text;
-            file.Tag.Title = textBoxTitle.Text;
-            file.Tag.Track = string.IsNullOrWhiteSpace(textBoxTitleNr.Text) ? 0 : uint.Parse(textBoxTitleNr.Text);
-            file.Tag.Year = string.IsNullOrWhiteSpace(textBoxYear.Text) ? 1900 : uint.Parse(textBoxYear.Text);
-            file.Tag.Comment = textBoxComment.Text;
-            file.Tag.Genres =
+                tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
+            tag.Album = textBoxAlbum.Text;
+            tag.Title = textBoxTitle.Text;
+            tag.Track = string.IsNullOrWhiteSpace(textBoxTitleNr.Text) ? 0 : uint.Parse(textBoxTitleNr.Text);
+            tag.Year = string.IsNullOrWhiteSpace(textBoxYear.Text) ? 1900 : uint.Parse(textBoxYear.Text);
+            tag.Comment = textBoxComment.Text;
+            tag.Genres =
               (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
 
             if (Id3Handler.Save(file, _file))
@@ -122,6 +131,8 @@ namespace AlbumDirectoryCreator
                         checkedListBox.SetItemCheckState(index, CheckState.Unchecked);
                     }
                 }
+                var starBox = ctrl as StarsBox;
+                starBox?.SetStars(Stars.Zero);
             }
         }
 
