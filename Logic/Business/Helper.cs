@@ -141,10 +141,8 @@ namespace Logic.Business
                 albums.Max(k => k.Key) == fileInfos.Count
                     ? (from y in albums where y.Key.Equals(albums.Max(x => x.Key)) select y.Value).ToArray()
                     : new[] { multiValues };
-            id3MultiEditHelp.Genres =
-                genres.Max(k => k.Key) == fileInfos.Count
-                    ? (from y in genres where y.Key.Equals(genres.Max(x => x.Key)) select y.Value).ToArray()
-                    : new[] { multiValues };
+            if (genres.Max(k => k.Key) == fileInfos.Count)
+                id3MultiEditHelp.Genres = (from y in genres where y.Key.Equals(genres.Max(x => x.Key)) select y.Value).ToArray();
             id3MultiEditHelp.Year = years.First(y => y.Key.Equals(years.Max(x => x.Key))).Value;
             id3MultiEditHelp.Comment = comments.First(y => y.Key.Equals(comments.Max(x => x.Key))).Value;
             id3MultiEditHelp.Rating = stars.First(y => y.Key.Equals(stars.Max(x => x.Key))).Value;

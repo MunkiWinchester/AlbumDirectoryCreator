@@ -170,6 +170,7 @@ namespace AlbumDirectoryCreator
 
                 transformBlock.Complete();
                 await transformBlock.Completion;
+                ClearBindingsEtc();
                 _stopwatch.Stop();
 
                 _logger.Info($"{withException} files that triggered an exception and are ignored");
@@ -196,7 +197,7 @@ namespace AlbumDirectoryCreator
             if (button != null)
             {
                 var path = button == buttonSearch ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
-                var pathExists = Directory.Exists(_pathOut);
+                var pathExists = Directory.Exists(path);
                 if (button == buttonSearch && pathExists)
                 {
                     _pathIn = path;
@@ -252,13 +253,11 @@ namespace AlbumDirectoryCreator
         {
             if (advancedDataGridView1.SelectedRows.Count > 1)
             {
-                // TODO: Massmanipulation
-                var mp3S = (
+                iD3Editor.SetValues((
                     from DataGridViewRow row in advancedDataGridView1.SelectedRows
                     select row.DataBoundItem as DataRowView
                     into current
-                    select current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString()).ToList();
-                iD3Editor.SetValues(mp3S);
+                    select current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString()).ToList());
             }
             else
             {

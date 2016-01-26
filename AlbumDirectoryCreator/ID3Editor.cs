@@ -93,7 +93,7 @@ namespace AlbumDirectoryCreator
                 }
                 else
                 {
-                    genres = _id3MultiEditHelp.Genres.ToList();
+                    genres = _id3MultiEditHelp.Genres?.ToList();
                     performers = _id3MultiEditHelp.Performers;
                     year = _id3MultiEditHelp.Year?.ToString();
                     album = string.Join("; ", _id3MultiEditHelp.Albums);
@@ -112,17 +112,18 @@ namespace AlbumDirectoryCreator
                 starsBoxRating.SetStars(rating);
                 textBoxTitleNr.Text = titleNr;
                 textBoxPath.Text = path;
-                foreach (var genre in genres)
-                {
-                    var index = checkedListBoxGenre.Items.IndexOf(genre);
-                    if (index == -1)
+                if (genres != null)
+                    foreach (var genre in genres)
                     {
-                        checkedListBoxGenre.Items.Add(genre);
-                        checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
+                        var index = checkedListBoxGenre.Items.IndexOf(genre);
+                        if (index == -1)
+                        {
+                            checkedListBoxGenre.Items.Add(genre);
+                            checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
+                        }
+                        else
+                            checkedListBoxGenre.SetItemChecked(index, true);
                     }
-                    else
-                        checkedListBoxGenre.SetItemChecked(index, true);
-                }
             }
             catch (CorruptFileException ex)
             {
@@ -165,7 +166,7 @@ namespace AlbumDirectoryCreator
         public void Clear()
         {
             bindingSourcePerformers.Clear();
-            foreach (Control ctrl in groupBoxEditor.Controls)
+            foreach (Control ctrl in tableLayoutPanel.Controls)
             {
                 var box = ctrl as TextBox;
                 if (box != null)

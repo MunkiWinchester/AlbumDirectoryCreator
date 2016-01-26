@@ -41,6 +41,7 @@ namespace Logic.Business
                     LogDifferences(newTags.GetPopularimeterFrame().Rating.ToStars(), oldTags.GetPopularimeterFrame().Rating.ToStars(), "Rating");
 
                 id3.Save();
+                Logger.Info("---------------");
                 return true;
             }
             catch (CorruptFileException ex)
