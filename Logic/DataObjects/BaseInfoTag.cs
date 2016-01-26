@@ -2,21 +2,16 @@
 
 namespace Logic.DataObjects
 {
-    public class TreeMp3
+    public class BaseInfoTag
     {
         public string JoinedPerformers { get; }
         public string FirstPerformer { get; }
         public string Album { get; }
         public string Title { get; }
         public string FileInfo { get; }
+        public string NewBasePath { get; }
 
-        public string NewPath { get; }
-
-        public TreeMp3()
-        {
-        }
-
-        public TreeMp3(string joinedPerformers, string firstPerformer, string album, string title, string fileInfo)
+        public BaseInfoTag(string joinedPerformers, string firstPerformer, string album, string title, string fileInfo)
         {
             JoinedPerformers = joinedPerformers;
             FirstPerformer = firstPerformer;
@@ -36,7 +31,7 @@ namespace Logic.DataObjects
             {
                 path = $"{firstPerformer.RemoveInvalidPathCharsAndToTitleCase()}\\";
             }
-            NewPath = path;
+            NewBasePath = path;
         }
     }
 }

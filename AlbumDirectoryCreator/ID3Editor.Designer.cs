@@ -41,18 +41,20 @@
             this.labelGenre = new System.Windows.Forms.Label();
             this.labelComment = new System.Windows.Forms.Label();
             this.groupBoxEditor = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.labelPerformers = new System.Windows.Forms.Label();
             this.dataGridViewPerformers = new System.Windows.Forms.DataGridView();
+            this.perfomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bindingSourcePerformers = new System.Windows.Forms.BindingSource(this.components);
-            this.labelArstits = new System.Windows.Forms.Label();
-            this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
-            this.buttonCancel = new System.Windows.Forms.Button();
+            this.labelRating = new System.Windows.Forms.Label();
+            this.starsBoxRating = new AlbumDirectoryCreator.StarsBox();
+            this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.buttonSave = new System.Windows.Forms.Button();
-            this.perfomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.starsBox1 = new AlbumDirectoryCreator.StarsBox();
+            this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxEditor.SuspendLayout();
+            this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePerformers)).BeginInit();
             this.SuspendLayout();
@@ -61,9 +63,10 @@
             // 
             this.textBoxYear.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxYear.Location = new System.Drawing.Point(71, 215);
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxYear, 2);
+            this.textBoxYear.Location = new System.Drawing.Point(94, 243);
             this.textBoxYear.Name = "textBoxYear";
-            this.textBoxYear.Size = new System.Drawing.Size(196, 21);
+            this.textBoxYear.Size = new System.Drawing.Size(176, 21);
             this.textBoxYear.TabIndex = 0;
             this.textBoxYear.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxYear_KeyPress);
             // 
@@ -71,47 +74,47 @@
             // 
             this.textBoxAlbum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxAlbum.Location = new System.Drawing.Point(71, 134);
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxAlbum, 2);
+            this.textBoxAlbum.Location = new System.Drawing.Point(94, 63);
             this.textBoxAlbum.Name = "textBoxAlbum";
-            this.textBoxAlbum.Size = new System.Drawing.Size(196, 21);
+            this.textBoxAlbum.Size = new System.Drawing.Size(176, 21);
             this.textBoxAlbum.TabIndex = 2;
             // 
             // textBoxTitle
             // 
             this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxTitle.Location = new System.Drawing.Point(71, 161);
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxTitle, 2);
+            this.textBoxTitle.Location = new System.Drawing.Point(94, 123);
             this.textBoxTitle.Name = "textBoxTitle";
-            this.textBoxTitle.Size = new System.Drawing.Size(196, 21);
+            this.textBoxTitle.Size = new System.Drawing.Size(176, 21);
             this.textBoxTitle.TabIndex = 3;
             // 
             // textBoxTitleNr
             // 
             this.textBoxTitleNr.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxTitleNr.Location = new System.Drawing.Point(71, 188);
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxTitleNr, 2);
+            this.textBoxTitleNr.Location = new System.Drawing.Point(94, 183);
             this.textBoxTitleNr.Name = "textBoxTitleNr";
-            this.textBoxTitleNr.Size = new System.Drawing.Size(196, 21);
+            this.textBoxTitleNr.Size = new System.Drawing.Size(176, 21);
             this.textBoxTitleNr.TabIndex = 4;
             this.textBoxTitleNr.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxYear_KeyPress);
             // 
             // textBoxComment
             // 
-            this.textBoxComment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxComment.Location = new System.Drawing.Point(71, 242);
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxComment, 2);
+            this.textBoxComment.Location = new System.Drawing.Point(94, 303);
             this.textBoxComment.Multiline = true;
             this.textBoxComment.Name = "textBoxComment";
-            this.textBoxComment.Size = new System.Drawing.Size(196, 63);
+            this.textBoxComment.Size = new System.Drawing.Size(176, 52);
             this.textBoxComment.TabIndex = 5;
             // 
             // labelAlbum
             // 
-            this.labelAlbum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.labelAlbum.AutoSize = true;
             this.labelAlbum.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelAlbum.Location = new System.Drawing.Point(26, 134);
+            this.labelAlbum.Location = new System.Drawing.Point(3, 60);
             this.labelAlbum.Name = "labelAlbum";
             this.labelAlbum.Size = new System.Drawing.Size(39, 13);
             this.labelAlbum.TabIndex = 9;
@@ -123,9 +126,9 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelTitle.AutoSize = true;
             this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitle.Location = new System.Drawing.Point(35, 161);
+            this.labelTitle.Location = new System.Drawing.Point(3, 120);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(30, 13);
+            this.labelTitle.Size = new System.Drawing.Size(30, 60);
             this.labelTitle.TabIndex = 10;
             this.labelTitle.Text = "Title:";
             // 
@@ -135,9 +138,9 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelTitleNr.AutoSize = true;
             this.labelTitleNr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitleNr.Location = new System.Drawing.Point(21, 188);
+            this.labelTitleNr.Location = new System.Drawing.Point(3, 180);
             this.labelTitleNr.Name = "labelTitleNr";
-            this.labelTitleNr.Size = new System.Drawing.Size(44, 13);
+            this.labelTitleNr.Size = new System.Drawing.Size(44, 60);
             this.labelTitleNr.TabIndex = 11;
             this.labelTitleNr.Text = "Title Nr:";
             // 
@@ -147,9 +150,9 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelYear.AutoSize = true;
             this.labelYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelYear.Location = new System.Drawing.Point(33, 215);
+            this.labelYear.Location = new System.Drawing.Point(3, 240);
             this.labelYear.Name = "labelYear";
-            this.labelYear.Size = new System.Drawing.Size(32, 13);
+            this.labelYear.Size = new System.Drawing.Size(32, 60);
             this.labelYear.TabIndex = 12;
             this.labelYear.Text = "Year:";
             // 
@@ -159,9 +162,9 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelGenre.AutoSize = true;
             this.labelGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelGenre.Location = new System.Drawing.Point(26, 391);
+            this.labelGenre.Location = new System.Drawing.Point(3, 480);
             this.labelGenre.Name = "labelGenre";
-            this.labelGenre.Size = new System.Drawing.Size(39, 13);
+            this.labelGenre.Size = new System.Drawing.Size(39, 60);
             this.labelGenre.TabIndex = 13;
             this.labelGenre.Text = "Genre:";
             // 
@@ -171,34 +174,15 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelComment.AutoSize = true;
             this.labelComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelComment.Location = new System.Drawing.Point(11, 242);
+            this.labelComment.Location = new System.Drawing.Point(3, 300);
             this.labelComment.Name = "labelComment";
-            this.labelComment.Size = new System.Drawing.Size(54, 13);
+            this.labelComment.Size = new System.Drawing.Size(54, 60);
             this.labelComment.TabIndex = 14;
             this.labelComment.Text = "Comment:";
             // 
             // groupBoxEditor
             // 
-            this.groupBoxEditor.Controls.Add(this.starsBox1);
-            this.groupBoxEditor.Controls.Add(this.label1);
-            this.groupBoxEditor.Controls.Add(this.dataGridViewPerformers);
-            this.groupBoxEditor.Controls.Add(this.labelArstits);
-            this.groupBoxEditor.Controls.Add(this.labelGenre);
-            this.groupBoxEditor.Controls.Add(this.checkedListBoxGenre);
-            this.groupBoxEditor.Controls.Add(this.labelPath);
-            this.groupBoxEditor.Controls.Add(this.textBoxPath);
-            this.groupBoxEditor.Controls.Add(this.buttonCancel);
-            this.groupBoxEditor.Controls.Add(this.buttonSave);
-            this.groupBoxEditor.Controls.Add(this.labelComment);
-            this.groupBoxEditor.Controls.Add(this.textBoxYear);
-            this.groupBoxEditor.Controls.Add(this.labelYear);
-            this.groupBoxEditor.Controls.Add(this.textBoxAlbum);
-            this.groupBoxEditor.Controls.Add(this.labelTitleNr);
-            this.groupBoxEditor.Controls.Add(this.textBoxTitle);
-            this.groupBoxEditor.Controls.Add(this.labelTitle);
-            this.groupBoxEditor.Controls.Add(this.textBoxTitleNr);
-            this.groupBoxEditor.Controls.Add(this.labelAlbum);
-            this.groupBoxEditor.Controls.Add(this.textBoxComment);
+            this.groupBoxEditor.Controls.Add(this.tableLayoutPanel);
             this.groupBoxEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBoxEditor.Location = new System.Drawing.Point(0, 0);
@@ -208,17 +192,59 @@
             this.groupBoxEditor.TabStop = false;
             this.groupBoxEditor.Text = "ID3 Editor";
             // 
-            // label1
+            // tableLayoutPanel
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(24, 363);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "Rating:";
+            this.tableLayoutPanel.ColumnCount = 3;
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel.Controls.Add(this.labelPerformers, 0, 0);
+            this.tableLayoutPanel.Controls.Add(this.dataGridViewPerformers, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.labelAlbum, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.textBoxAlbum, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.labelTitle, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.textBoxTitle, 1, 2);
+            this.tableLayoutPanel.Controls.Add(this.labelTitleNr, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.textBoxTitleNr, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.labelYear, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.textBoxYear, 1, 4);
+            this.tableLayoutPanel.Controls.Add(this.labelComment, 0, 5);
+            this.tableLayoutPanel.Controls.Add(this.textBoxComment, 1, 5);
+            this.tableLayoutPanel.Controls.Add(this.labelPath, 0, 6);
+            this.tableLayoutPanel.Controls.Add(this.textBoxPath, 1, 6);
+            this.tableLayoutPanel.Controls.Add(this.labelRating, 0, 7);
+            this.tableLayoutPanel.Controls.Add(this.starsBoxRating, 1, 7);
+            this.tableLayoutPanel.Controls.Add(this.labelGenre, 0, 8);
+            this.tableLayoutPanel.Controls.Add(this.checkedListBoxGenre, 1, 8);
+            this.tableLayoutPanel.Controls.Add(this.buttonSave, 1, 9);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 9);
+            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel.Location = new System.Drawing.Point(3, 17);
+            this.tableLayoutPanel.Name = "tableLayoutPanel";
+            this.tableLayoutPanel.RowCount = 10;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.Size = new System.Drawing.Size(273, 602);
+            this.tableLayoutPanel.TabIndex = 0;
+            // 
+            // labelPerformers
+            // 
+            this.labelPerformers.AutoSize = true;
+            this.labelPerformers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPerformers.Location = new System.Drawing.Point(3, 0);
+            this.labelPerformers.Name = "labelPerformers";
+            this.labelPerformers.Size = new System.Drawing.Size(60, 13);
+            this.labelPerformers.TabIndex = 21;
+            this.labelPerformers.Text = "Performers:";
             // 
             // dataGridViewPerformers
             // 
@@ -229,85 +255,14 @@
             this.dataGridViewPerformers.ColumnHeadersVisible = false;
             this.dataGridViewPerformers.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.perfomerDataGridViewTextBoxColumn});
+            this.tableLayoutPanel.SetColumnSpan(this.dataGridViewPerformers, 2);
             this.dataGridViewPerformers.DataSource = this.bindingSourcePerformers;
-            this.dataGridViewPerformers.Location = new System.Drawing.Point(71, 20);
+            this.dataGridViewPerformers.Location = new System.Drawing.Point(94, 3);
             this.dataGridViewPerformers.Name = "dataGridViewPerformers";
             this.dataGridViewPerformers.RowHeadersVisible = false;
-            this.dataGridViewPerformers.Size = new System.Drawing.Size(196, 108);
+            this.dataGridViewPerformers.Size = new System.Drawing.Size(176, 52);
             this.dataGridViewPerformers.TabIndex = 23;
             this.dataGridViewPerformers.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewPerformers_KeyDown);
-            // 
-            // bindingSourcePerformers
-            // 
-            this.bindingSourcePerformers.DataSource = typeof(Logic.DataObjects.Performer);
-            // 
-            // labelArstits
-            // 
-            this.labelArstits.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelArstits.AutoSize = true;
-            this.labelArstits.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelArstits.Location = new System.Drawing.Point(5, 20);
-            this.labelArstits.Name = "labelArstits";
-            this.labelArstits.Size = new System.Drawing.Size(60, 13);
-            this.labelArstits.TabIndex = 21;
-            this.labelArstits.Text = "Performers:";
-            // 
-            // checkedListBoxGenre
-            // 
-            this.checkedListBoxGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkedListBoxGenre.FormattingEnabled = true;
-            this.checkedListBoxGenre.Location = new System.Drawing.Point(71, 391);
-            this.checkedListBoxGenre.Name = "checkedListBoxGenre";
-            this.checkedListBoxGenre.Size = new System.Drawing.Size(196, 196);
-            this.checkedListBoxGenre.TabIndex = 19;
-            // 
-            // labelPath
-            // 
-            this.labelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelPath.AutoSize = true;
-            this.labelPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPath.Location = new System.Drawing.Point(33, 316);
-            this.labelPath.Name = "labelPath";
-            this.labelPath.Size = new System.Drawing.Size(32, 13);
-            this.labelPath.TabIndex = 17;
-            this.labelPath.Text = "Path:";
-            // 
-            // textBoxPath
-            // 
-            this.textBoxPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxPath.Location = new System.Drawing.Point(71, 311);
-            this.textBoxPath.Multiline = true;
-            this.textBoxPath.Name = "textBoxPath";
-            this.textBoxPath.ReadOnly = true;
-            this.textBoxPath.Size = new System.Drawing.Size(196, 46);
-            this.textBoxPath.TabIndex = 18;
-            // 
-            // buttonCancel
-            // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(192, 593);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 16;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(111, 593);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(75, 23);
-            this.buttonSave.TabIndex = 15;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // perfomerDataGridViewTextBoxColumn
             // 
@@ -315,14 +270,83 @@
             this.perfomerDataGridViewTextBoxColumn.HeaderText = "Perfomer";
             this.perfomerDataGridViewTextBoxColumn.Name = "perfomerDataGridViewTextBoxColumn";
             // 
-            // starsBox1
+            // bindingSourcePerformers
             // 
-            this.starsBox1.Location = new System.Drawing.Point(71, 363);
-            this.starsBox1.MaximumSize = new System.Drawing.Size(175, 22);
-            this.starsBox1.MinimumSize = new System.Drawing.Size(175, 22);
-            this.starsBox1.Name = "starsBox1";
-            this.starsBox1.Size = new System.Drawing.Size(175, 22);
-            this.starsBox1.TabIndex = 26;
+            this.bindingSourcePerformers.DataSource = typeof(Logic.DataObjects.Performer);
+            // 
+            // labelPath
+            // 
+            this.labelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelPath.AutoSize = true;
+            this.labelPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPath.Location = new System.Drawing.Point(3, 360);
+            this.labelPath.Name = "labelPath";
+            this.labelPath.Size = new System.Drawing.Size(32, 60);
+            this.labelPath.TabIndex = 17;
+            this.labelPath.Text = "Path:";
+            // 
+            // textBoxPath
+            // 
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxPath, 2);
+            this.textBoxPath.Location = new System.Drawing.Point(94, 363);
+            this.textBoxPath.Multiline = true;
+            this.textBoxPath.Name = "textBoxPath";
+            this.textBoxPath.ReadOnly = true;
+            this.textBoxPath.Size = new System.Drawing.Size(176, 52);
+            this.textBoxPath.TabIndex = 18;
+            // 
+            // labelRating
+            // 
+            this.labelRating.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelRating.AutoSize = true;
+            this.labelRating.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelRating.Location = new System.Drawing.Point(3, 420);
+            this.labelRating.Name = "labelRating";
+            this.labelRating.Size = new System.Drawing.Size(41, 60);
+            this.labelRating.TabIndex = 25;
+            this.labelRating.Text = "Rating:";
+            // 
+            // starsBoxRating
+            // 
+            this.starsBoxRating.Location = new System.Drawing.Point(94, 423);
+            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.Name = "starsBoxRating";
+            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.TabIndex = 26;
+            // 
+            // checkedListBoxGenre
+            // 
+            this.tableLayoutPanel.SetColumnSpan(this.checkedListBoxGenre, 2);
+            this.checkedListBoxGenre.FormattingEnabled = true;
+            this.checkedListBoxGenre.Location = new System.Drawing.Point(94, 483);
+            this.checkedListBoxGenre.Name = "checkedListBoxGenre";
+            this.checkedListBoxGenre.Size = new System.Drawing.Size(176, 52);
+            this.checkedListBoxGenre.TabIndex = 19;
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSave.Location = new System.Drawing.Point(104, 576);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(75, 23);
+            this.buttonSave.TabIndex = 15;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Location = new System.Drawing.Point(195, 576);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.TabIndex = 16;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // Id3Editor
             // 
@@ -332,7 +356,8 @@
             this.Name = "Id3Editor";
             this.Size = new System.Drawing.Size(279, 622);
             this.groupBoxEditor.ResumeLayout(false);
-            this.groupBoxEditor.PerformLayout();
+            this.tableLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePerformers)).EndInit();
             this.ResumeLayout(false);
@@ -357,11 +382,12 @@
         private System.Windows.Forms.TextBox textBoxPath;
         private System.Windows.Forms.Label labelPath;
         private System.Windows.Forms.CheckedListBox checkedListBoxGenre;
-        private System.Windows.Forms.Label labelArstits;
+        private System.Windows.Forms.Label labelPerformers;
         private System.Windows.Forms.DataGridView dataGridViewPerformers;
         private System.Windows.Forms.BindingSource bindingSourcePerformers;
-        private System.Windows.Forms.Label label1;
-        private StarsBox starsBox1;
+        private System.Windows.Forms.Label labelRating;
+        private StarsBox starsBoxRating;
         private System.Windows.Forms.DataGridViewTextBoxColumn perfomerDataGridViewTextBoxColumn;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
     }
 }

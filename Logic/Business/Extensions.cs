@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TagLib;
-using TagLib.Asf;
 using TagLib.Id3v2;
 using Tag = TagLib.Tag;
 
@@ -75,7 +74,7 @@ namespace Logic.Business
         }
 
         /// <summary>
-        /// Verwurstet eine Collection vom Typ IEnumerable (also Liste, IEnumerable, ArrayList what ever... zu einer DataTable
+        /// Verwurstet eine Collection vom Typ IEnumerable zu einer DataTable
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -123,12 +122,6 @@ namespace Logic.Business
             return PopularimeterFrame.Get((TagLib.Id3v2.Tag)tag,
                 "Windows Media Player 9 Series",
                 true);
-        }
-
-        // ReSharper disable once UnusedParameter.Global
-        public static byte SetRating(this Tag tag, Stars stars)
-        {
-            return (byte)stars;
         }
 
         public static Stars ToStars(this byte value)

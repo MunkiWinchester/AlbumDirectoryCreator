@@ -10,11 +10,6 @@
         /// <summary>
         ///
         /// </summary>
-        DataObjects,
-
-        /// <summary>
-        ///
-        /// </summary>
         UI
     }
 }

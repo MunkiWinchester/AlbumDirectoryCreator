@@ -1,4 +1,5 @@
-﻿using HundredMilesSoftware.UltraID3Lib;
+﻿using AlbumDirectoryCreator.Properties;
+using HundredMilesSoftware.UltraID3Lib;
 using Logging;
 using Logic.Business;
 using Logic.DataObjects;
@@ -20,6 +21,8 @@ namespace AlbumDirectoryCreator
 
         private static readonly Logger Logger = new Logger(LoggingType.UI);
         private File _file;
+        private bool _isMulti;
+        private Id3MultiEditHelp _id3MultiEditHelp;
 
         public Id3Editor()
         {
@@ -44,9 +47,17 @@ namespace AlbumDirectoryCreator
         {
             if (System.IO.File.Exists(fileInfo))
             {
+                _isMulti = false;
                 _file = File.Create(fileInfo);
                 SetValues();
             }
+        }
+
+        public void SetValues(List<string> fileInfoList)
+        {
+            _isMulti = true;
+            _id3MultiEditHelp = Helper.GetTagsAndIntersectionFields(fileInfoList);
+            SetValues();
         }
 
         private void SetValues()
@@ -54,19 +65,54 @@ namespace AlbumDirectoryCreator
             Clear();
             try
             {
-                var tag = _file.TagTypes != TagTypes.Id3v2 ? _file.Tag : _file.GetTag(TagTypes.Id3v2);
+                List<string> genres;
+                List<Performer> performers;
+                string album;
+                var year = string.Empty;
+                string comment;
+                Stars? rating;
+                string title;
+                var titleNr = string.Empty;
+                string path;
 
-                var performers = (from object item in tag.Performers select new Performer(item.ToString())).ToList();
+                if (!_isMulti)
+                {
+                    var tag = _file.TagTypes != TagTypes.Id3v2 ? _file.Tag : _file.GetTag(TagTypes.Id3v2);
+
+                    performers = (from object item in tag.Performers select new Performer(item.ToString())).ToList();
+                    album = tag.Album;
+                    title = tag.Title;
+                    if (tag.Track != 0)
+                        titleNr = tag.Track.ToString();
+                    if (tag.Year != 0)
+                        year = tag.Year.ToString();
+                    comment = tag.Comment;
+                    path = _file.Name;
+                    rating = tag.GetPopularimeterFrame()?.Rating.ToStars();
+                    genres = tag.Genres.ToList();
+                }
+                else
+                {
+                    genres = _id3MultiEditHelp.Genres.ToList();
+                    performers = _id3MultiEditHelp.Performers;
+                    year = _id3MultiEditHelp.Year?.ToString();
+                    album = string.Join("; ", _id3MultiEditHelp.Albums);
+                    comment = _id3MultiEditHelp.Comment;
+                    rating = _id3MultiEditHelp.Rating;
+                    title = Resources.multiValue;
+                    titleNr = Resources.multiValue;
+                    path = Resources.multiValue;
+                }
+
                 bindingSourcePerformers.DataSource = performers;
-                textBoxAlbum.Text = tag.Album;
-                textBoxTitle.Text = tag.Title;
-                textBoxTitleNr.Text = tag.Track.ToString();
-                textBoxYear.Text = tag.Year.ToString();
-                textBoxComment.Text = tag.Comment;
-                textBoxPath.Text = _file.Name;
-                starsBox1.SetStars(tag.GetPopularimeterFrame()?.Rating.ToStars());
-
-                foreach (var genre in tag.Genres)
+                textBoxAlbum.Text = album;
+                textBoxTitle.Text = title;
+                textBoxYear.Text = year;
+                textBoxComment.Text = comment;
+                starsBoxRating.SetStars(rating);
+                textBoxTitleNr.Text = titleNr;
+                textBoxPath.Text = path;
+                foreach (var genre in genres)
                 {
                     var index = checkedListBoxGenre.Items.IndexOf(genre);
                     if (index == -1)
@@ -92,15 +138,17 @@ namespace AlbumDirectoryCreator
             var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
             var rating = tag.GetPopularimeterFrame();
             if (rating != null)
-                rating.Rating = tag.SetRating(starsBox1.GetStars());
+                rating.Rating = Helper.SetRating(starsBoxRating.GetStars());
 
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
             if (performers != null)
                 tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
             tag.Album = textBoxAlbum.Text;
             tag.Title = textBoxTitle.Text;
-            tag.Track = string.IsNullOrWhiteSpace(textBoxTitleNr.Text) ? 0 : uint.Parse(textBoxTitleNr.Text);
-            tag.Year = string.IsNullOrWhiteSpace(textBoxYear.Text) ? 1900 : uint.Parse(textBoxYear.Text);
+            if (!string.IsNullOrWhiteSpace(textBoxTitleNr.Text))
+                tag.Track = uint.Parse(textBoxTitleNr.Text);
+            if (!string.IsNullOrWhiteSpace(textBoxYear.Text))
+                tag.Year = uint.Parse(textBoxYear.Text);
             tag.Comment = textBoxComment.Text;
             tag.Genres =
               (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();

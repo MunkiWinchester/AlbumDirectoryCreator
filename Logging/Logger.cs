@@ -29,20 +29,6 @@ namespace Logging
         }
 
         /// <summary>
-        /// Logs a warn message
-        /// </summary>
-        /// <param name="message">The message</param>
-        public void Warn(string message)
-        {
-            var log = new LogEventInfo
-            {
-                Message = message,
-                Level = LogLevel.Warn
-            };
-            LogEventInfos(log);
-        }
-
-        /// <summary>
         /// Logs an error message
         /// </summary>
         /// <param name="message">The message</param>

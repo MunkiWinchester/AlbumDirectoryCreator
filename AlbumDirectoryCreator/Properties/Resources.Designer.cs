@@ -117,6 +117,15 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (multiple Values).
+        /// </summary>
+        internal static string multiValue {
+            get {
+                return ResourceManager.GetString("multiValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please select a folder where the music with the new structure shoud be copied (Empty folder is recommend).
         /// </summary>
         internal static string OutputHint {

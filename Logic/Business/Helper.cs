@@ -1,6 +1,7 @@
 ﻿using Logging;
 using Logic.DataObjects;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TagLib;
@@ -41,16 +42,21 @@ namespace Logic.Business
             }
         }
 
-        public static bool MoveFile(TreeMp3 treeMp3, string basePath)
+        public static byte SetRating(Stars stars)
+        {
+            return (byte)stars;
+        }
+
+        public static bool MoveFile(BaseInfoTag baseInfoTag, string basePath)
         {
             try
             {
-                var path = $"{basePath}\\{treeMp3.NewPath}";
+                var path = $"{basePath}\\{baseInfoTag.NewBasePath}";
                 Directory.CreateDirectory(path);
-                var oldFileInfo = new FileInfo(treeMp3.FileInfo);
+                var oldFileInfo = new FileInfo(baseInfoTag.FileInfo);
 
                 // falls die Datei schon existiert
-                var newFileName = $"{treeMp3.JoinedPerformers} - {treeMp3.Title}";
+                var newFileName = $"{baseInfoTag.JoinedPerformers} - {baseInfoTag.Title}";
                 var newFileInfo = new FileInfo(Path.Combine(path, $"{newFileName}{oldFileInfo.Extension}"));
                 var counter = 1;
                 while (newFileInfo.Exists)
@@ -64,12 +70,12 @@ namespace Logic.Business
             }
             catch (Exception ex)
             {
-                Logger.Error($"{ex.Message} -> \"{treeMp3.FileInfo}\"", ex);
+                Logger.Error($"{ex.Message} -> \"{baseInfoTag.FileInfo}\"", ex);
                 return false;
             }
         }
 
-        public static TreeMp3 ReadMetaDatas(string fileInfo)
+        public static BaseInfoTag ReadMetaDatas(string fileInfo)
         {
             try
             {
@@ -77,7 +83,7 @@ namespace Logic.Business
                 var file = TagLib.File.Create(fileInfo);
                 var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
 
-                return new TreeMp3(tag.JoinedPerformers, tag.FirstPerformer,
+                return new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer,
                     tag.Album, tag.Title, fileInfo);
             }
             catch (Exception ex)
@@ -85,6 +91,64 @@ namespace Logic.Business
                 Logger.Error($"{ex.Message} -> \"{fileInfo}\"", ex);
                 return null;
             }
+        }
+
+        public static Id3MultiEditHelp GetTagsAndIntersectionFields(List<string> fileInfos)
+        {
+            var id3MultiEditHelp = new Id3MultiEditHelp();
+            var multiValues = "(multiple Values)";
+            foreach (var fileInfo in fileInfos)
+            {
+                var file = TagLib.File.Create(fileInfo);
+                var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
+                id3MultiEditHelp.TagList.Add(fileInfo, tag);
+            }
+            var performers =
+                id3MultiEditHelp.TagList.Values.SelectMany(tag => tag.Performers)
+                    .ToList()
+                    .GroupBy(x => x)
+                    .Select(g => new KeyValuePair<int, string>(g.Count(), g.Key))
+                    .ToList();
+            var albums =
+                id3MultiEditHelp.TagList.Values.GroupBy(i => i.Album)
+                    .Select(g => new KeyValuePair<int, string>(g.Count(), g.First().Album))
+                    .ToList();
+            var years =
+                id3MultiEditHelp.TagList.Values.GroupBy(i => i.Year)
+                    .Select(g => new KeyValuePair<int, uint?>(g.Count(), g.First().Year))
+                    .ToList();
+            var genres =
+                id3MultiEditHelp.TagList.Values.GroupBy(i => i.JoinedGenres)
+                    .Select(g => new KeyValuePair<int, string>(g.Count(), g.First().JoinedGenres))
+                    .ToList();
+            var comments =
+                id3MultiEditHelp.TagList.Values.GroupBy(i => i.Comment)
+                    .Select(g => new KeyValuePair<int, string>(g.Count(), g.First().Comment))
+                    .ToList();
+            var stars =
+                id3MultiEditHelp.TagList.Values.GroupBy(i => i.GetPopularimeterFrame()?.Rating.ToStars())
+                    .Select(
+                        g =>
+                            new KeyValuePair<int, Stars?>(g.Count(), g.First().GetPopularimeterFrame()?.Rating.ToStars()))
+                    .ToList();
+
+            id3MultiEditHelp.Performers =
+                performers.Max(k => k.Key) == fileInfos.Count
+                    ? (from y in performers where y.Key.Equals(performers.Max(x => x.Key)) select new Performer(y.Value))
+                        .ToList()
+                    : new List<Performer> { new Performer(multiValues) };
+            id3MultiEditHelp.Albums =
+                albums.Max(k => k.Key) == fileInfos.Count
+                    ? (from y in albums where y.Key.Equals(albums.Max(x => x.Key)) select y.Value).ToArray()
+                    : new[] { multiValues };
+            id3MultiEditHelp.Genres =
+                genres.Max(k => k.Key) == fileInfos.Count
+                    ? (from y in genres where y.Key.Equals(genres.Max(x => x.Key)) select y.Value).ToArray()
+                    : new[] { multiValues };
+            id3MultiEditHelp.Year = years.First(y => y.Key.Equals(years.Max(x => x.Key))).Value;
+            id3MultiEditHelp.Comment = comments.First(y => y.Key.Equals(comments.Max(x => x.Key))).Value;
+            id3MultiEditHelp.Rating = stars.First(y => y.Key.Equals(stars.Max(x => x.Key))).Value;
+            return id3MultiEditHelp;
         }
     }
 }

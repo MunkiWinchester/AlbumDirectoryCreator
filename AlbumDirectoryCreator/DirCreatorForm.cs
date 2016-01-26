@@ -24,7 +24,7 @@ namespace AlbumDirectoryCreator
         private readonly Stopwatch _stopwatch = new Stopwatch();
         private readonly List<string> _fileInfos = new List<string>();
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
-        private ConcurrentDictionary<string, TreeMp3> _hashSet = new ConcurrentDictionary<string, TreeMp3>();
+        private ConcurrentDictionary<string, BaseInfoTag> _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
 
         public DirCreatorForm()
@@ -57,13 +57,13 @@ namespace AlbumDirectoryCreator
                 var errorHappened = false;
                 var withException = 0;
                 progressBar.Maximum = _hashSet.Count;
-                var transformBlock = new TransformBlock<string, TreeMp3>(s => Helper.ReadMetaDatas(s),
+                var transformBlock = new TransformBlock<string, BaseInfoTag>(s => Helper.ReadMetaDatas(s),
             new ExecutionDataflowBlockOptions
             {
                 TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
                 MaxDegreeOfParallelism = 20
             });
-                var readMetaDates = new ActionBlock<TreeMp3>(treeMp3 =>
+                var readMetaDates = new ActionBlock<BaseInfoTag>(treeMp3 =>
                 {
                     progressBar.PerformStep();
                     if (treeMp3 != null)
@@ -117,7 +117,7 @@ namespace AlbumDirectoryCreator
             // Sort the stuff and bind it to the binding sources
             bindingSourceFiles.DataSource = _hashSet.Values.ToDataTable();
             if (_hashSet.Values.Count != 0)
-                bindingSourceFiles.Sort = $"{nameof(TreeMp3.FirstPerformer)}, {nameof(TreeMp3.Album)}";
+                bindingSourceFiles.Sort = $"{nameof(BaseInfoTag.FirstPerformer)}, {nameof(BaseInfoTag.Album)}";
 
             // Attach current changed event
             bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
@@ -128,7 +128,7 @@ namespace AlbumDirectoryCreator
                 bindingSourceFiles.MoveFirst();
             }
             else
-                bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(TreeMp3.FileInfo), fileInfoOfEdited);
+                bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(BaseInfoTag.FileInfo), fileInfoOfEdited);
         }
 
         private async void CreateFolderEtc()
@@ -138,7 +138,7 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
-                var transformBlock = new TransformBlock<TreeMp3, bool>(t => Helper.MoveFile(t, _pathOut),
+                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => Helper.MoveFile(t, _pathOut),
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
@@ -187,7 +187,7 @@ namespace AlbumDirectoryCreator
         {
             bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
-            _hashSet = new ConcurrentDictionary<string, TreeMp3>();
+            _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e)
@@ -253,33 +253,17 @@ namespace AlbumDirectoryCreator
             if (advancedDataGridView1.SelectedRows.Count > 1)
             {
                 // TODO: Massmanipulation
-                var mp3S = new List<TreeMp3>();
-                foreach (DataGridViewRow row in advancedDataGridView1.SelectedRows)
-                {
-                    var treemp3 = row.DataBoundItem as DataRowView;
-                    if (treemp3 != null)
-                        mp3S.Add(new TreeMp3(treemp3[0]?.ToString(), treemp3[1]?.ToString(), treemp3[2]?.ToString(),
-                            treemp3[3]?.ToString(), treemp3[4]?.ToString()));
-                }
-                var performersCombined =
-                    mp3S.GroupBy(i => i.JoinedPerformers)
-                        .Select(g => new KeyValuePair<int, string>(g.Count(), g.First().JoinedPerformers))
-                        .ToList();
-                var albumCombined =
-                    mp3S.GroupBy(i => i.Album)
-                        .Select(g => new KeyValuePair<int, string>(g.Count(), g.First().Album))
-                        .ToList();
-                var filesInfos = string.Join(";", mp3S.Select(g => g.FileInfo));
-                var mp3 =
-                    new TreeMp3(performersCombined.First(y => y.Key.Equals(performersCombined.Max(x => x.Key))).Value,
-                        string.Empty, albumCombined.First(y => y.Key.Equals(albumCombined.Max(x => x.Key))).Value,
-                        string.Empty, filesInfos);
-                var bla = mp3;
+                var mp3S = (
+                    from DataGridViewRow row in advancedDataGridView1.SelectedRows
+                    select row.DataBoundItem as DataRowView
+                    into current
+                    select current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString()).ToList();
+                iD3Editor.SetValues(mp3S);
             }
             else
             {
                 var current = bindingSourceFiles.Current as DataRowView;
-                var path = current?.Row[nameof(TreeMp3.FileInfo)]?.ToString();
+                var path = current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString();
                 SetEditorUp(!string.IsNullOrEmpty(path) ? path : string.Empty);
             }
         }
@@ -330,7 +314,7 @@ namespace AlbumDirectoryCreator
             if (taglibFile != null && previous.Value != null)
             {
                 var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
-                var newTreeMp3 = new TreeMp3(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                var newTreeMp3 = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
                     previous.Key);
                 _hashSet.AddOrUpdate(previous.Key, newTreeMp3, (s, mp3) => newTreeMp3);
 
