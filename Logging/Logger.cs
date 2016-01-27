@@ -6,12 +6,12 @@ namespace Logging
     public class Logger
     {
         /// <summary>
-        /// NLog Logger for the calling project/class
+        ///     NLog Logger for the calling project/class
         /// </summary>
         private readonly NLog.Logger _nLogger;
 
         /// <summary>
-        /// Creates the logger for the calling project/class
+        ///     Creates the logger for the calling project/class
         /// </summary>
         /// <param name="loggingType">Enum for the class</param>
         public Logger(LoggingType loggingType)
@@ -20,7 +20,7 @@ namespace Logging
         }
 
         /// <summary>
-        /// Logs an info message
+        ///     Logs an info message
         /// </summary>
         /// <param name="message">The message</param>
         public void Info(string message)
@@ -29,7 +29,7 @@ namespace Logging
         }
 
         /// <summary>
-        /// Logs an error message
+        ///     Logs an error message
         /// </summary>
         /// <param name="message">The message</param>
         /// <param name="ex">The exception</param>
@@ -45,7 +45,7 @@ namespace Logging
         }
 
         /// <summary>
-        /// Logs the LogEventInfo to the specified "location"
+        ///     Logs the LogEventInfo to the specified "location"
         /// </summary>
         /// <param name="log"></param>
         private void LogEventInfos(LogEventInfo log)
