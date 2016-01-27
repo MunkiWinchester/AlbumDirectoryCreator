@@ -44,19 +44,21 @@
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelPerformers = new System.Windows.Forms.Label();
             this.dataGridViewPerformers = new System.Windows.Forms.DataGridView();
+            this.perfomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingSourcePerformers = new System.Windows.Forms.BindingSource(this.components);
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.labelRating = new System.Windows.Forms.Label();
             this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
-            this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.perfomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingSourcePerformers = new System.Windows.Forms.BindingSource(this.components);
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
             this.starsBoxRating = new AlbumDirectoryCreator.StarsBox();
             this.groupBoxEditor.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePerformers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxYear
@@ -215,6 +217,7 @@
             this.tableLayoutPanel.Controls.Add(this.checkedListBoxGenre, 1, 8);
             this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 9);
             this.tableLayoutPanel.Controls.Add(this.buttonSave, 1, 9);
+            this.tableLayoutPanel.Controls.Add(this.pictureBox, 0, 9);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 17);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -262,6 +265,16 @@
             this.dataGridViewPerformers.TabIndex = 23;
             this.dataGridViewPerformers.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewPerformers_KeyDown);
             // 
+            // perfomerDataGridViewTextBoxColumn
+            // 
+            this.perfomerDataGridViewTextBoxColumn.DataPropertyName = "Perfomer";
+            this.perfomerDataGridViewTextBoxColumn.HeaderText = "Perfomer";
+            this.perfomerDataGridViewTextBoxColumn.Name = "perfomerDataGridViewTextBoxColumn";
+            // 
+            // bindingSourcePerformers
+            // 
+            this.bindingSourcePerformers.DataSource = typeof(Logic.DataObjects.Performer);
+            // 
             // labelPath
             // 
             this.labelPath.AutoSize = true;
@@ -305,17 +318,6 @@
             this.checkedListBoxGenre.Size = new System.Drawing.Size(192, 142);
             this.checkedListBoxGenre.TabIndex = 19;
             // 
-            // buttonSave
-            // 
-            this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSave.Location = new System.Drawing.Point(96, 574);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(75, 25);
-            this.buttonSave.TabIndex = 15;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
             // buttonCancel
             // 
             this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Left;
@@ -327,15 +329,28 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // perfomerDataGridViewTextBoxColumn
+            // buttonSave
             // 
-            this.perfomerDataGridViewTextBoxColumn.DataPropertyName = "Perfomer";
-            this.perfomerDataGridViewTextBoxColumn.HeaderText = "Perfomer";
-            this.perfomerDataGridViewTextBoxColumn.Name = "perfomerDataGridViewTextBoxColumn";
+            this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonSave.Location = new System.Drawing.Point(96, 574);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(75, 25);
+            this.buttonSave.TabIndex = 15;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // bindingSourcePerformers
+            // pictureBox
             // 
-            this.bindingSourcePerformers.DataSource = typeof(Logic.DataObjects.Performer);
+            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pictureBox.Image = global::AlbumDirectoryCreator.Properties.Resources.Harken1;
+            this.pictureBox.Location = new System.Drawing.Point(47, 574);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(25, 25);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox.TabIndex = 27;
+            this.pictureBox.TabStop = false;
+            this.pictureBox.Visible = false;
             // 
             // starsBoxRating
             // 
@@ -358,6 +373,7 @@
             this.tableLayoutPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePerformers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -387,5 +403,6 @@
         private StarsBox starsBoxRating;
         private System.Windows.Forms.DataGridViewTextBoxColumn perfomerDataGridViewTextBoxColumn;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.PictureBox pictureBox;
     }
 }

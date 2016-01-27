@@ -23,16 +23,9 @@ namespace Logic.Business
 
                 if (!hasSubdirectories)
                 {
-                    var canBeDeleted = true;
-                    foreach (var file in files)
-                    {
-                        var attributes = File.GetAttributes(file);
-                        if ((attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                        {
-                            canBeDeleted = false;
-                            break;
-                        }
-                    }
+                    var canBeDeleted =
+                        files.Select(File.GetAttributes)
+                            .All(attributes => (attributes & FileAttributes.Hidden) == FileAttributes.Hidden);
 
                     if (canBeDeleted)
                     {
@@ -58,14 +51,17 @@ namespace Logic.Business
                 // falls die Datei schon existiert
                 var newFileName = $"{baseInfoTag.JoinedPerformers} - {baseInfoTag.Title}";
                 var newFileInfo = new FileInfo(Path.Combine(path, $"{newFileName}{oldFileInfo.Extension}"));
-                var counter = 1;
-                while (newFileInfo.Exists)
+                if (newFileInfo != oldFileInfo)
                 {
-                    var tempFileName = $"{newFileName} ({counter++})";
-                    newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
+                    var counter = 1;
+                    while (newFileInfo.Exists)
+                    {
+                        var tempFileName = $"{newFileName} ({counter++})";
+                        newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
+                    }
+                    // Datei in neue Struktur kopieren
+                    oldFileInfo.MoveTo(newFileInfo.FullName);
                 }
-                // Datei in neue Struktur kopieren
-                oldFileInfo.MoveTo(newFileInfo.FullName);
                 return true;
             }
             catch (Exception ex)
@@ -91,6 +87,11 @@ namespace Logic.Business
                 Logger.Error($"{ex.Message} -> \"{fileInfo}\"", ex);
                 return null;
             }
+        }
+
+        public static float CalculatePercentage(int total, int successfully, int unsuccessfully)
+        {
+            return (float)successfully / (total - unsuccessfully) * 100;
         }
 
         public static Id3MultiEditHelp GetTagsAndIntersectionFields(List<string> fileInfos)

@@ -98,6 +98,16 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Harken1 {
+            get {
+                object obj = ResourceManager.GetObject("Harken1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please select a folder from where the music files should be  loaded (Subfolders will be included).
         /// </summary>
         internal static string InputHint {
@@ -131,16 +141,6 @@ namespace AlbumDirectoryCreator.Properties {
         internal static string OutputHint {
             get {
                 return ResourceManager.GetString("OutputHint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap plus {
-            get {
-                object obj = ResourceManager.GetObject("plus", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

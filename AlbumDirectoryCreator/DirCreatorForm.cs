@@ -30,10 +30,6 @@ namespace AlbumDirectoryCreator
         public DirCreatorForm()
         {
             InitializeComponent();
-            _logger.Info("_________________________________________________________________");
-            _logger.Info("AlbumDirectoryCreator is opened!");
-            textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
-            textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath = _pathOut = Settings.Default.pathDestiny;
         }
 
         private void EnumerateFiles()
@@ -57,15 +53,14 @@ namespace AlbumDirectoryCreator
                 var errorHappened = false;
                 var withException = 0;
                 progressBar.Maximum = _hashSet.Count;
-                var transformBlock = new TransformBlock<string, BaseInfoTag>(s => Helper.ReadMetaDatas(s),
-            new ExecutionDataflowBlockOptions
-            {
-                TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                MaxDegreeOfParallelism = 20
-            });
+                var transformBlock = new TransformBlock<string, BaseInfoTag>(s => { progressBar.PerformStep(); return Helper.ReadMetaDatas(s); },
+                    new ExecutionDataflowBlockOptions
+                    {
+                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                        MaxDegreeOfParallelism = 20
+                    });
                 var readMetaDates = new ActionBlock<BaseInfoTag>(treeMp3 =>
                 {
-                    progressBar.PerformStep();
                     if (treeMp3 != null)
                         _hashSet.TryAdd(treeMp3.FileInfo, treeMp3);
                     else
@@ -101,7 +96,7 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Analyzing of {_hashSet.Count} files done within {_stopwatch.Elapsed}");
                 _stopwatch.Reset();
                 _logger.Info($"{withException} files that triggered an exception and were ignored");
-                var percentage = (float)_hashSet.Count / _fileInfos.Count * 100;
+                var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count, 0);
                 _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
                 // Show the stuff on the UI
                 BindAndSort();
@@ -138,7 +133,7 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
-                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => Helper.MoveFile(t, _pathOut),
+                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => { progressBar.PerformStep(); return Helper.MoveFile(t, _pathOut); },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
@@ -148,7 +143,6 @@ namespace AlbumDirectoryCreator
                 var withException = 0;
                 var readMetaDates = new ActionBlock<bool>(x =>
                 {
-                    progressBar.PerformStep();
                     if (x)
                         successfully++;
                     else
@@ -174,7 +168,7 @@ namespace AlbumDirectoryCreator
                 _stopwatch.Stop();
 
                 _logger.Info($"{withException} files that triggered an exception and are ignored");
-                var percentage = (float)successfully / (_hashSet.Count - withException) * 100;
+                var percentage = Helper.CalculatePercentage(_hashSet.Count, successfully, withException);
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
                 _stopwatch.Reset();
 
@@ -329,6 +323,14 @@ namespace AlbumDirectoryCreator
         private void advancedDataGridView1_SortStringChanged(object sender, EventArgs e)
         {
             bindingSourceFiles.Sort = advancedDataGridView1.SortString;
+        }
+
+        private void DirCreatorForm_Load(object sender, EventArgs e)
+        {
+            _logger.Info("_________________________________________________________________");
+            _logger.Info("AlbumDirectoryCreator is opened!");
+            textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
+            textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath = _pathOut = Settings.Default.pathDestiny;
         }
     }
 }

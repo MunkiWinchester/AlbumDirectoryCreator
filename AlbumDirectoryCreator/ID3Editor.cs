@@ -104,31 +104,38 @@ namespace AlbumDirectoryCreator
                     path = Resources.multiValue;
                 }
 
-                bindingSourcePerformers.DataSource = performers;
-                textBoxAlbum.Text = album;
-                textBoxTitle.Text = title;
-                textBoxYear.Text = year;
-                textBoxComment.Text = comment;
-                starsBoxRating.SetStars(rating);
-                textBoxTitleNr.Text = titleNr;
-                textBoxPath.Text = path;
-                if (genres != null)
-                    foreach (var genre in genres)
-                    {
-                        var index = checkedListBoxGenre.Items.IndexOf(genre);
-                        if (index == -1)
-                        {
-                            checkedListBoxGenre.Items.Add(genre);
-                            checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
-                        }
-                        else
-                            checkedListBoxGenre.SetItemChecked(index, true);
-                    }
+                SetValues(performers, album, title, year, comment, rating, titleNr, path, genres);
             }
             catch (CorruptFileException ex)
             {
                 Logger.Error($"{_file.Name} is corrupted! Reasons: \"{_file.CorruptionReasons}\"",
                     ex);
+            }
+        }
+
+        private void SetValues(IReadOnlyCollection<Performer> performers, string album, string title, string year, string comment, Stars? rating,
+            string titleNr, string path, IReadOnlyCollection<string> genres)
+        {
+            bindingSourcePerformers.DataSource = performers;
+            textBoxAlbum.Text = album;
+            textBoxTitle.Text = title;
+            textBoxYear.Text = year;
+            textBoxComment.Text = comment;
+            starsBoxRating.SetStars(rating);
+            textBoxTitleNr.Text = titleNr;
+            textBoxPath.Text = path;
+
+            if (genres == null) return;
+            foreach (var genre in genres)
+            {
+                var index = checkedListBoxGenre.Items.IndexOf(genre);
+                if (index == -1)
+                {
+                    checkedListBoxGenre.Items.Add(genre);
+                    checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
+                }
+                else
+                    checkedListBoxGenre.SetItemChecked(index, true);
             }
         }
 
@@ -155,7 +162,10 @@ namespace AlbumDirectoryCreator
               (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
 
             if (Id3Handler.Save(file, _file))
+            {
                 ItemSaved?.Invoke(file, EventArgs.Empty);
+                pictureBox.Show();
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -180,8 +190,12 @@ namespace AlbumDirectoryCreator
                         checkedListBox.SetItemCheckState(index, CheckState.Unchecked);
                     }
                 }
+
                 var starBox = ctrl as StarsBox;
                 starBox?.SetStars(Stars.Zero);
+
+                var picBox = ctrl as PictureBox;
+                picBox?.Hide();
             }
         }
 
