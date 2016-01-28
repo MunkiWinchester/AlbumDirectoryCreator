@@ -162,7 +162,7 @@ namespace AlbumDirectoryCreator
                 _stopwatch.Start();
                 LoadingAnimation.Start(advancedDataGridView1);
                 progressBar.Step = 0;
-                progressBar.Maximum = _fileInfos.Count;
+                progressBar.Maximum = _hashSet.Count;
                 // Dateien durchgehen
                 Parallel.ForEach(_hashSet.Values, treeMp3 =>
                 {
@@ -171,7 +171,6 @@ namespace AlbumDirectoryCreator
 
                 transformBlock.Complete();
                 await transformBlock.Completion;
-                ClearBindingsEtc();
                 LoadingAnimation.End(advancedDataGridView1);
                 _stopwatch.Stop();
 
@@ -184,6 +183,7 @@ namespace AlbumDirectoryCreator
                 if (checkBoxClearPathOut.Checked)
                     Helper.DeleteEmptyFolders(_pathIn);
                 buttonCreate.Enabled = false;
+                ClearBindingsEtc();
             }
         }
 

@@ -1,4 +1,6 @@
-﻿namespace AlbumDirectoryCreator
+﻿using AlbumDirectoryCreator.Components;
+
+namespace AlbumDirectoryCreator
 {
     partial class DirCreatorForm
     {
@@ -55,7 +57,7 @@
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
-            this.iD3Editor = new AlbumDirectoryCreator.Id3Editor();
+            this.iD3Editor = new Id3Editor();
             this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();

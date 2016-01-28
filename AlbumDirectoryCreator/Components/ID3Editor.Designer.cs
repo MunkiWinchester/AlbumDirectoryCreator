@@ -1,4 +1,4 @@
-﻿namespace AlbumDirectoryCreator
+﻿namespace AlbumDirectoryCreator.Components
 {
     partial class Id3Editor
     {
@@ -53,7 +53,7 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.starsBoxRating = new AlbumDirectoryCreator.StarsBox();
+            this.starsBoxRating = new StarsBox();
             this.groupBoxEditor.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();

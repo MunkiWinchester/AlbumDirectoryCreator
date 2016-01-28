@@ -1,10 +1,10 @@
-﻿using AlbumDirectoryCreator.Properties;
-using Logic.DataObjects;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using AlbumDirectoryCreator.Properties;
+using Logic.DataObjects;
 
-namespace AlbumDirectoryCreator
+namespace AlbumDirectoryCreator.Components
 {
     public partial class StarsBox : UserControl
     {

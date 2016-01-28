@@ -1,4 +1,4 @@
-﻿namespace AlbumDirectoryCreator
+﻿namespace AlbumDirectoryCreator.Components
 {
     partial class StarsBox
     {
