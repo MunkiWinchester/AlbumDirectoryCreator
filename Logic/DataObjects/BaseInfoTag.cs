@@ -20,16 +20,18 @@ namespace Logic.DataObjects
             FileInfo = fileInfo;
 
             var path = "00Without Artist\\";
+            var perf = firstPerformer.RemoveInvalidPathCharsAndToTitleCase();
+            var alb = album.RemoveInvalidPathCharsAndToTitleCase();
             // Pfad erstellen
-            if (!string.IsNullOrWhiteSpace(firstPerformer) &&
-                !string.IsNullOrWhiteSpace(album))
+            if (!string.IsNullOrWhiteSpace(perf) &&
+                !string.IsNullOrWhiteSpace(alb))
             {
                 path =
-                    $"{firstPerformer.RemoveInvalidPathCharsAndToTitleCase()}\\{album.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                    $"{perf}\\{alb}\\";
             }
-            else if (!string.IsNullOrWhiteSpace(firstPerformer))
+            else if (!string.IsNullOrWhiteSpace(perf))
             {
-                path = $"{firstPerformer.RemoveInvalidPathCharsAndToTitleCase()}\\";
+                path = $"{perf}\\";
             }
             NewBasePath = path;
         }

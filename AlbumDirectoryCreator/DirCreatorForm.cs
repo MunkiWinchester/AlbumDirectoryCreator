@@ -1,4 +1,5 @@
-﻿using AlbumDirectoryCreator.Properties;
+﻿using AlbumDirectoryCreator.Components;
+using AlbumDirectoryCreator.Properties;
 using Logging;
 using Logic.Business;
 using Logic.DataObjects;
@@ -22,7 +23,7 @@ namespace AlbumDirectoryCreator
         private string _pathIn;
         private string _pathOut;
         private readonly Stopwatch _stopwatch = new Stopwatch();
-        private readonly List<string> _fileInfos = new List<string>();
+        private List<string> _fileInfos = new List<string>();
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, BaseInfoTag> _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
@@ -35,10 +36,7 @@ namespace AlbumDirectoryCreator
         private void EnumerateFiles()
         {
             _fileInfos.Clear();
-            _fileInfos.AddRange(
-                Directory.EnumerateFiles(_pathIn, "*.*", SearchOption.AllDirectories)
-                    .Where(file => _extensions.Contains(file.Split('.').Last().ToLower()))
-                    .ToList());
+            _fileInfos = Helper.GetAllFiles(_pathIn, _extensions);
 
             ReadMetaDatesTpl();
         }
@@ -76,6 +74,7 @@ namespace AlbumDirectoryCreator
                 transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
                 _stopwatch.Start();
+                LoadingAnimation.Start(advancedDataGridView1);
                 progressBar.Maximum = _fileInfos.Count;
                 // Dateien durchgehen
                 Parallel.ForEach(_fileInfos, fileInfo =>
@@ -85,6 +84,7 @@ namespace AlbumDirectoryCreator
 
                 transformBlock.Complete();
                 await transformBlock.Completion;
+                LoadingAnimation.End(advancedDataGridView1);
                 _stopwatch.Stop();
 
                 if (errorHappened)
@@ -96,10 +96,14 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Analyzing of {_hashSet.Count} files done within {_stopwatch.Elapsed}");
                 _stopwatch.Reset();
                 _logger.Info($"{withException} files that triggered an exception and were ignored");
-                var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count, 0);
+                var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
                 _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
                 // Show the stuff on the UI
                 BindAndSort();
+
+                _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
+                if (checkBoxClearPathIn.Checked)
+                    Helper.DeleteEmptyFolders(_pathIn);
                 buttonCreate.Enabled = true;
             }
         }
@@ -133,7 +137,7 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
-                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => { progressBar.PerformStep(); return Helper.MoveFile(t, _pathOut); },
+                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => { return Helper.MoveFile(t, _pathOut); },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
@@ -143,6 +147,7 @@ namespace AlbumDirectoryCreator
                 var withException = 0;
                 var readMetaDates = new ActionBlock<bool>(x =>
                 {
+                    progressBar.PerformStep();
                     if (x)
                         successfully++;
                     else
@@ -155,6 +160,8 @@ namespace AlbumDirectoryCreator
                 transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
                 _stopwatch.Start();
+                LoadingAnimation.Start(advancedDataGridView1);
+                progressBar.Step = 0;
                 progressBar.Maximum = _fileInfos.Count;
                 // Dateien durchgehen
                 Parallel.ForEach(_hashSet.Values, treeMp3 =>
@@ -165,15 +172,17 @@ namespace AlbumDirectoryCreator
                 transformBlock.Complete();
                 await transformBlock.Completion;
                 ClearBindingsEtc();
+                LoadingAnimation.End(advancedDataGridView1);
                 _stopwatch.Stop();
 
                 _logger.Info($"{withException} files that triggered an exception and are ignored");
-                var percentage = Helper.CalculatePercentage(_hashSet.Count, successfully, withException);
+                var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
                 _stopwatch.Reset();
 
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
-                Helper.DeleteEmptyFolders(_pathOut);
+                if (checkBoxClearPathOut.Checked)
+                    Helper.DeleteEmptyFolders(_pathIn);
                 buttonCreate.Enabled = false;
             }
         }
@@ -277,27 +286,9 @@ namespace AlbumDirectoryCreator
 
         private void linkLabelLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var date = DateTime.Today.ToString("yyyy-MM-dd");
             var logfilePath =
-                $@"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\logs\{date}.log";
-
-            try
-            {
-                var p = new Process
-                {
-                    StartInfo =
-                            {
-                                FileName = "notepad++.exe",
-                                Arguments = logfilePath
-                            }
-                };
-                p.Start();
-            }
-            catch
-            {
-                MessageBox.Show(Resources.CantFindNotepadPlus, Resources.Error,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                $@"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\logs\";
+            Process.Start("explorer.exe", logfilePath);
         }
 
         private void iD3Editor_ItemSaved(object sender, EventArgs e)
@@ -329,6 +320,7 @@ namespace AlbumDirectoryCreator
         {
             _logger.Info("_________________________________________________________________");
             _logger.Info("AlbumDirectoryCreator is opened!");
+            Helper.StartLogEntry();
             textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
             textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath = _pathOut = Settings.Default.pathDestiny;
         }

@@ -18,17 +18,25 @@ namespace Logic.Business
 
         public static string RemoveInvalidPathCharsAndToTitleCase(this string s)
         {
-            var temp = s.Split(InvalidChars, StringSplitOptions.RemoveEmptyEntries);
-            var temp1 = new string[temp.Length];
-            for (var index = 0; index < temp.Length; index++)
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ");
+            if (s.IndexOfAny(InvalidChars) != -1)
             {
-                var s1 = temp[index];
-                if (index != temp.Length - 1)
-                    temp1[index] = string.Format("{0} ", s1.Trim());
-                else
-                    temp1[index] = s1.Trim();
+                var temp = s.Split(InvalidChars, StringSplitOptions.RemoveEmptyEntries);
+                var temp1 = new string[temp.Length];
+                for (var index = 0; index < temp.Length; index++)
+                {
+                    var s1 = temp[index];
+                    if (index != temp.Length - 1)
+                        temp1[index] = string.Format("{0} ", s1.Trim());
+                    else
+                        temp1[index] = s1.Trim();
+                }
+                var sNew =
+                    System.Text.RegularExpressions.Regex.Replace(
+                        CultureInfo.CurrentCulture.TextInfo.ToTitleCase(string.Join(" ", temp1)), @"\s+", " ");
+                return sNew;
             }
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(string.Join("", temp1));
+            return s;
         }
 
         public static object GetPropertyValue(this object obj, string propertyName)

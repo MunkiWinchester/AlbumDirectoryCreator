@@ -60,6 +60,8 @@
             this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
+            this.checkBoxClearPathIn = new System.Windows.Forms.CheckBox();
+            this.checkBoxClearPathOut = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -78,7 +80,7 @@
             this.textBoxPathOrigins.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
             this.textBoxPathOrigins.Location = new System.Drawing.Point(13, 12);
             this.textBoxPathOrigins.Name = "textBoxPathOrigins";
-            this.textBoxPathOrigins.Size = new System.Drawing.Size(911, 20);
+            this.textBoxPathOrigins.Size = new System.Drawing.Size(890, 20);
             this.textBoxPathOrigins.TabIndex = 2;
             this.textBoxPathOrigins.Text = "G:\\Stuff\\Filme\\Musik";
             this.textBoxPathOrigins.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
@@ -86,7 +88,7 @@
             // buttonSearch
             // 
             this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSearch.Location = new System.Drawing.Point(971, 10);
+            this.buttonSearch.Location = new System.Drawing.Point(950, 10);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(103, 23);
             this.buttonSearch.TabIndex = 3;
@@ -102,7 +104,7 @@
             this.textBoxPathDestiny.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
             this.textBoxPathDestiny.Location = new System.Drawing.Point(13, 38);
             this.textBoxPathDestiny.Name = "textBoxPathDestiny";
-            this.textBoxPathDestiny.Size = new System.Drawing.Size(911, 20);
+            this.textBoxPathDestiny.Size = new System.Drawing.Size(890, 20);
             this.textBoxPathDestiny.TabIndex = 8;
             this.textBoxPathDestiny.Text = "G:\\Stuff\\Filme\\Musik\\Musik Geordnet";
             this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
@@ -111,7 +113,7 @@
             // 
             this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCreate.Enabled = false;
-            this.buttonCreate.Location = new System.Drawing.Point(971, 36);
+            this.buttonCreate.Location = new System.Drawing.Point(950, 36);
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(103, 23);
             this.buttonCreate.TabIndex = 9;
@@ -375,7 +377,7 @@
             // 
             this.buttonSearchDestinyPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSearchDestinyPath.Image = global::AlbumDirectoryCreator.Properties.Resources.Binocular;
-            this.buttonSearchDestinyPath.Location = new System.Drawing.Point(930, 35);
+            this.buttonSearchDestinyPath.Location = new System.Drawing.Point(909, 36);
             this.buttonSearchDestinyPath.Name = "buttonSearchDestinyPath";
             this.buttonSearchDestinyPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchDestinyPath.TabIndex = 15;
@@ -386,12 +388,30 @@
             // 
             this.buttonSearchOriginPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSearchOriginPath.Image = global::AlbumDirectoryCreator.Properties.Resources.Binocular;
-            this.buttonSearchOriginPath.Location = new System.Drawing.Point(930, 10);
+            this.buttonSearchOriginPath.Location = new System.Drawing.Point(909, 10);
             this.buttonSearchOriginPath.Name = "buttonSearchOriginPath";
             this.buttonSearchOriginPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
+            // 
+            // checkBoxClearPathIn
+            // 
+            this.checkBoxClearPathIn.AutoSize = true;
+            this.checkBoxClearPathIn.Location = new System.Drawing.Point(1059, 15);
+            this.checkBoxClearPathIn.Name = "checkBoxClearPathIn";
+            this.checkBoxClearPathIn.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxClearPathIn.TabIndex = 16;
+            this.checkBoxClearPathIn.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxClearPathOut
+            // 
+            this.checkBoxClearPathOut.AutoSize = true;
+            this.checkBoxClearPathOut.Location = new System.Drawing.Point(1059, 41);
+            this.checkBoxClearPathOut.Name = "checkBoxClearPathOut";
+            this.checkBoxClearPathOut.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxClearPathOut.TabIndex = 17;
+            this.checkBoxClearPathOut.UseVisualStyleBackColor = true;
             // 
             // DirCreatorForm
             // 
@@ -399,6 +419,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1086, 655);
+            this.Controls.Add(this.checkBoxClearPathOut);
+            this.Controls.Add(this.checkBoxClearPathIn);
             this.Controls.Add(this.buttonSearchDestinyPath);
             this.Controls.Add(this.buttonSearchOriginPath);
             this.Controls.Add(this.splitContainer);
@@ -459,6 +481,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn albumDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn firstPerformerDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn joinedPerformersDataGridViewTextBoxColumn;
+        private System.Windows.Forms.CheckBox checkBoxClearPathIn;
+        private System.Windows.Forms.CheckBox checkBoxClearPathOut;
     }
 }
 

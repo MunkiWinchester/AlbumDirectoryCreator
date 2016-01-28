@@ -56,7 +56,7 @@ namespace AlbumDirectoryCreator
         public void SetValues(List<string> fileInfoList)
         {
             _isMulti = true;
-            _id3MultiEditHelp = Helper.GetTagsAndIntersectionFields(fileInfoList);
+            _id3MultiEditHelp = Id3Handler.GetTagsAndIntersectionFields(fileInfoList);
             SetValues();
         }
 
