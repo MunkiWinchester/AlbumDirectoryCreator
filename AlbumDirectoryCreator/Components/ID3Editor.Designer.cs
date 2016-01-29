@@ -49,11 +49,11 @@
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.labelRating = new System.Windows.Forms.Label();
+            this.starsBoxRating = new AlbumDirectoryCreator.Components.StarsBox();
             this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.starsBoxRating = new StarsBox();
             this.groupBoxEditor.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
@@ -308,6 +308,15 @@
             this.labelRating.TabIndex = 25;
             this.labelRating.Text = "Rating:";
             // 
+            // starsBoxRating
+            // 
+            this.starsBoxRating.Location = new System.Drawing.Point(78, 401);
+            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.Name = "starsBoxRating";
+            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.TabIndex = 26;
+            // 
             // checkedListBoxGenre
             // 
             this.tableLayoutPanel.SetColumnSpan(this.checkedListBoxGenre, 2);
@@ -351,15 +360,6 @@
             this.pictureBox.TabIndex = 27;
             this.pictureBox.TabStop = false;
             this.pictureBox.Visible = false;
-            // 
-            // starsBoxRating
-            // 
-            this.starsBoxRating.Location = new System.Drawing.Point(78, 401);
-            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.Name = "starsBoxRating";
-            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.TabIndex = 26;
             // 
             // Id3Editor
             // 

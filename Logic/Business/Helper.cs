@@ -46,7 +46,7 @@ namespace Logic.Business
         {
             try
             {
-                var path = $"{basePath}{baseInfoTag.NewBasePath}";
+                var path = $"{basePath}\\{baseInfoTag.NewBasePath}";
                 Directory.CreateDirectory(path);
                 var oldFileInfo = new FileInfo(baseInfoTag.FileInfo);
 
@@ -65,16 +65,25 @@ namespace Logic.Business
                 if (!newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower()))
                 {
                     var counter = 1;
+                    var isTheSame = false;
                     while (newFileInfo.Exists)
                     {
+                        isTheSame = newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower());
+                        if (isTheSame)
+                            break;
+
                         var tempFileName = $"{newFileName} ({counter++})";
                         newFileInfo =
                             new FileInfo(Path.Combine(path,
                                 $"{tempFileName}{oldFileInfo.Extension.ToLower()}"));
                     }
-                    // Datei in neue Struktur kopieren
-                    Logger.Info($"Moving \"{oldFileInfo}\"\r\n                                  to \"{newFileInfo}\"");
-                    oldFileInfo.MoveTo(newFileInfo.FullName);
+                    if (!isTheSame)
+                    {
+                        // Datei in neue Struktur kopieren
+                        Logger.Info(
+                            $"Moving \"{oldFileInfo}\"\r\n                                  to \"{newFileInfo}\"");
+                        oldFileInfo.MoveTo(newFileInfo.FullName);
+                    }
                 }
                 return true;
             }
@@ -89,17 +98,13 @@ namespace Logic.Business
         {
             try
             {
-                foreach (var directory in Directory.GetDirectories(startLocation))
+                var directories = Directory.GetDirectories(startLocation);
+                foreach (var directory in directories)
                 {
                     DeleteEmptyFolders(directory);
-                    var hasSubdirectories = Directory.GetDirectories(directory).Any();
-
-                    if (!hasSubdirectories)
-                    {
-                        DeleteFolderIfEmpty(directory);
-                    }
                 }
-                DeleteFolderIfEmpty(startLocation);
+                if (!Directory.GetDirectories(startLocation).Any())
+                    DeleteFolderIfEmpty(startLocation);
             }
             catch (Exception ex)
             {
@@ -118,7 +123,7 @@ namespace Logic.Business
             {
                 try
                 {
-                    Directory.Delete(directory, true);
+                    Directory.Delete(directory, false);
                 }
                 catch (Exception ex)
                 {

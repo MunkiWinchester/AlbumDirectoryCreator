@@ -51,7 +51,11 @@ namespace AlbumDirectoryCreator
                 var errorHappened = false;
                 var withException = 0;
                 progressBar.Maximum = _hashSet.Count;
-                var transformBlock = new TransformBlock<string, BaseInfoTag>(s => { progressBar.PerformStep(); return Helper.ReadMetaDatas(s); },
+                var transformBlock = new TransformBlock<string, BaseInfoTag>(s =>
+                {
+                    progressBar.PerformStep();
+                    return Helper.ReadMetaDatas(s);
+                },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
@@ -93,17 +97,14 @@ namespace AlbumDirectoryCreator
                         Resources.Error,
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Logfile schreiben
-                _logger.Info($"Analyzing of {_hashSet.Count} files done within {_stopwatch.Elapsed}");
                 _stopwatch.Reset();
-                _logger.Info($"{withException} files that triggered an exception and were ignored");
+                if (withException > 0)
+                    _logger.Info($"{withException} files that triggered an exception and were ignored");
                 var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
-                _logger.Info($"{_hashSet.Count} files that are successfully read in ({percentage}%)");
+                _logger.Info($"{_hashSet.Count} files that are successfully read in within {_stopwatch.Elapsed} ({percentage}%)");
                 // Show the stuff on the UI
                 BindAndSort();
 
-                _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
-                if (checkBoxClearPathIn.Checked)
-                    Helper.DeleteEmptyFolders(_pathIn);
                 buttonCreate.Enabled = true;
             }
         }
@@ -137,7 +138,11 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
-                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t => { return Helper.MoveFile(t, _pathOut); },
+                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t =>
+                {
+                    progressBar.PerformStep();
+                    return Helper.MoveFile(t, _pathOut);
+                },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
@@ -147,7 +152,6 @@ namespace AlbumDirectoryCreator
                 var withException = 0;
                 var readMetaDates = new ActionBlock<bool>(x =>
                 {
-                    progressBar.PerformStep();
                     if (x)
                         successfully++;
                     else
@@ -174,14 +178,14 @@ namespace AlbumDirectoryCreator
                 LoadingAnimation.End(advancedDataGridView1);
                 _stopwatch.Stop();
 
-                _logger.Info($"{withException} files that triggered an exception and are ignored");
+                if (withException > 0)
+                    _logger.Info($"{withException} files that triggered an exception and are ignored");
                 var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
                 _stopwatch.Reset();
 
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
-                if (checkBoxClearPathOut.Checked)
-                    Helper.DeleteEmptyFolders(_pathIn);
+                Helper.DeleteEmptyFolders(_pathIn);
                 buttonCreate.Enabled = false;
                 ClearBindingsEtc();
             }
@@ -213,11 +217,11 @@ namespace AlbumDirectoryCreator
                 {
                     if (Path.IsPathRooted(path) && !path.StartsWith("\\"))
                     {
-                        if (!pathExists)
-                            Directory.CreateDirectory(_pathOut);
                         _pathOut = path;
                         Settings.Default.pathDestiny = _pathOut;
                         Settings.Default.Save();
+                        if (!pathExists)
+                            Directory.CreateDirectory(_pathOut);
 
                         CreateFolderEtc();
                     }
@@ -323,6 +327,11 @@ namespace AlbumDirectoryCreator
             Helper.StartLogEntry();
             textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
             textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath = _pathOut = Settings.Default.pathDestiny;
+        }
+
+        private void iD3Editor_Leave(object sender, EventArgs e)
+        {
+            // Todo: Unsaved Values
         }
     }
 }

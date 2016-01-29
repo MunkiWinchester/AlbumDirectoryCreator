@@ -37,7 +37,7 @@ namespace Logging
         {
             var log = new LogEventInfo
             {
-                Message = message,
+                Message = $"{message} ({ex.GetType()})\r\n{ex.StackTrace}",
                 Level = LogLevel.Error,
                 Exception = ex
             };
