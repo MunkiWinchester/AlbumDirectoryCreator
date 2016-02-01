@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AlbumDirectoryCreator.Properties;
+using Logic.DataObjects;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using AlbumDirectoryCreator.Properties;
-using Logic.DataObjects;
 
 namespace AlbumDirectoryCreator.Components
 {

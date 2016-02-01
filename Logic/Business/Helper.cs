@@ -58,7 +58,7 @@ namespace Logic.Business
                 else
                     newFileName = oldFileInfo.Name.Replace(oldFileInfo.Extension, "");
 
-                newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase();
+                newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase().Trim();
                 var newFileInfo =
                     new FileInfo(Path.Combine(path,
                         $"{newFileName}{oldFileInfo.Extension.ToLower()}"));
@@ -79,9 +79,12 @@ namespace Logic.Business
                     }
                     if (!isTheSame)
                     {
+                        var file = TagLib.File.Create(oldFileInfo.FullName);
+                        file.Tag.Comment += $" ~ Originname: \"{Path.GetFileName(oldFileInfo.Name)}\"";
+                        file.Save();
                         // Datei in neue Struktur kopieren
                         Logger.Info(
-                            $"Moving \"{oldFileInfo}\"\r\n                                  to \"{newFileInfo}\"");
+                            $"Moving \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
                         oldFileInfo.MoveTo(newFileInfo.FullName);
                     }
                 }
@@ -140,17 +143,13 @@ namespace Logic.Business
 
         public static List<string> GetAllFiles(string folder, List<string> extensions)
         {
-            var files = new List<string>();
+            var files = (from file in Directory.GetFiles(folder)
+                         let attributes = File.GetAttributes(file)
+                         where
+                             (attributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
+                             extensions.Contains(file.Split('.').Last().ToLower())
+                         select file).ToList();
 
-            foreach (var file in Directory.GetFiles(folder).ToList())
-            {
-                var attributes = File.GetAttributes(file);
-                if (((attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                    && (extensions.Contains(file.Split('.').Last().ToLower())))
-                {
-                    files.Add(file);
-                }
-            }
             try
             {
                 foreach (var subDir in Directory.GetDirectories(folder))

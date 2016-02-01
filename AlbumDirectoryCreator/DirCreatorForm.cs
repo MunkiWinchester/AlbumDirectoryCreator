@@ -27,86 +27,73 @@ namespace AlbumDirectoryCreator
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, BaseInfoTag> _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         private readonly Logger _logger = new Logger(LoggingType.UI);
+        private float _stepValue;
+        private float _currentPercentage;
 
         public DirCreatorForm()
         {
             InitializeComponent();
         }
 
-        private void EnumerateFiles()
-        {
-            _fileInfos.Clear();
-            _fileInfos = Helper.GetAllFiles(_pathIn, _extensions);
-
-            ReadMetaDatesTpl();
-        }
-
-        private async void ReadMetaDatesTpl()
+        private async void EnumerateFiles()
         {
             ClearBindingsEtc();
-            if (!_hashSet.Any())
-            {
-                _logger.Info(
+            _fileInfos = Helper.GetAllFiles(_pathIn, _extensions);
+            _logger.Info(
                     $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) being read in from \"{_pathIn}\"");
-                var errorHappened = false;
-                var withException = 0;
-                progressBar.Maximum = _hashSet.Count;
-                var transformBlock = new TransformBlock<string, BaseInfoTag>(s =>
+            var errorHappened = false;
+            var withException = 0;
+            var transformBlock = new TransformBlock<string, BaseInfoTag>(s =>
+            {
+                PerformStep();
+                return Helper.ReadMetaDatas(s);
+            },
+                new ExecutionDataflowBlockOptions
                 {
-                    progressBar.PerformStep();
-                    return Helper.ReadMetaDatas(s);
-                },
-                    new ExecutionDataflowBlockOptions
-                    {
-                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                        MaxDegreeOfParallelism = 20
-                    });
-                var readMetaDates = new ActionBlock<BaseInfoTag>(treeMp3 =>
-                {
-                    if (treeMp3 != null)
-                        _hashSet.TryAdd(treeMp3.FileInfo, treeMp3);
-                    else
-                    {
-                        withException++;
-                        errorHappened = true;
-                    }
-                },
-                    new ExecutionDataflowBlockOptions
-                    {
-                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
-                    });
-                transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
-
-                _stopwatch.Start();
-                LoadingAnimation.Start(advancedDataGridView1);
-                progressBar.Maximum = _fileInfos.Count;
-                // Dateien durchgehen
-                Parallel.ForEach(_fileInfos, fileInfo =>
-                {
-                    transformBlock.Post(fileInfo);
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    MaxDegreeOfParallelism = 40
                 });
+            var readMetaDates = new ActionBlock<BaseInfoTag>(treeMp3 =>
+            {
+                if (treeMp3 != null)
+                    _hashSet.TryAdd(treeMp3.FileInfo, treeMp3);
+                else
+                {
+                    withException++;
+                    errorHappened = true;
+                }
+            },
+                new ExecutionDataflowBlockOptions
+                {
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
+                });
+            transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
-                transformBlock.Complete();
-                await transformBlock.Completion;
-                LoadingAnimation.End(advancedDataGridView1);
-                _stopwatch.Stop();
+            StartOrStop(true, _fileInfos.Count);
+            // Dateien durchgehen
+            Parallel.ForEach(_fileInfos, fileInfo =>
+            {
+                transformBlock.Post(fileInfo);
+            });
+            transformBlock.Complete();
+            await transformBlock.Completion;
+            StartOrStop(false);
 
-                if (errorHappened)
-                    MessageBox.Show(
-                        $"{Resources.ErrorOccured}\r\n{withException} files caused an exception.\r\n(View Logfile to see which files)",
-                        Resources.Error,
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // Logfile schreiben
-                _stopwatch.Reset();
-                if (withException > 0)
-                    _logger.Info($"{withException} files that triggered an exception and were ignored");
-                var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
-                _logger.Info($"{_hashSet.Count} files that are successfully read in within {_stopwatch.Elapsed} ({percentage}%)");
-                // Show the stuff on the UI
-                BindAndSort();
+            if (errorHappened)
+                MessageBox.Show(
+                    $"{Resources.ErrorOccured}\r\n{withException} files caused an exception.\r\n(View Logfile to see which files)",
+                    Resources.Error,
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Logfile schreiben
+            _stopwatch.Reset();
+            if (withException > 0)
+                _logger.Info($"{withException} files that triggered an exception and were ignored");
+            var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
+            _logger.Info($"{_hashSet.Count} files that are successfully read in within {_stopwatch.Elapsed} ({percentage}%)");
+            // Show the stuff on the UI
+            BindAndSort();
 
-                buttonCreate.Enabled = true;
-            }
+            buttonCreate.Enabled = true;
         }
 
         private void BindAndSort(string fileInfoOfEdited = "")
@@ -140,13 +127,13 @@ namespace AlbumDirectoryCreator
 
                 var transformBlock = new TransformBlock<BaseInfoTag, bool>(t =>
                 {
-                    progressBar.PerformStep();
+                    PerformStep();
                     return Helper.MoveFile(t, _pathOut);
                 },
                     new ExecutionDataflowBlockOptions
                     {
                         TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                        MaxDegreeOfParallelism = 20
+                        MaxDegreeOfParallelism = 40
                     });
                 var successfully = 0;
                 var withException = 0;
@@ -163,20 +150,15 @@ namespace AlbumDirectoryCreator
                     });
                 transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
 
-                _stopwatch.Start();
-                LoadingAnimation.Start(advancedDataGridView1);
-                progressBar.Step = 0;
-                progressBar.Maximum = _hashSet.Count;
+                StartOrStop(true, _hashSet.Count);
                 // Dateien durchgehen
                 Parallel.ForEach(_hashSet.Values, treeMp3 =>
                 {
                     transformBlock.Post(treeMp3);
                 });
-
                 transformBlock.Complete();
                 await transformBlock.Completion;
-                LoadingAnimation.End(advancedDataGridView1);
-                _stopwatch.Stop();
+                StartOrStop(false);
 
                 if (withException > 0)
                     _logger.Info($"{withException} files that triggered an exception and are ignored");
@@ -195,7 +177,36 @@ namespace AlbumDirectoryCreator
         {
             bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
+            _fileInfos.Clear();
             _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
+        }
+
+        private void StartOrStop(bool start, int maximum = 0)
+        {
+            if (start)
+            {
+                _stepValue = (float)100 / maximum;
+                progressBar.Value = 0;
+                _currentPercentage = 0;
+                labelPercentage.Text = "";
+                labelPercentage.Refresh();
+                progressBar.Maximum = maximum;
+                _stopwatch.Start();
+                LoadingAnimation.Start(advancedDataGridView1);
+            }
+            else
+            {
+                LoadingAnimation.End(advancedDataGridView1);
+                _stopwatch.Stop();
+            }
+        }
+
+        private void PerformStep()
+        {
+            progressBar.PerformStep();
+            _currentPercentage += _stepValue;
+            labelPercentage.Text = $"{Convert.ToInt32(_currentPercentage)}%";
+            labelPercentage.Refresh();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e)
@@ -204,45 +215,61 @@ namespace AlbumDirectoryCreator
             if (button != null)
             {
                 var path = button == buttonSearch ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
-                var pathExists = Directory.Exists(path);
-                if (button == buttonSearch && pathExists)
+                if (button == buttonSearch)
+                {
+                    if (SavePath(path, true))
+                        EnumerateFiles();
+                }
+                else if (button == buttonCreate)
+                {
+                    if (SavePath(path, false))
+                        CreateFolderEtc();
+                }
+            }
+        }
+
+        private bool SavePath(string path, bool isIn)
+        {
+            if (isIn)
+            {
+                if (Directory.Exists(path))
                 {
                     _pathIn = path;
                     Settings.Default.pathOrigin = _pathIn;
                     Settings.Default.Save();
-
-                    EnumerateFiles();
+                    return true;
                 }
-                else if (button == buttonCreate)
-                {
-                    if (Path.IsPathRooted(path) && !path.StartsWith("\\"))
-                    {
-                        _pathOut = path;
-                        Settings.Default.pathDestiny = _pathOut;
-                        Settings.Default.Save();
-                        if (!pathExists)
-                            Directory.CreateDirectory(_pathOut);
-
-                        CreateFolderEtc();
-                    }
-                }
-                else
-                    MessageBox.Show($"Your given path (\"{path}\") is not valid!", Resources.Error,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Your given path (\"{path}\") is not valid!", Resources.Error,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
+            if (Path.IsPathRooted(path) && !path.StartsWith("\\"))
+            {
+                _pathOut = path;
+                Settings.Default.pathDestiny = _pathOut;
+                Settings.Default.Save();
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(_pathOut);
+                return true;
+            }
+            MessageBox.Show($"Your given path (\"{path}\") is not valid!", Resources.Error,
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
         }
 
         private void buttonSearchOriginPath_Click(object sender, EventArgs e)
         {
             var button = sender as Button;
-            folderDialogOrigins.SelectedPath = _pathIn;
-            var result = folderDialogOrigins.ShowDialog();
-            if (result == DialogResult.OK && button != null)
+            if (button != null)
             {
-                if (button == buttonSearchOriginPath)
-                    _pathIn = textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath;
-                else if (button == buttonSearchDestinyPath)
-                    _pathOut = textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath;
+                var isOrigin = button == buttonSearchOriginPath;
+                folderDialog.SelectedPath = isOrigin ? _pathIn : _pathOut;
+                folderDialog.Description = isOrigin ? Resources.InputHint : Resources.OutputHint;
+                var result = folderDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    SavePath(folderDialog.SelectedPath, isOrigin);
+                }
             }
         }
 
@@ -325,13 +352,23 @@ namespace AlbumDirectoryCreator
             _logger.Info("_________________________________________________________________");
             _logger.Info("AlbumDirectoryCreator is opened!");
             Helper.StartLogEntry();
-            textBoxPathOrigins.Text = folderDialogOrigins.SelectedPath = _pathIn = Settings.Default.pathOrigin;
-            textBoxPathDestiny.Text = folderDialogDestiny.SelectedPath = _pathOut = Settings.Default.pathDestiny;
+            textBoxPathOrigins.Text = _pathIn = Settings.Default.pathOrigin;
+            textBoxPathDestiny.Text = _pathOut = Settings.Default.pathDestiny;
         }
 
         private void iD3Editor_Leave(object sender, EventArgs e)
         {
             // Todo: Unsaved Values
+        }
+
+        private void textBoxPathOrigins_KeyDown(object sender, KeyEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox != null && e.KeyCode == Keys.Enter)
+            {
+                SavePath(textBox == textBoxPathOrigins ? textBoxPathOrigins.Text : textBoxPathDestiny.Text,
+                    textBox == textBoxPathOrigins);
+            }
         }
     }
 }

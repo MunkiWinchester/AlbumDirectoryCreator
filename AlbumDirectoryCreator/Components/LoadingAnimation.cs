@@ -14,7 +14,7 @@ namespace AlbumDirectoryCreator.Components
         {
             try
             {
-                ControlAnimator.StartAnimating(targetControl, ControlAnimator.DrawMode.Lines, Color.FromArgb(198, 0, 0),
+                ControlAnimator.StartAnimating(targetControl, ControlAnimator.DrawMode.Lines, Color.Red,
                     false);
             }
             catch (Exception ex)
