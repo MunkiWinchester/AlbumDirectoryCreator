@@ -82,7 +82,7 @@ namespace AlbumDirectoryCreator
             this.textBoxPathOrigins.Name = "textBoxPathOrigins";
             this.textBoxPathOrigins.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathOrigins.TabIndex = 2;
-            this.textBoxPathOrigins.Text = "G:\\Stuff\\Filme\\Musik";
+            this.textBoxPathOrigins.Text = "Music Incoming Path";
             this.textBoxPathOrigins.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
             // 
             // buttonSearch
@@ -106,7 +106,7 @@ namespace AlbumDirectoryCreator
             this.textBoxPathDestiny.Name = "textBoxPathDestiny";
             this.textBoxPathDestiny.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathDestiny.TabIndex = 8;
-            this.textBoxPathDestiny.Text = "G:\\Stuff\\Filme\\Musik\\Musik Geordnet";
+            this.textBoxPathDestiny.Text = "Music Outgoing Path";
             this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
             // 
             // buttonCreate

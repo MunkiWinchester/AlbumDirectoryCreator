@@ -41,6 +41,8 @@ namespace Logic.Business
                 }
                 if (id3.TagTypes == TagTypes.Id3v2)
                     LogDifferences(newTags.GetPopularimeterFrame().Rating.ToStars(), oldTags.GetPopularimeterFrame().Rating.ToStars(), "Rating");
+                //TODO: sauberer
+                id3.Tag.Comment = $" - {oldId3.Name}";
 
                 id3.Save();
                 Logger.Info("---------------");

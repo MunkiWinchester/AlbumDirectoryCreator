@@ -31,6 +31,9 @@ namespace Logic.Business
                 // Auslesen
                 var file = TagLib.File.Create(fileInfo);
                 var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
+                //TODO: Sauberer
+                tag.Comment += $" - {fileInfo}";
+                file.Save();
 
                 return new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer,
                     tag.Album, tag.Title, fileInfo);
