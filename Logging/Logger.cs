@@ -13,10 +13,9 @@ namespace Logging
         /// <summary>
         ///     Creates the logger for the calling project/class
         /// </summary>
-        /// <param name="loggingType">Enum for the class</param>
-        public Logger(LoggingType loggingType)
+        public Logger()
         {
-            _nLogger = LogManager.GetLogger(loggingType.ToString());
+            _nLogger = LogManager.GetCurrentClassLogger();
         }
 
         /// <summary>

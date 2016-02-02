@@ -11,18 +11,7 @@ namespace Logic.Business
 {
     public static class Helper
     {
-        private static readonly Logger Logger = new Logger(LoggingType.Business);
-
-        public static void StartLogEntry()
-        {
-            Logger.Info("_________________________________________________________________");
-            Logger.Info("AlbumDirectoryCreator is opened!");
-        }
-
-        public static byte SetRating(Stars stars)
-        {
-            return (byte)stars;
-        }
+        private static readonly Logger Logger = new Logger();
 
         public static BaseInfoTag ReadMetaDatas(string fileInfo)
         {
@@ -97,6 +86,29 @@ namespace Logic.Business
             }
         }
 
+        public static List<string> GetAllFiles(string folder, List<string> extensions)
+        {
+            var files = (from file in Directory.GetFiles(folder)
+                         let attributes = File.GetAttributes(file)
+                         where
+                             (attributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
+                             extensions.Contains(file.Split('.').Last().ToLower())
+                         select file).ToList();
+
+            try
+            {
+                foreach (var subDir in Directory.GetDirectories(folder))
+                {
+                    files.AddRange(GetAllFiles(subDir, extensions));
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"{ex.Message} -> \"{folder}\"", ex);
+            }
+            return files;
+        }
+
         public static void DeleteEmptyFolders(string startLocation)
         {
             try
@@ -139,29 +151,6 @@ namespace Logic.Business
         {
             var number = (float)successfully / total;
             return number * 100;
-        }
-
-        public static List<string> GetAllFiles(string folder, List<string> extensions)
-        {
-            var files = (from file in Directory.GetFiles(folder)
-                         let attributes = File.GetAttributes(file)
-                         where
-                             (attributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
-                             extensions.Contains(file.Split('.').Last().ToLower())
-                         select file).ToList();
-
-            try
-            {
-                foreach (var subDir in Directory.GetDirectories(folder))
-                {
-                    files.AddRange(GetAllFiles(subDir, extensions));
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"{ex.Message} -> \"{folder}\"", ex);
-            }
-            return files;
         }
     }
 }

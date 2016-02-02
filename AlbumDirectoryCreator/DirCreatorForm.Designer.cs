@@ -33,14 +33,14 @@ namespace AlbumDirectoryCreator
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirCreatorForm));
             this.textBoxPathOrigins = new System.Windows.Forms.TextBox();
-            this.buttonSearch = new System.Windows.Forms.Button();
+            this.buttonEnumerate = new System.Windows.Forms.Button();
             this.textBoxPathDestiny = new System.Windows.Forms.TextBox();
-            this.buttonCreate = new System.Windows.Forms.Button();
+            this.buttonMove = new System.Windows.Forms.Button();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanelProgress = new System.Windows.Forms.TableLayoutPanel();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelPercentage = new System.Windows.Forms.Label();
-            this.advancedDataGridView1 = new ADGV.AdvancedDataGridView();
+            this.advancedDataGridView = new ADGV.AdvancedDataGridView();
             this.joinedPerformersDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.firstPerformerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.albumDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,7 +68,7 @@ namespace AlbumDirectoryCreator
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.tableLayoutPanelProgress.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).BeginInit();
             this.bindingNavigator.SuspendLayout();
@@ -85,19 +85,19 @@ namespace AlbumDirectoryCreator
             this.textBoxPathOrigins.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathOrigins.TabIndex = 2;
             this.textBoxPathOrigins.Text = "Music Incoming Path";
-            this.textBoxPathOrigins.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPathOrigins_KeyDown);
-            this.textBoxPathOrigins.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
+            this.textBoxPathOrigins.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPath_KeyDown);
+            this.textBoxPathOrigins.MouseHover += new System.EventHandler(this.textBoxPath_Enter);
             // 
-            // buttonSearch
+            // buttonEnumerate
             // 
-            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSearch.Location = new System.Drawing.Point(971, 10);
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(103, 23);
-            this.buttonSearch.TabIndex = 3;
-            this.buttonSearch.Text = "Read Files In";
-            this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            this.buttonEnumerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEnumerate.Location = new System.Drawing.Point(971, 10);
+            this.buttonEnumerate.Name = "buttonEnumerate";
+            this.buttonEnumerate.Size = new System.Drawing.Size(103, 23);
+            this.buttonEnumerate.TabIndex = 3;
+            this.buttonEnumerate.Text = "Read Files In";
+            this.buttonEnumerate.UseVisualStyleBackColor = true;
+            this.buttonEnumerate.Click += new System.EventHandler(this.buttonAction_Click);
             // 
             // textBoxPathDestiny
             // 
@@ -110,20 +110,20 @@ namespace AlbumDirectoryCreator
             this.textBoxPathDestiny.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathDestiny.TabIndex = 8;
             this.textBoxPathDestiny.Text = "Music Outgoing Path";
-            this.textBoxPathDestiny.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPathOrigins_KeyDown);
-            this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
+            this.textBoxPathDestiny.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPath_KeyDown);
+            this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPath_Enter);
             // 
-            // buttonCreate
+            // buttonMove
             // 
-            this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCreate.Enabled = false;
-            this.buttonCreate.Location = new System.Drawing.Point(971, 36);
-            this.buttonCreate.Name = "buttonCreate";
-            this.buttonCreate.Size = new System.Drawing.Size(103, 23);
-            this.buttonCreate.TabIndex = 9;
-            this.buttonCreate.Text = "Create Directories";
-            this.buttonCreate.UseVisualStyleBackColor = true;
-            this.buttonCreate.Click += new System.EventHandler(this.buttonSearch_Click);
+            this.buttonMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonMove.Enabled = false;
+            this.buttonMove.Location = new System.Drawing.Point(971, 36);
+            this.buttonMove.Name = "buttonMove";
+            this.buttonMove.Size = new System.Drawing.Size(103, 23);
+            this.buttonMove.TabIndex = 9;
+            this.buttonMove.Text = "Create Directories";
+            this.buttonMove.UseVisualStyleBackColor = true;
+            this.buttonMove.Click += new System.EventHandler(this.buttonAction_Click);
             // 
             // splitContainer
             // 
@@ -136,7 +136,7 @@ namespace AlbumDirectoryCreator
             // splitContainer.Panel1
             // 
             this.splitContainer.Panel1.Controls.Add(this.tableLayoutPanelProgress);
-            this.splitContainer.Panel1.Controls.Add(this.advancedDataGridView1);
+            this.splitContainer.Panel1.Controls.Add(this.advancedDataGridView);
             this.splitContainer.Panel1.Controls.Add(this.bindingNavigator);
             // 
             // splitContainer.Panel2
@@ -185,33 +185,33 @@ namespace AlbumDirectoryCreator
             this.labelPercentage.TabIndex = 4;
             this.labelPercentage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // advancedDataGridView1
+            // advancedDataGridView
             // 
-            this.advancedDataGridView1.AllowUserToAddRows = false;
-            this.advancedDataGridView1.AllowUserToDeleteRows = false;
-            this.advancedDataGridView1.AllowUserToResizeRows = false;
-            this.advancedDataGridView1.AutoGenerateColumns = false;
-            this.advancedDataGridView1.AutoGenerateContextFilters = true;
-            this.advancedDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.advancedDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.advancedDataGridView.AllowUserToAddRows = false;
+            this.advancedDataGridView.AllowUserToDeleteRows = false;
+            this.advancedDataGridView.AllowUserToResizeRows = false;
+            this.advancedDataGridView.AutoGenerateColumns = false;
+            this.advancedDataGridView.AutoGenerateContextFilters = true;
+            this.advancedDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.advancedDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.joinedPerformersDataGridViewTextBoxColumn,
             this.firstPerformerDataGridViewTextBoxColumn,
             this.albumDataGridViewTextBoxColumn,
             this.titleDataGridViewTextBoxColumn,
             this.fileInfoDataGridViewTextBoxColumn,
             this.newBasePathDataGridViewTextBoxColumn});
-            this.advancedDataGridView1.DataSource = this.bindingSourceFiles;
-            this.advancedDataGridView1.DateWithTime = false;
-            this.advancedDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.advancedDataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.advancedDataGridView1.Name = "advancedDataGridView1";
-            this.advancedDataGridView1.RowHeadersVisible = false;
-            this.advancedDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.advancedDataGridView1.Size = new System.Drawing.Size(778, 553);
-            this.advancedDataGridView1.TabIndex = 0;
-            this.advancedDataGridView1.TimeFilter = false;
-            this.advancedDataGridView1.SortStringChanged += new System.EventHandler(this.advancedDataGridView1_SortStringChanged);
-            this.advancedDataGridView1.FilterStringChanged += new System.EventHandler(this.advancedDataGridView1_FilterStringChanged);
+            this.advancedDataGridView.DataSource = this.bindingSourceFiles;
+            this.advancedDataGridView.DateWithTime = false;
+            this.advancedDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.advancedDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.advancedDataGridView.Name = "advancedDataGridView";
+            this.advancedDataGridView.RowHeadersVisible = false;
+            this.advancedDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.advancedDataGridView.Size = new System.Drawing.Size(778, 553);
+            this.advancedDataGridView.TabIndex = 0;
+            this.advancedDataGridView.TimeFilter = false;
+            this.advancedDataGridView.SortStringChanged += new System.EventHandler(this.advancedDataGridView_SortStringChanged);
+            this.advancedDataGridView.FilterStringChanged += new System.EventHandler(this.advancedDataGridView_FilterStringChanged);
             // 
             // joinedPerformersDataGridViewTextBoxColumn
             // 
@@ -394,7 +394,6 @@ namespace AlbumDirectoryCreator
             this.iD3Editor.Size = new System.Drawing.Size(279, 578);
             this.iD3Editor.TabIndex = 12;
             this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
-            this.iD3Editor.Leave += new System.EventHandler(this.iD3Editor_Leave);
             // 
             // buttonSearchDestinyPath
             // 
@@ -405,7 +404,7 @@ namespace AlbumDirectoryCreator
             this.buttonSearchDestinyPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchDestinyPath.TabIndex = 15;
             this.buttonSearchDestinyPath.UseVisualStyleBackColor = true;
-            this.buttonSearchDestinyPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
+            this.buttonSearchDestinyPath.Click += new System.EventHandler(this.buttonSearchPath_Click);
             // 
             // buttonSearchOriginPath
             // 
@@ -416,7 +415,7 @@ namespace AlbumDirectoryCreator
             this.buttonSearchOriginPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
-            this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
+            this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchPath_Click);
             // 
             // DirCreatorForm
             // 
@@ -427,9 +426,9 @@ namespace AlbumDirectoryCreator
             this.Controls.Add(this.buttonSearchDestinyPath);
             this.Controls.Add(this.buttonSearchOriginPath);
             this.Controls.Add(this.splitContainer);
-            this.Controls.Add(this.buttonCreate);
+            this.Controls.Add(this.buttonMove);
             this.Controls.Add(this.textBoxPathDestiny);
-            this.Controls.Add(this.buttonSearch);
+            this.Controls.Add(this.buttonEnumerate);
             this.Controls.Add(this.textBoxPathOrigins);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -444,7 +443,7 @@ namespace AlbumDirectoryCreator
             this.splitContainer.ResumeLayout(false);
             this.tableLayoutPanelProgress.ResumeLayout(false);
             this.tableLayoutPanelProgress.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
             this.bindingNavigator.ResumeLayout(false);
@@ -457,9 +456,9 @@ namespace AlbumDirectoryCreator
         #endregion
 
         private System.Windows.Forms.TextBox textBoxPathOrigins;
-        private System.Windows.Forms.Button buttonSearch;
+        private System.Windows.Forms.Button buttonEnumerate;
         private System.Windows.Forms.TextBox textBoxPathDestiny;
-        private System.Windows.Forms.Button buttonCreate;
+        private System.Windows.Forms.Button buttonMove;
         private System.Windows.Forms.BindingSource bindingSourceFiles;
         private Id3Editor iD3Editor;
         private System.Windows.Forms.SplitContainer splitContainer;
@@ -467,7 +466,7 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.Button buttonSearchDestinyPath;
         private System.Windows.Forms.FolderBrowserDialog folderDialog;
         private System.Windows.Forms.LinkLabel linkLabelLog;
-        private ADGV.AdvancedDataGridView advancedDataGridView1;
+        private ADGV.AdvancedDataGridView advancedDataGridView;
         private System.Windows.Forms.BindingNavigator bindingNavigator;
         private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem;
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem;

@@ -368,6 +368,7 @@
             this.Controls.Add(this.groupBoxEditor);
             this.Name = "Id3Editor";
             this.Size = new System.Drawing.Size(279, 622);
+            this.Load += new System.EventHandler(this.Id3Editor_Load);
             this.groupBoxEditor.ResumeLayout(false);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();

@@ -26,47 +26,6 @@ namespace AlbumDirectoryCreator.Components
             return _stars;
         }
 
-        private void pictureBox1_MouseHover(object sender, EventArgs e)
-        {
-            SetAllStars(false);
-            SetStarsInternal(GetStarsInternal(sender));
-        }
-
-        private Stars GetStarsInternal(object control)
-        {
-            var box = control as PictureBox;
-            if (box != null)
-            {
-                var boxNumber = int.Parse(box.Name.Last().ToString());
-                switch (boxNumber)
-                {
-                    case 1:
-                        return Stars.One;
-
-                    case 2:
-                        return Stars.Two;
-
-                    case 3:
-                        return Stars.Three;
-
-                    case 4:
-                        return Stars.Four;
-
-                    case 5:
-                        return Stars.Five;
-
-                    default:
-                        return Stars.Zero;
-                }
-            }
-            return Stars.Zero;
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            _stars = GetStarsInternal(sender);
-        }
-
         private void SetStarsInternal(Stars stars)
         {
             SetAllStars(false);
@@ -105,17 +64,54 @@ namespace AlbumDirectoryCreator.Components
         private void SetAllStars(bool filled)
         {
             var image = filled ? Resources.Stars_1 : Resources.Stars_0;
-            foreach (var control in Controls)
+            foreach (var box in Controls.OfType<PictureBox>())
             {
-                var box = control as PictureBox;
-                if (box != null)
-                    box.Image = image;
+                box.Image = image;
             }
         }
 
-        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        private static Stars GetStarsInternal(object control)
+        {
+            var box = control as PictureBox;
+            if (box == null) return Stars.Zero;
+
+            var boxNumber = int.Parse(box.Name.Last().ToString());
+            switch (boxNumber)
+            {
+                case 1:
+                    return Stars.One;
+
+                case 2:
+                    return Stars.Two;
+
+                case 3:
+                    return Stars.Three;
+
+                case 4:
+                    return Stars.Four;
+
+                case 5:
+                    return Stars.Five;
+
+                default:
+                    return Stars.Zero;
+            }
+        }
+
+        private void pictureBox_Click(object sender, EventArgs e)
+        {
+            _stars = GetStarsInternal(sender);
+        }
+
+        private void pictureBox_MouseLeave(object sender, EventArgs e)
         {
             SetStarsInternal(_stars);
+        }
+
+        private void pictureBox_MouseHover(object sender, EventArgs e)
+        {
+            SetAllStars(false);
+            SetStarsInternal(GetStarsInternal(sender));
         }
     }
 }

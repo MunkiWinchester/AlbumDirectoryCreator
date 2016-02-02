@@ -10,7 +10,7 @@ namespace Logic.Business
 {
     public static class Id3Handler
     {
-        private static readonly Logger Logger = new Logger(LoggingType.Business);
+        private static readonly Logger Logger = new Logger();
 
         private static readonly List<string> Properties = new List<string>
         {

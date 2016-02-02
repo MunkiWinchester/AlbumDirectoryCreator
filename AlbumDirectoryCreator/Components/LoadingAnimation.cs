@@ -8,7 +8,7 @@ namespace AlbumDirectoryCreator.Components
 {
     public static class LoadingAnimation
     {
-        private static readonly Logger Logger = new Logger(LoggingType.UI);
+        private static readonly Logger Logger = new Logger();
 
         public static void Start(Control targetControl)
         {

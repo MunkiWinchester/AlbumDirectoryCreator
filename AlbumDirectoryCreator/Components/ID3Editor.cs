@@ -19,7 +19,7 @@ namespace AlbumDirectoryCreator.Components
         [Browsable(true)]
         public event EventHandler ItemSaved;
 
-        private static readonly Logger Logger = new Logger(LoggingType.UI);
+        private static readonly Logger Logger = new Logger();
         private File _file;
         private bool _isMulti;
         private Id3MultiEditHelp _id3MultiEditHelp;
@@ -27,20 +27,34 @@ namespace AlbumDirectoryCreator.Components
         public Id3Editor()
         {
             InitializeComponent();
-            var genres = new UltraID3().GenreInfos;
-            genres.RemoveAt(0);
-            foreach (GenreInfo genre in genres)
-            {
-                checkedListBoxGenre.Items.Add(genre.Name);
-            }
-            dataGridViewPerformers.AutoGenerateColumns = true;
-            bindingSourcePerformers.AllowNew = true;
         }
 
-        private void textBoxYear_KeyPress(object sender, KeyPressEventArgs e)
+        #region Methods
+
+        public void Clear()
         {
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            bindingSourcePerformers.Clear();
+            foreach (Control ctrl in tableLayoutPanel.Controls)
+            {
+                var box = ctrl as TextBox;
+                if (box != null)
+                    box.Text = string.Empty;
+
+                var checkedListBox = ctrl as CheckedListBox;
+                if (checkedListBox != null)
+                {
+                    foreach (int index in checkedListBox.CheckedIndices)
+                    {
+                        checkedListBox.SetItemCheckState(index, CheckState.Unchecked);
+                    }
+                }
+
+                var starBox = ctrl as StarsBox;
+                starBox?.SetStars(Stars.Zero);
+
+                var picBox = ctrl as PictureBox;
+                picBox?.Hide();
+            }
         }
 
         public void SetValues(string fileInfo)
@@ -104,7 +118,27 @@ namespace AlbumDirectoryCreator.Components
                     path = Resources.multiValue;
                 }
 
-                SetValues(performers, album, title, year, comment, rating, titleNr, path, genres);
+                bindingSourcePerformers.DataSource = performers;
+                textBoxAlbum.Text = album;
+                textBoxTitle.Text = title;
+                textBoxYear.Text = year;
+                textBoxComment.Text = comment;
+                starsBoxRating.SetStars(rating);
+                textBoxTitleNr.Text = titleNr;
+                textBoxPath.Text = path;
+
+                if (genres == null) return;
+                foreach (var genre in genres)
+                {
+                    var index = checkedListBoxGenre.Items.IndexOf(genre);
+                    if (index == -1)
+                    {
+                        checkedListBoxGenre.Items.Add(genre);
+                        checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
+                    }
+                    else
+                        checkedListBoxGenre.SetItemChecked(index, true);
+                }
             }
             catch (CorruptFileException ex)
             {
@@ -113,30 +147,18 @@ namespace AlbumDirectoryCreator.Components
             }
         }
 
-        private void SetValues(IReadOnlyCollection<Performer> performers, string album, string title, string year, string comment, Stars? rating,
-            string titleNr, string path, IReadOnlyCollection<string> genres)
-        {
-            bindingSourcePerformers.DataSource = performers;
-            textBoxAlbum.Text = album;
-            textBoxTitle.Text = title;
-            textBoxYear.Text = year;
-            textBoxComment.Text = comment;
-            starsBoxRating.SetStars(rating);
-            textBoxTitleNr.Text = titleNr;
-            textBoxPath.Text = path;
+        #endregion Methods
 
-            if (genres == null) return;
-            foreach (var genre in genres)
+        private void Id3Editor_Load(object sender, EventArgs e)
+        {
+            var genres = new UltraID3().GenreInfos;
+            genres.RemoveAt(0);
+            foreach (GenreInfo genre in genres)
             {
-                var index = checkedListBoxGenre.Items.IndexOf(genre);
-                if (index == -1)
-                {
-                    checkedListBoxGenre.Items.Add(genre);
-                    checkedListBoxGenre.SetItemChecked(checkedListBoxGenre.Items.IndexOf(genre), true);
-                }
-                else
-                    checkedListBoxGenre.SetItemChecked(index, true);
+                checkedListBoxGenre.Items.Add(genre.Name);
             }
+            dataGridViewPerformers.AutoGenerateColumns = true;
+            bindingSourcePerformers.AllowNew = true;
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -146,7 +168,7 @@ namespace AlbumDirectoryCreator.Components
             var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
             var rating = tag.GetPopularimeterFrame();
             if (rating != null)
-                rating.Rating = Helper.SetRating(starsBoxRating.GetStars());
+                rating.Rating = (byte)starsBoxRating.GetStars();
 
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
             if (performers != null)
@@ -173,38 +195,18 @@ namespace AlbumDirectoryCreator.Components
             SetValues();
         }
 
-        public void Clear()
-        {
-            bindingSourcePerformers.Clear();
-            foreach (Control ctrl in tableLayoutPanel.Controls)
-            {
-                var box = ctrl as TextBox;
-                if (box != null)
-                    box.Text = string.Empty;
-
-                var checkedListBox = ctrl as CheckedListBox;
-                if (checkedListBox != null)
-                {
-                    foreach (int index in checkedListBox.CheckedIndices)
-                    {
-                        checkedListBox.SetItemCheckState(index, CheckState.Unchecked);
-                    }
-                }
-
-                var starBox = ctrl as StarsBox;
-                starBox?.SetStars(Stars.Zero);
-
-                var picBox = ctrl as PictureBox;
-                picBox?.Hide();
-            }
-        }
-
         private void dataGridViewPerformers_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
                 bindingSourcePerformers.Remove(bindingSourcePerformers.Current);
             }
+        }
+
+        private void textBoxYear_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                e.Handled = true;
         }
     }
 }

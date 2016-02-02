@@ -20,19 +20,55 @@ namespace AlbumDirectoryCreator
 {
     public partial class DirCreatorForm : Form
     {
+        #region Properties
+
         private string _pathIn;
         private string _pathOut;
         private readonly Stopwatch _stopwatch = new Stopwatch();
         private List<string> _fileInfos = new List<string>();
         private readonly List<string> _extensions = new List<string> { "mp3", "wma" };
         private ConcurrentDictionary<string, BaseInfoTag> _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
-        private readonly Logger _logger = new Logger(LoggingType.UI);
+        private readonly Logger _logger = new Logger();
         private float _stepValue;
         private float _currentPercentage;
+
+        #endregion Properties
 
         public DirCreatorForm()
         {
             InitializeComponent();
+        }
+
+        #region Methods
+
+        private void ClearBindingsEtc()
+        {
+            bindingSourceFiles.Sort = "";
+            bindingSourceFiles.DataSource = null;
+            _fileInfos.Clear();
+            _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
+        }
+
+        private void BindAndSort(string fileInfoOfEdited = "")
+        {
+            // Detach current changed event
+            bindingSourceFiles.CurrentChanged -= bindingSourceFiles_CurrentChanged;
+
+            // Sort the stuff and bind it to the binding sources
+            bindingSourceFiles.DataSource = _hashSet.Values.ToDataTable();
+            if (_hashSet.Values.Count != 0)
+                bindingSourceFiles.Sort = $"{nameof(BaseInfoTag.FirstPerformer)}, {nameof(BaseInfoTag.Album)}";
+
+            // Attach current changed event
+            bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
+
+            if (string.IsNullOrWhiteSpace(fileInfoOfEdited))
+            {
+                bindingSourceFiles.MoveNext();
+                bindingSourceFiles.MoveFirst();
+            }
+            else
+                bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(BaseInfoTag.FileInfo), fileInfoOfEdited);
         }
 
         private async void EnumerateFiles()
@@ -85,7 +121,6 @@ namespace AlbumDirectoryCreator
                     Resources.Error,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             // Logfile schreiben
-            _stopwatch.Reset();
             if (withException > 0)
                 _logger.Info($"{withException} files that triggered an exception and were ignored");
             var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
@@ -93,29 +128,7 @@ namespace AlbumDirectoryCreator
             // Show the stuff on the UI
             BindAndSort();
 
-            buttonCreate.Enabled = true;
-        }
-
-        private void BindAndSort(string fileInfoOfEdited = "")
-        {
-            // Detach current changed event
-            bindingSourceFiles.CurrentChanged -= bindingSourceFiles_CurrentChanged;
-
-            // Sort the stuff and bind it to the binding sources
-            bindingSourceFiles.DataSource = _hashSet.Values.ToDataTable();
-            if (_hashSet.Values.Count != 0)
-                bindingSourceFiles.Sort = $"{nameof(BaseInfoTag.FirstPerformer)}, {nameof(BaseInfoTag.Album)}";
-
-            // Attach current changed event
-            bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
-
-            if (string.IsNullOrWhiteSpace(fileInfoOfEdited))
-            {
-                bindingSourceFiles.MoveNext();
-                bindingSourceFiles.MoveFirst();
-            }
-            else
-                bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(BaseInfoTag.FileInfo), fileInfoOfEdited);
+            buttonMove.Enabled = true;
         }
 
         private async void CreateFolderEtc()
@@ -164,21 +177,11 @@ namespace AlbumDirectoryCreator
                     _logger.Info($"{withException} files that triggered an exception and are ignored");
                 var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
-                _stopwatch.Reset();
-
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
                 Helper.DeleteEmptyFolders(_pathIn);
-                buttonCreate.Enabled = false;
+                buttonMove.Enabled = false;
                 ClearBindingsEtc();
             }
-        }
-
-        private void ClearBindingsEtc()
-        {
-            bindingSourceFiles.Sort = "";
-            bindingSourceFiles.DataSource = null;
-            _fileInfos.Clear();
-            _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         }
 
         private void StartOrStop(bool start, int maximum = 0)
@@ -189,14 +192,15 @@ namespace AlbumDirectoryCreator
                 progressBar.Value = 0;
                 _currentPercentage = 0;
                 labelPercentage.Text = "";
+                _stopwatch.Reset();
                 labelPercentage.Refresh();
                 progressBar.Maximum = maximum;
                 _stopwatch.Start();
-                LoadingAnimation.Start(advancedDataGridView1);
+                LoadingAnimation.Start(advancedDataGridView);
             }
             else
             {
-                LoadingAnimation.End(advancedDataGridView1);
+                LoadingAnimation.End(advancedDataGridView);
                 _stopwatch.Stop();
             }
         }
@@ -207,25 +211,6 @@ namespace AlbumDirectoryCreator
             _currentPercentage += _stepValue;
             labelPercentage.Text = $"{Convert.ToInt32(_currentPercentage)}%";
             labelPercentage.Refresh();
-        }
-
-        private void buttonSearch_Click(object sender, EventArgs e)
-        {
-            var button = sender as Button;
-            if (button != null)
-            {
-                var path = button == buttonSearch ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
-                if (button == buttonSearch)
-                {
-                    if (SavePath(path, true))
-                        EnumerateFiles();
-                }
-                else if (button == buttonCreate)
-                {
-                    if (SavePath(path, false))
-                        CreateFolderEtc();
-                }
-            }
         }
 
         private bool SavePath(string path, bool isIn)
@@ -257,7 +242,38 @@ namespace AlbumDirectoryCreator
             return false;
         }
 
-        private void buttonSearchOriginPath_Click(object sender, EventArgs e)
+        #endregion Methods
+
+        #region Events
+
+        private void DirCreatorForm_Load(object sender, EventArgs e)
+        {
+            _logger.Info("_________________________________________________________________");
+            _logger.Info("AlbumDirectoryCreator is opened!");
+            textBoxPathOrigins.Text = _pathIn = Settings.Default.pathOrigin;
+            textBoxPathDestiny.Text = _pathOut = Settings.Default.pathDestiny;
+        }
+
+        private void buttonAction_Click(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null)
+            {
+                var path = button == buttonEnumerate ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
+                if (button == buttonEnumerate)
+                {
+                    if (SavePath(path, true))
+                        EnumerateFiles();
+                }
+                else if (button == buttonMove)
+                {
+                    if (SavePath(path, false))
+                        CreateFolderEtc();
+                }
+            }
+        }
+
+        private void buttonSearchPath_Click(object sender, EventArgs e)
         {
             var button = sender as Button;
             if (button != null)
@@ -273,7 +289,7 @@ namespace AlbumDirectoryCreator
             }
         }
 
-        private void textBoxPathOrigins_Enter(object sender, EventArgs e)
+        private void textBoxPath_Enter(object sender, EventArgs e)
         {
             var textBox = (TextBox)sender;
             var toolTip = new ToolTip();
@@ -283,12 +299,22 @@ namespace AlbumDirectoryCreator
                 toolTip.Show(Resources.OutputHint, textBox, 0, 15, 1500);
         }
 
+        private void textBoxPath_KeyDown(object sender, KeyEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox != null && e.KeyCode == Keys.Enter)
+            {
+                SavePath(textBox == textBoxPathOrigins ? textBoxPathOrigins.Text : textBoxPathDestiny.Text,
+                    textBox == textBoxPathOrigins);
+            }
+        }
+
         private void bindingSourceFiles_CurrentChanged(object sender, EventArgs e)
         {
-            if (advancedDataGridView1.SelectedRows.Count > 1)
+            if (advancedDataGridView.SelectedRows.Count > 1)
             {
                 iD3Editor.SetValues((
-                    from DataGridViewRow row in advancedDataGridView1.SelectedRows
+                    from DataGridViewRow row in advancedDataGridView.SelectedRows
                     select row.DataBoundItem as DataRowView
                     into current
                     select current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString()).ToList());
@@ -297,29 +323,34 @@ namespace AlbumDirectoryCreator
             {
                 var current = bindingSourceFiles.Current as DataRowView;
                 var path = current?.Row[nameof(BaseInfoTag.FileInfo)]?.ToString();
-                SetEditorUp(!string.IsNullOrEmpty(path) ? path : string.Empty);
-            }
-        }
-
-        private void SetEditorUp(string path)
-        {
-            if (!string.IsNullOrWhiteSpace(path))
-            {
-                iD3Editor.Enabled = true;
-                iD3Editor.SetValues(path);
-            }
-            else
-            {
-                iD3Editor.Enabled = false;
-                iD3Editor.Clear();
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    iD3Editor.Enabled = true;
+                    iD3Editor.SetValues(path);
+                }
+                else
+                {
+                    iD3Editor.Enabled = false;
+                    iD3Editor.Clear();
+                }
             }
         }
 
         private void linkLabelLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var logfilePath =
-                $@"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\logs\";
-            Process.Start("explorer.exe", logfilePath);
+                $@"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\logs\{DateTime.Today.ToString("yyyy-MM-dd")}.log";
+            Process.Start(logfilePath);
+        }
+
+        private void advancedDataGridView_FilterStringChanged(object sender, EventArgs e)
+        {
+            bindingSourceFiles.Filter = advancedDataGridView.FilterString;
+        }
+
+        private void advancedDataGridView_SortStringChanged(object sender, EventArgs e)
+        {
+            bindingSourceFiles.Sort = advancedDataGridView.SortString;
         }
 
         private void iD3Editor_ItemSaved(object sender, EventArgs e)
@@ -337,38 +368,6 @@ namespace AlbumDirectoryCreator
             }
         }
 
-        private void advancedDataGridView1_FilterStringChanged(object sender, EventArgs e)
-        {
-            bindingSourceFiles.Filter = advancedDataGridView1.FilterString;
-        }
-
-        private void advancedDataGridView1_SortStringChanged(object sender, EventArgs e)
-        {
-            bindingSourceFiles.Sort = advancedDataGridView1.SortString;
-        }
-
-        private void DirCreatorForm_Load(object sender, EventArgs e)
-        {
-            _logger.Info("_________________________________________________________________");
-            _logger.Info("AlbumDirectoryCreator is opened!");
-            Helper.StartLogEntry();
-            textBoxPathOrigins.Text = _pathIn = Settings.Default.pathOrigin;
-            textBoxPathDestiny.Text = _pathOut = Settings.Default.pathDestiny;
-        }
-
-        private void iD3Editor_Leave(object sender, EventArgs e)
-        {
-            // Todo: Unsaved Values
-        }
-
-        private void textBoxPathOrigins_KeyDown(object sender, KeyEventArgs e)
-        {
-            var textBox = sender as TextBox;
-            if (textBox != null && e.KeyCode == Keys.Enter)
-            {
-                SavePath(textBox == textBoxPathOrigins ? textBoxPathOrigins.Text : textBoxPathDestiny.Text,
-                    textBox == textBoxPathOrigins);
-            }
-        }
+        #endregion Events
     }
 }
