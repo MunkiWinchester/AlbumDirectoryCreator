@@ -108,7 +108,7 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a folder from where the music files should be  loaded (Subfolders will be included).
+        ///   Looks up a localized string similar to Please select a folder from where the music files should be loaded (Subfolders will be included).
         /// </summary>
         internal static string InputHint {
             get {
@@ -136,7 +136,7 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a folder where the music with the new structure shoud be copied (Empty folder is recommend).
+        ///   Looks up a localized string similar to Please select a folder where the music with the new structure should be moved to (Empty folder is recommend).
         /// </summary>
         internal static string OutputHint {
             get {

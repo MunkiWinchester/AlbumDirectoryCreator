@@ -57,11 +57,12 @@ namespace AlbumDirectoryCreator
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
-            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
-            this.folderDialogOrigins = new System.Windows.Forms.FolderBrowserDialog();
-            this.folderDialogDestiny = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
+            this.tableLayoutPanelProgress = new System.Windows.Forms.TableLayoutPanel();
+            this.labelPercentage = new System.Windows.Forms.Label();
+            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -70,6 +71,7 @@ namespace AlbumDirectoryCreator
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).BeginInit();
             this.bindingNavigator.SuspendLayout();
+            this.tableLayoutPanelProgress.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxPathOrigins
@@ -83,6 +85,7 @@ namespace AlbumDirectoryCreator
             this.textBoxPathOrigins.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathOrigins.TabIndex = 2;
             this.textBoxPathOrigins.Text = "Music Incoming Path";
+            this.textBoxPathOrigins.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPathOrigins_KeyDown);
             this.textBoxPathOrigins.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
             // 
             // buttonSearch
@@ -107,6 +110,7 @@ namespace AlbumDirectoryCreator
             this.textBoxPathDestiny.Size = new System.Drawing.Size(911, 20);
             this.textBoxPathDestiny.TabIndex = 8;
             this.textBoxPathDestiny.Text = "Music Outgoing Path";
+            this.textBoxPathDestiny.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPathOrigins_KeyDown);
             this.textBoxPathDestiny.MouseHover += new System.EventHandler(this.textBoxPathOrigins_Enter);
             // 
             // buttonCreate
@@ -131,7 +135,7 @@ namespace AlbumDirectoryCreator
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.progressBar);
+            this.splitContainer.Panel1.Controls.Add(this.tableLayoutPanelProgress);
             this.splitContainer.Panel1.Controls.Add(this.advancedDataGridView1);
             this.splitContainer.Panel1.Controls.Add(this.bindingNavigator);
             // 
@@ -145,11 +149,11 @@ namespace AlbumDirectoryCreator
             // 
             // progressBar
             // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.progressBar.ForeColor = System.Drawing.Color.Lime;
-            this.progressBar.Location = new System.Drawing.Point(428, 555);
+            this.progressBar.Location = new System.Drawing.Point(62, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(350, 20);
+            this.progressBar.Size = new System.Drawing.Size(333, 18);
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 3;
             // 
@@ -353,27 +357,6 @@ namespace AlbumDirectoryCreator
             this.linkLabelLog.Text = "Open Logfile";
             this.linkLabelLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLog_LinkClicked);
             // 
-            // iD3Editor
-            // 
-            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iD3Editor.Enabled = false;
-            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
-            this.iD3Editor.Name = "iD3Editor";
-            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
-            this.iD3Editor.TabIndex = 12;
-            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
-            this.iD3Editor.Leave += new System.EventHandler(this.iD3Editor_Leave);
-            // 
-            // folderDialogOrigins
-            // 
-            this.folderDialogOrigins.Description = "Please select a folder from where the music files should be  loaded (Subfolders w" +
-    "ill be included)";
-            // 
-            // folderDialogDestiny
-            // 
-            this.folderDialogDestiny.Description = "Please select a folder where the music with the new structure shoud be copied (Em" +
-    "pty folder is recommend)";
-            // 
             // buttonSearchDestinyPath
             // 
             this.buttonSearchDestinyPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -395,6 +378,44 @@ namespace AlbumDirectoryCreator
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchOriginPath_Click);
+            // 
+            // tableLayoutPanelProgress
+            // 
+            this.tableLayoutPanelProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanelProgress.ColumnCount = 2;
+            this.tableLayoutPanelProgress.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.tableLayoutPanelProgress.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85F));
+            this.tableLayoutPanelProgress.Controls.Add(this.progressBar, 1, 0);
+            this.tableLayoutPanelProgress.Controls.Add(this.labelPercentage, 0, 0);
+            this.tableLayoutPanelProgress.Location = new System.Drawing.Point(380, 553);
+            this.tableLayoutPanelProgress.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelProgress.Name = "tableLayoutPanelProgress";
+            this.tableLayoutPanelProgress.RowCount = 1;
+            this.tableLayoutPanelProgress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.tableLayoutPanelProgress.Size = new System.Drawing.Size(398, 24);
+            this.tableLayoutPanelProgress.TabIndex = 4;
+            // 
+            // labelPercentage
+            // 
+            this.labelPercentage.AutoSize = true;
+            this.labelPercentage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelPercentage.Location = new System.Drawing.Point(3, 0);
+            this.labelPercentage.Name = "labelPercentage";
+            this.labelPercentage.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.labelPercentage.Size = new System.Drawing.Size(53, 24);
+            this.labelPercentage.TabIndex = 4;
+            this.labelPercentage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // iD3Editor
+            // 
+            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iD3Editor.Enabled = false;
+            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
+            this.iD3Editor.Name = "iD3Editor";
+            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
+            this.iD3Editor.TabIndex = 12;
+            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
+            this.iD3Editor.Leave += new System.EventHandler(this.iD3Editor_Leave);
             // 
             // DirCreatorForm
             // 
@@ -425,6 +446,8 @@ namespace AlbumDirectoryCreator
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
             this.bindingNavigator.ResumeLayout(false);
             this.bindingNavigator.PerformLayout();
+            this.tableLayoutPanelProgress.ResumeLayout(false);
+            this.tableLayoutPanelProgress.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -441,8 +464,7 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Button buttonSearchOriginPath;
         private System.Windows.Forms.Button buttonSearchDestinyPath;
-        private System.Windows.Forms.FolderBrowserDialog folderDialogOrigins;
-        private System.Windows.Forms.FolderBrowserDialog folderDialogDestiny;
+        private System.Windows.Forms.FolderBrowserDialog folderDialog;
         private System.Windows.Forms.LinkLabel linkLabelLog;
         private ADGV.AdvancedDataGridView advancedDataGridView1;
         private System.Windows.Forms.BindingNavigator bindingNavigator;
@@ -462,6 +484,8 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.DataGridViewTextBoxColumn albumDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn firstPerformerDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn joinedPerformersDataGridViewTextBoxColumn;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelProgress;
+        private System.Windows.Forms.Label labelPercentage;
     }
 }
 

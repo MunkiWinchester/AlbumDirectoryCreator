@@ -1,8 +1,10 @@
 ﻿using Logging;
 using Logic.DataObjects;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TagLib;
+using File = TagLib.File;
 
 namespace Logic.Business
 {
@@ -41,8 +43,7 @@ namespace Logic.Business
                 }
                 if (id3.TagTypes == TagTypes.Id3v2)
                     LogDifferences(newTags.GetPopularimeterFrame().Rating.ToStars(), oldTags.GetPopularimeterFrame().Rating.ToStars(), "Rating");
-                //TODO: sauberer
-                id3.Tag.Comment = $" - {oldId3.Name}";
+                id3.Tag.Comment += $" ~ Originname: \"{Path.GetFileName(oldId3.Name)}\"";
 
                 id3.Save();
                 Logger.Info("---------------");

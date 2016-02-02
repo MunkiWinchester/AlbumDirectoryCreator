@@ -31,9 +31,6 @@ namespace Logic.Business
                 // Auslesen
                 var file = TagLib.File.Create(fileInfo);
                 var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
-                //TODO: Sauberer
-                tag.Comment += $" - {fileInfo}";
-                file.Save();
 
                 return new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer,
                     tag.Album, tag.Title, fileInfo);
@@ -61,7 +58,7 @@ namespace Logic.Business
                 else
                     newFileName = oldFileInfo.Name.Replace(oldFileInfo.Extension, "");
 
-                newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase();
+                newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase().Trim();
                 var newFileInfo =
                     new FileInfo(Path.Combine(path,
                         $"{newFileName}{oldFileInfo.Extension.ToLower()}"));
@@ -82,9 +79,12 @@ namespace Logic.Business
                     }
                     if (!isTheSame)
                     {
+                        var file = TagLib.File.Create(oldFileInfo.FullName);
+                        file.Tag.Comment += $" ~ Originname: \"{Path.GetFileName(oldFileInfo.Name)}\"";
+                        file.Save();
                         // Datei in neue Struktur kopieren
                         Logger.Info(
-                            $"Moving \"{oldFileInfo}\"\r\n                                  to \"{newFileInfo}\"");
+                            $"Moving \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
                         oldFileInfo.MoveTo(newFileInfo.FullName);
                     }
                 }
