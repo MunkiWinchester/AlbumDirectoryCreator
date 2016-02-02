@@ -127,10 +127,8 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\DataObjects.Performer.datasource" />
-    <None Include="Properties\DataSources\DataObjects.TreeMp3.datasource" />
     <None Include="Properties\DataSources\Logic.DataObjects.BaseInfoTag.datasource" />
     <None Include="Properties\DataSources\Logic.DataObjects.Performer.datasource" />
-    <None Include="Properties\DataSources\TreeMP3.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

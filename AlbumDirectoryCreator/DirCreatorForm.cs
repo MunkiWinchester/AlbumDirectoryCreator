@@ -31,6 +31,7 @@ namespace AlbumDirectoryCreator
         private readonly Logger _logger = new Logger();
         private float _stepValue;
         private float _currentPercentage;
+        private const int MaxDegreeOfParallelism = 200;
 
         #endregion Properties
 
@@ -79,40 +80,32 @@ namespace AlbumDirectoryCreator
                     $"{_fileInfos.Count} files ({string.Join("; ", _extensions)}) being read in from \"{_pathIn}\"");
             var errorHappened = false;
             var withException = 0;
-            var transformBlock = new TransformBlock<string, BaseInfoTag>(s =>
+
+            var actionBlock = new ActionBlock<string>(s =>
             {
                 PerformStep();
-                return Helper.ReadMetaDatas(s);
-            },
-                new ExecutionDataflowBlockOptions
-                {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                    MaxDegreeOfParallelism = 40
-                });
-            var readMetaDates = new ActionBlock<BaseInfoTag>(treeMp3 =>
-            {
-                if (treeMp3 != null)
-                    _hashSet.TryAdd(treeMp3.FileInfo, treeMp3);
+                var baseInfoTags = Helper.ReadMetaDatas(s);
+                if (baseInfoTags != null)
+                    _hashSet.TryAdd(baseInfoTags.FileInfo, baseInfoTags);
                 else
                 {
                     withException++;
                     errorHappened = true;
                 }
-            },
-                new ExecutionDataflowBlockOptions
-                {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
-                });
-            transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
+            }, new ExecutionDataflowBlockOptions
+            {
+                TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                MaxDegreeOfParallelism = MaxDegreeOfParallelism
+            });
 
             StartOrStop(true, _fileInfos.Count);
             // Dateien durchgehen
             Parallel.ForEach(_fileInfos, fileInfo =>
             {
-                transformBlock.Post(fileInfo);
+                actionBlock.Post(fileInfo);
             });
-            transformBlock.Complete();
-            await transformBlock.Completion;
+            actionBlock.Complete();
+            await actionBlock.Completion;
             StartOrStop(false);
 
             if (errorHappened)
@@ -138,39 +131,29 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
-                var transformBlock = new TransformBlock<BaseInfoTag, bool>(t =>
-                {
-                    PerformStep();
-                    return Helper.MoveFile(t, _pathOut);
-                },
-                    new ExecutionDataflowBlockOptions
-                    {
-                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                        MaxDegreeOfParallelism = 40
-                    });
                 var successfully = 0;
                 var withException = 0;
-                var readMetaDates = new ActionBlock<bool>(x =>
+                var actionBlock = new ActionBlock<BaseInfoTag>(b =>
                 {
-                    if (x)
+                    PerformStep();
+                    if (Helper.MoveFile(b, _pathOut))
                         successfully++;
                     else
                         withException++;
-                },
-                    new ExecutionDataflowBlockOptions
-                    {
-                        TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext()
-                    });
-                transformBlock.LinkTo(readMetaDates, new DataflowLinkOptions { PropagateCompletion = true });
+                }, new ExecutionDataflowBlockOptions
+                {
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    MaxDegreeOfParallelism = MaxDegreeOfParallelism
+                });
 
                 StartOrStop(true, _hashSet.Count);
                 // Dateien durchgehen
-                Parallel.ForEach(_hashSet.Values, treeMp3 =>
+                Parallel.ForEach(_hashSet.Values, baseInfoTag =>
                 {
-                    transformBlock.Post(treeMp3);
+                    actionBlock.Post(baseInfoTag);
                 });
-                transformBlock.Complete();
-                await transformBlock.Completion;
+                actionBlock.Complete();
+                await actionBlock.Completion;
                 StartOrStop(false);
 
                 if (withException > 0)
@@ -179,6 +162,7 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
                 Helper.DeleteEmptyFolders(_pathIn);
+
                 buttonMove.Enabled = false;
                 ClearBindingsEtc();
             }
@@ -360,9 +344,9 @@ namespace AlbumDirectoryCreator
             if (taglibFile != null && previous.Value != null)
             {
                 var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
-                var newTreeMp3 = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
                     previous.Key);
-                _hashSet.AddOrUpdate(previous.Key, newTreeMp3, (s, mp3) => newTreeMp3);
+                _hashSet.AddOrUpdate(previous.Key, baseInfoTag, (key, previousBaseInfoTag) => baseInfoTag);
 
                 BindAndSort(previous.Key);
             }
