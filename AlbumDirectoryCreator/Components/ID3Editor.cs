@@ -29,8 +29,6 @@ namespace AlbumDirectoryCreator.Components
             InitializeComponent();
         }
 
-        #region Methods
-
         public void Clear()
         {
             bindingSourcePerformers.Clear();
@@ -54,6 +52,10 @@ namespace AlbumDirectoryCreator.Components
 
                 var picBox = ctrl as PictureBox;
                 picBox?.Hide();
+
+                var checkBox = ctrl as CheckBox;
+                if (checkBox != null)
+                    checkBox.Checked = false;
             }
         }
 
@@ -147,8 +149,6 @@ namespace AlbumDirectoryCreator.Components
             }
         }
 
-        #endregion Methods
-
         private void Id3Editor_Load(object sender, EventArgs e)
         {
             var genres = new UltraID3().GenreInfos;
@@ -185,7 +185,14 @@ namespace AlbumDirectoryCreator.Components
 
             if (Id3Handler.Save(file, _file))
             {
-                ItemSaved?.Invoke(file, EventArgs.Empty);
+                if (checkBoxRename.Checked)
+                {
+                    var filename = Helper.RenameFile(new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                        _file.Name));
+                    if (filename != null)
+                        file = File.Create(filename);
+                }
+                ItemSaved?.Invoke(new KeyValuePair<string, File>(_file.Name, file), new EventArgs());
                 pictureBox.Show();
             }
         }

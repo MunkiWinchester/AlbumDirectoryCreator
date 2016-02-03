@@ -14,14 +14,13 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Forms;
 using TagLib;
+using File = TagLib.File;
 using TextBox = System.Windows.Forms.TextBox;
 
 namespace AlbumDirectoryCreator
 {
     public partial class DirCreatorForm : Form
     {
-        #region Properties
-
         private string _pathIn;
         private string _pathOut;
         private readonly Stopwatch _stopwatch = new Stopwatch();
@@ -31,16 +30,12 @@ namespace AlbumDirectoryCreator
         private readonly Logger _logger = new Logger();
         private float _stepValue;
         private float _currentPercentage;
-        private const int MaxDegreeOfParallelism = 200;
-
-        #endregion Properties
+        private static int _maxDegreeOfParallelism = 2;
 
         public DirCreatorForm()
         {
             InitializeComponent();
         }
-
-        #region Methods
 
         private void ClearBindingsEtc()
         {
@@ -58,7 +53,8 @@ namespace AlbumDirectoryCreator
             // Sort the stuff and bind it to the binding sources
             bindingSourceFiles.DataSource = _hashSet.Values.ToDataTable();
             if (_hashSet.Values.Count != 0)
-                bindingSourceFiles.Sort = $"{nameof(BaseInfoTag.FirstPerformer)}, {nameof(BaseInfoTag.Album)}";
+                bindingSourceFiles.Sort =
+                    $"{nameof(BaseInfoTag.FirstPerformer)}, {nameof(BaseInfoTag.Album)}, {nameof(BaseInfoTag.Title)}";
 
             // Attach current changed event
             bindingSourceFiles.CurrentChanged += bindingSourceFiles_CurrentChanged;
@@ -95,7 +91,7 @@ namespace AlbumDirectoryCreator
             }, new ExecutionDataflowBlockOptions
             {
                 TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                MaxDegreeOfParallelism = MaxDegreeOfParallelism
+                MaxDegreeOfParallelism = _maxDegreeOfParallelism
             });
 
             StartOrStop(true, _fileInfos.Count);
@@ -143,7 +139,7 @@ namespace AlbumDirectoryCreator
                 }, new ExecutionDataflowBlockOptions
                 {
                     TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
-                    MaxDegreeOfParallelism = MaxDegreeOfParallelism
+                    MaxDegreeOfParallelism = _maxDegreeOfParallelism
                 });
 
                 StartOrStop(true, _hashSet.Count);
@@ -226,16 +222,13 @@ namespace AlbumDirectoryCreator
             return false;
         }
 
-        #endregion Methods
-
-        #region Events
-
         private void DirCreatorForm_Load(object sender, EventArgs e)
         {
             _logger.Info("_________________________________________________________________");
             _logger.Info("AlbumDirectoryCreator is opened!");
             textBoxPathOrigins.Text = _pathIn = Settings.Default.pathOrigin;
             textBoxPathDestiny.Text = _pathOut = Settings.Default.pathDestiny;
+            _maxDegreeOfParallelism = Environment.ProcessorCount * 2;
         }
 
         private void buttonAction_Click(object sender, EventArgs e)
@@ -339,19 +332,22 @@ namespace AlbumDirectoryCreator
 
         private void iD3Editor_ItemSaved(object sender, EventArgs e)
         {
-            var taglibFile = sender as TagLib.File;
-            var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(taglibFile.Name));
-            if (taglibFile != null && previous.Value != null)
+            var kvp = sender as KeyValuePair<string, File>? ?? new KeyValuePair<string, File>();
+            if (kvp.Key != null)
             {
-                var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
-                var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
-                    previous.Key);
-                _hashSet.AddOrUpdate(previous.Key, baseInfoTag, (key, previousBaseInfoTag) => baseInfoTag);
+                var taglibFile = kvp.Value;
+                var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(kvp.Key));
+                if (previous.Value != null)
+                {
+                    var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
+                    var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                        taglibFile.Name);
+                    _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
+                    _hashSet.TryRemove(previous.Key, out baseInfoTag);
 
-                BindAndSort(previous.Key);
+                    BindAndSort(baseInfoTag.FileInfo);
+                }
             }
         }
-
-        #endregion Events
     }
 }

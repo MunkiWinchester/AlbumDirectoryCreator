@@ -49,11 +49,12 @@
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.labelRating = new System.Windows.Forms.Label();
-            this.starsBoxRating = new AlbumDirectoryCreator.Components.StarsBox();
             this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.checkBoxRename = new System.Windows.Forms.CheckBox();
+            this.starsBoxRating = new AlbumDirectoryCreator.Components.StarsBox();
             this.groupBoxEditor.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
@@ -66,7 +67,7 @@
             this.textBoxYear.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxYear, 2);
-            this.textBoxYear.Location = new System.Drawing.Point(78, 226);
+            this.textBoxYear.Location = new System.Drawing.Point(78, 214);
             this.textBoxYear.Name = "textBoxYear";
             this.textBoxYear.Size = new System.Drawing.Size(192, 21);
             this.textBoxYear.TabIndex = 0;
@@ -77,7 +78,7 @@
             this.textBoxAlbum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxAlbum, 2);
-            this.textBoxAlbum.Location = new System.Drawing.Point(78, 151);
+            this.textBoxAlbum.Location = new System.Drawing.Point(78, 139);
             this.textBoxAlbum.Name = "textBoxAlbum";
             this.textBoxAlbum.Size = new System.Drawing.Size(192, 21);
             this.textBoxAlbum.TabIndex = 2;
@@ -87,7 +88,7 @@
             this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxTitle, 2);
-            this.textBoxTitle.Location = new System.Drawing.Point(78, 176);
+            this.textBoxTitle.Location = new System.Drawing.Point(78, 164);
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.Size = new System.Drawing.Size(192, 21);
             this.textBoxTitle.TabIndex = 3;
@@ -97,7 +98,7 @@
             this.textBoxTitleNr.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxTitleNr, 2);
-            this.textBoxTitleNr.Location = new System.Drawing.Point(78, 201);
+            this.textBoxTitleNr.Location = new System.Drawing.Point(78, 189);
             this.textBoxTitleNr.Name = "textBoxTitleNr";
             this.textBoxTitleNr.Size = new System.Drawing.Size(192, 21);
             this.textBoxTitleNr.TabIndex = 4;
@@ -107,7 +108,7 @@
             // 
             this.tableLayoutPanel.SetColumnSpan(this.textBoxComment, 2);
             this.textBoxComment.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxComment.Location = new System.Drawing.Point(78, 251);
+            this.textBoxComment.Location = new System.Drawing.Point(78, 239);
             this.textBoxComment.Multiline = true;
             this.textBoxComment.Name = "textBoxComment";
             this.textBoxComment.Size = new System.Drawing.Size(192, 69);
@@ -117,10 +118,11 @@
             // 
             this.labelAlbum.AutoSize = true;
             this.labelAlbum.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelAlbum.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelAlbum.Location = new System.Drawing.Point(33, 148);
+            this.labelAlbum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAlbum.Location = new System.Drawing.Point(27, 139);
+            this.labelAlbum.Margin = new System.Windows.Forms.Padding(3);
             this.labelAlbum.Name = "labelAlbum";
-            this.labelAlbum.Size = new System.Drawing.Size(39, 25);
+            this.labelAlbum.Size = new System.Drawing.Size(45, 19);
             this.labelAlbum.TabIndex = 9;
             this.labelAlbum.Text = "Album:";
             // 
@@ -128,10 +130,11 @@
             // 
             this.labelTitle.AutoSize = true;
             this.labelTitle.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitle.Location = new System.Drawing.Point(42, 173);
+            this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTitle.Location = new System.Drawing.Point(39, 164);
+            this.labelTitle.Margin = new System.Windows.Forms.Padding(3);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(30, 25);
+            this.labelTitle.Size = new System.Drawing.Size(33, 19);
             this.labelTitle.TabIndex = 10;
             this.labelTitle.Text = "Title:";
             // 
@@ -139,10 +142,11 @@
             // 
             this.labelTitleNr.AutoSize = true;
             this.labelTitleNr.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelTitleNr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitleNr.Location = new System.Drawing.Point(28, 198);
+            this.labelTitleNr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTitleNr.Location = new System.Drawing.Point(23, 189);
+            this.labelTitleNr.Margin = new System.Windows.Forms.Padding(3);
             this.labelTitleNr.Name = "labelTitleNr";
-            this.labelTitleNr.Size = new System.Drawing.Size(44, 25);
+            this.labelTitleNr.Size = new System.Drawing.Size(49, 19);
             this.labelTitleNr.TabIndex = 11;
             this.labelTitleNr.Text = "Title Nr:";
             // 
@@ -150,10 +154,11 @@
             // 
             this.labelYear.AutoSize = true;
             this.labelYear.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelYear.Location = new System.Drawing.Point(40, 223);
+            this.labelYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelYear.Location = new System.Drawing.Point(37, 214);
+            this.labelYear.Margin = new System.Windows.Forms.Padding(3);
             this.labelYear.Name = "labelYear";
-            this.labelYear.Size = new System.Drawing.Size(32, 25);
+            this.labelYear.Size = new System.Drawing.Size(35, 19);
             this.labelYear.TabIndex = 12;
             this.labelYear.Text = "Year:";
             // 
@@ -161,10 +166,11 @@
             // 
             this.labelGenre.AutoSize = true;
             this.labelGenre.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelGenre.Location = new System.Drawing.Point(33, 423);
+            this.labelGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelGenre.Location = new System.Drawing.Point(28, 414);
+            this.labelGenre.Margin = new System.Windows.Forms.Padding(3);
             this.labelGenre.Name = "labelGenre";
-            this.labelGenre.Size = new System.Drawing.Size(39, 148);
+            this.labelGenre.Size = new System.Drawing.Size(44, 130);
             this.labelGenre.TabIndex = 13;
             this.labelGenre.Text = "Genre:";
             // 
@@ -172,10 +178,11 @@
             // 
             this.labelComment.AutoSize = true;
             this.labelComment.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelComment.Location = new System.Drawing.Point(18, 248);
+            this.labelComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelComment.Location = new System.Drawing.Point(8, 239);
+            this.labelComment.Margin = new System.Windows.Forms.Padding(3);
             this.labelComment.Name = "labelComment";
-            this.labelComment.Size = new System.Drawing.Size(54, 75);
+            this.labelComment.Size = new System.Drawing.Size(64, 69);
             this.labelComment.TabIndex = 14;
             this.labelComment.Text = "Comment:";
             // 
@@ -215,13 +222,14 @@
             this.tableLayoutPanel.Controls.Add(this.starsBoxRating, 1, 7);
             this.tableLayoutPanel.Controls.Add(this.labelGenre, 0, 8);
             this.tableLayoutPanel.Controls.Add(this.checkedListBoxGenre, 1, 8);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 9);
-            this.tableLayoutPanel.Controls.Add(this.buttonSave, 1, 9);
-            this.tableLayoutPanel.Controls.Add(this.pictureBox, 0, 9);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 10);
+            this.tableLayoutPanel.Controls.Add(this.buttonSave, 1, 10);
+            this.tableLayoutPanel.Controls.Add(this.pictureBox, 0, 10);
+            this.tableLayoutPanel.Controls.Add(this.checkBoxRename, 1, 9);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 17);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 10;
+            this.tableLayoutPanel.RowCount = 11;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
@@ -231,7 +239,9 @@
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel.Size = new System.Drawing.Size(273, 602);
             this.tableLayoutPanel.TabIndex = 0;
             // 
@@ -239,10 +249,11 @@
             // 
             this.labelPerformers.AutoSize = true;
             this.labelPerformers.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelPerformers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPerformers.Location = new System.Drawing.Point(12, 0);
+            this.labelPerformers.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPerformers.Location = new System.Drawing.Point(4, 3);
+            this.labelPerformers.Margin = new System.Windows.Forms.Padding(3);
             this.labelPerformers.Name = "labelPerformers";
-            this.labelPerformers.Size = new System.Drawing.Size(60, 148);
+            this.labelPerformers.Size = new System.Drawing.Size(68, 130);
             this.labelPerformers.TabIndex = 21;
             this.labelPerformers.Text = "Performers:";
             // 
@@ -261,7 +272,7 @@
             this.dataGridViewPerformers.Location = new System.Drawing.Point(78, 3);
             this.dataGridViewPerformers.Name = "dataGridViewPerformers";
             this.dataGridViewPerformers.RowHeadersVisible = false;
-            this.dataGridViewPerformers.Size = new System.Drawing.Size(192, 142);
+            this.dataGridViewPerformers.Size = new System.Drawing.Size(192, 130);
             this.dataGridViewPerformers.TabIndex = 23;
             this.dataGridViewPerformers.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewPerformers_KeyDown);
             // 
@@ -279,10 +290,11 @@
             // 
             this.labelPath.AutoSize = true;
             this.labelPath.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPath.Location = new System.Drawing.Point(40, 323);
+            this.labelPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPath.Location = new System.Drawing.Point(37, 314);
+            this.labelPath.Margin = new System.Windows.Forms.Padding(3);
             this.labelPath.Name = "labelPath";
-            this.labelPath.Size = new System.Drawing.Size(32, 75);
+            this.labelPath.Size = new System.Drawing.Size(35, 69);
             this.labelPath.TabIndex = 17;
             this.labelPath.Text = "Path:";
             // 
@@ -290,7 +302,7 @@
             // 
             this.tableLayoutPanel.SetColumnSpan(this.textBoxPath, 2);
             this.textBoxPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxPath.Location = new System.Drawing.Point(78, 326);
+            this.textBoxPath.Location = new System.Drawing.Point(78, 314);
             this.textBoxPath.Multiline = true;
             this.textBoxPath.Name = "textBoxPath";
             this.textBoxPath.ReadOnly = true;
@@ -301,38 +313,31 @@
             // 
             this.labelRating.AutoSize = true;
             this.labelRating.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelRating.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelRating.Location = new System.Drawing.Point(31, 398);
+            this.labelRating.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelRating.Location = new System.Drawing.Point(26, 389);
+            this.labelRating.Margin = new System.Windows.Forms.Padding(3);
             this.labelRating.Name = "labelRating";
-            this.labelRating.Size = new System.Drawing.Size(41, 25);
+            this.labelRating.Size = new System.Drawing.Size(46, 19);
             this.labelRating.TabIndex = 25;
             this.labelRating.Text = "Rating:";
-            // 
-            // starsBoxRating
-            // 
-            this.starsBoxRating.Location = new System.Drawing.Point(78, 401);
-            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.Name = "starsBoxRating";
-            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.TabIndex = 26;
             // 
             // checkedListBoxGenre
             // 
             this.tableLayoutPanel.SetColumnSpan(this.checkedListBoxGenre, 2);
             this.checkedListBoxGenre.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkedListBoxGenre.FormattingEnabled = true;
-            this.checkedListBoxGenre.Location = new System.Drawing.Point(78, 426);
+            this.checkedListBoxGenre.Location = new System.Drawing.Point(78, 414);
             this.checkedListBoxGenre.Name = "checkedListBoxGenre";
-            this.checkedListBoxGenre.Size = new System.Drawing.Size(192, 142);
+            this.checkedListBoxGenre.Size = new System.Drawing.Size(192, 130);
             this.checkedListBoxGenre.TabIndex = 19;
             // 
             // buttonCancel
             // 
             this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonCancel.Location = new System.Drawing.Point(177, 574);
+            this.buttonCancel.Location = new System.Drawing.Point(177, 575);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 25);
+            this.buttonCancel.Size = new System.Drawing.Size(75, 24);
             this.buttonCancel.TabIndex = 16;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -341,9 +346,9 @@
             // buttonSave
             // 
             this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSave.Location = new System.Drawing.Point(96, 574);
+            this.buttonSave.Location = new System.Drawing.Point(96, 575);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(75, 25);
+            this.buttonSave.Size = new System.Drawing.Size(75, 24);
             this.buttonSave.TabIndex = 15;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
@@ -353,13 +358,34 @@
             // 
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Right;
             this.pictureBox.Image = global::AlbumDirectoryCreator.Properties.Resources.Harken1;
-            this.pictureBox.Location = new System.Drawing.Point(47, 574);
+            this.pictureBox.Location = new System.Drawing.Point(47, 575);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(25, 25);
+            this.pictureBox.Size = new System.Drawing.Size(25, 24);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox.TabIndex = 27;
             this.pictureBox.TabStop = false;
             this.pictureBox.Visible = false;
+            // 
+            // checkBoxRename
+            // 
+            this.checkBoxRename.AutoSize = true;
+            this.tableLayoutPanel.SetColumnSpan(this.checkBoxRename, 2);
+            this.checkBoxRename.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.checkBoxRename.Location = new System.Drawing.Point(78, 550);
+            this.checkBoxRename.Name = "checkBoxRename";
+            this.checkBoxRename.Size = new System.Drawing.Size(100, 19);
+            this.checkBoxRename.TabIndex = 29;
+            this.checkBoxRename.Text = "Rename file?";
+            this.checkBoxRename.UseVisualStyleBackColor = true;
+            // 
+            // starsBoxRating
+            // 
+            this.starsBoxRating.Location = new System.Drawing.Point(78, 389);
+            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.Name = "starsBoxRating";
+            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.TabIndex = 26;
             // 
             // Id3Editor
             // 
@@ -405,5 +431,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn perfomerDataGridViewTextBoxColumn;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.CheckBox checkBoxRename;
     }
 }
