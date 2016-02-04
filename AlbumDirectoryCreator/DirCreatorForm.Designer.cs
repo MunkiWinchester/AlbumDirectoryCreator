@@ -41,6 +41,13 @@ namespace AlbumDirectoryCreator
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelPercentage = new System.Windows.Forms.Label();
             this.advancedDataGridView = new ADGV.AdvancedDataGridView();
+            this.joinedPerformersDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.firstPerformerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.albumDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.titleDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.fileInfoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.newBasePathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
             this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
             this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
@@ -52,26 +59,20 @@ namespace AlbumDirectoryCreator
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
+            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
-            this.joinedPerformersDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.firstPerformerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.albumDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.titleDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.fileInfoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.newBasePathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingSourceFiles = new System.Windows.Forms.BindingSource(this.components);
-            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
+            this.buttonRename = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.tableLayoutPanelProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).BeginInit();
             this.bindingNavigator.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxPathOrigins
@@ -82,7 +83,7 @@ namespace AlbumDirectoryCreator
             this.textBoxPathOrigins.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
             this.textBoxPathOrigins.Location = new System.Drawing.Point(13, 12);
             this.textBoxPathOrigins.Name = "textBoxPathOrigins";
-            this.textBoxPathOrigins.Size = new System.Drawing.Size(911, 20);
+            this.textBoxPathOrigins.Size = new System.Drawing.Size(802, 20);
             this.textBoxPathOrigins.TabIndex = 2;
             this.textBoxPathOrigins.Text = "Music Incoming Path";
             this.textBoxPathOrigins.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPath_KeyDown);
@@ -91,7 +92,7 @@ namespace AlbumDirectoryCreator
             // buttonEnumerate
             // 
             this.buttonEnumerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonEnumerate.Location = new System.Drawing.Point(971, 10);
+            this.buttonEnumerate.Location = new System.Drawing.Point(862, 10);
             this.buttonEnumerate.Name = "buttonEnumerate";
             this.buttonEnumerate.Size = new System.Drawing.Size(103, 23);
             this.buttonEnumerate.TabIndex = 3;
@@ -213,6 +214,71 @@ namespace AlbumDirectoryCreator
             this.advancedDataGridView.SortStringChanged += new System.EventHandler(this.advancedDataGridView_SortStringChanged);
             this.advancedDataGridView.FilterStringChanged += new System.EventHandler(this.advancedDataGridView_FilterStringChanged);
             // 
+            // joinedPerformersDataGridViewTextBoxColumn
+            // 
+            this.joinedPerformersDataGridViewTextBoxColumn.DataPropertyName = "JoinedPerformers";
+            this.joinedPerformersDataGridViewTextBoxColumn.HeaderText = "Performer";
+            this.joinedPerformersDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.joinedPerformersDataGridViewTextBoxColumn.Name = "joinedPerformersDataGridViewTextBoxColumn";
+            this.joinedPerformersDataGridViewTextBoxColumn.ReadOnly = true;
+            this.joinedPerformersDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.joinedPerformersDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // firstPerformerDataGridViewTextBoxColumn
+            // 
+            this.firstPerformerDataGridViewTextBoxColumn.DataPropertyName = "FirstPerformer";
+            this.firstPerformerDataGridViewTextBoxColumn.HeaderText = "Performers";
+            this.firstPerformerDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.firstPerformerDataGridViewTextBoxColumn.Name = "firstPerformerDataGridViewTextBoxColumn";
+            this.firstPerformerDataGridViewTextBoxColumn.ReadOnly = true;
+            this.firstPerformerDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.firstPerformerDataGridViewTextBoxColumn.Visible = false;
+            // 
+            // albumDataGridViewTextBoxColumn
+            // 
+            this.albumDataGridViewTextBoxColumn.DataPropertyName = "Album";
+            this.albumDataGridViewTextBoxColumn.HeaderText = "Album";
+            this.albumDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.albumDataGridViewTextBoxColumn.Name = "albumDataGridViewTextBoxColumn";
+            this.albumDataGridViewTextBoxColumn.ReadOnly = true;
+            this.albumDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.albumDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // titleDataGridViewTextBoxColumn
+            // 
+            this.titleDataGridViewTextBoxColumn.DataPropertyName = "Title";
+            this.titleDataGridViewTextBoxColumn.HeaderText = "Title";
+            this.titleDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.titleDataGridViewTextBoxColumn.Name = "titleDataGridViewTextBoxColumn";
+            this.titleDataGridViewTextBoxColumn.ReadOnly = true;
+            this.titleDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.titleDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // fileInfoDataGridViewTextBoxColumn
+            // 
+            this.fileInfoDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.fileInfoDataGridViewTextBoxColumn.DataPropertyName = "FileInfo";
+            this.fileInfoDataGridViewTextBoxColumn.HeaderText = "FileInfo";
+            this.fileInfoDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.fileInfoDataGridViewTextBoxColumn.Name = "fileInfoDataGridViewTextBoxColumn";
+            this.fileInfoDataGridViewTextBoxColumn.ReadOnly = true;
+            this.fileInfoDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            // 
+            // newBasePathDataGridViewTextBoxColumn
+            // 
+            this.newBasePathDataGridViewTextBoxColumn.DataPropertyName = "NewBasePath";
+            this.newBasePathDataGridViewTextBoxColumn.HeaderText = "NewBasePath";
+            this.newBasePathDataGridViewTextBoxColumn.MinimumWidth = 22;
+            this.newBasePathDataGridViewTextBoxColumn.Name = "newBasePathDataGridViewTextBoxColumn";
+            this.newBasePathDataGridViewTextBoxColumn.ReadOnly = true;
+            this.newBasePathDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.newBasePathDataGridViewTextBoxColumn.Visible = false;
+            // 
+            // bindingSourceFiles
+            // 
+            this.bindingSourceFiles.DataSource = typeof(Logic.DataObjects.BaseInfoTag);
+            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
+            // 
             // bindingNavigator
             // 
             this.bindingNavigator.AddNewItem = null;
@@ -320,6 +386,16 @@ namespace AlbumDirectoryCreator
             this.linkLabelLog.Text = "Open Logfile";
             this.linkLabelLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLog_LinkClicked);
             // 
+            // iD3Editor
+            // 
+            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iD3Editor.Enabled = false;
+            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
+            this.iD3Editor.Name = "iD3Editor";
+            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
+            this.iD3Editor.TabIndex = 12;
+            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
+            // 
             // buttonSearchDestinyPath
             // 
             this.buttonSearchDestinyPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -335,87 +411,24 @@ namespace AlbumDirectoryCreator
             // 
             this.buttonSearchOriginPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSearchOriginPath.Image = global::AlbumDirectoryCreator.Properties.Resources.Binocular;
-            this.buttonSearchOriginPath.Location = new System.Drawing.Point(930, 10);
+            this.buttonSearchOriginPath.Location = new System.Drawing.Point(821, 10);
             this.buttonSearchOriginPath.Name = "buttonSearchOriginPath";
             this.buttonSearchOriginPath.Size = new System.Drawing.Size(35, 23);
             this.buttonSearchOriginPath.TabIndex = 14;
             this.buttonSearchOriginPath.UseVisualStyleBackColor = true;
             this.buttonSearchOriginPath.Click += new System.EventHandler(this.buttonSearchPath_Click);
             // 
-            // joinedPerformersDataGridViewTextBoxColumn
+            // buttonRename
             // 
-            this.joinedPerformersDataGridViewTextBoxColumn.DataPropertyName = "JoinedPerformers";
-            this.joinedPerformersDataGridViewTextBoxColumn.HeaderText = "Performer";
-            this.joinedPerformersDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.joinedPerformersDataGridViewTextBoxColumn.Name = "joinedPerformersDataGridViewTextBoxColumn";
-            this.joinedPerformersDataGridViewTextBoxColumn.ReadOnly = true;
-            this.joinedPerformersDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.joinedPerformersDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // firstPerformerDataGridViewTextBoxColumn
-            // 
-            this.firstPerformerDataGridViewTextBoxColumn.DataPropertyName = "FirstPerformer";
-            this.firstPerformerDataGridViewTextBoxColumn.HeaderText = "Performers";
-            this.firstPerformerDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.firstPerformerDataGridViewTextBoxColumn.Name = "firstPerformerDataGridViewTextBoxColumn";
-            this.firstPerformerDataGridViewTextBoxColumn.ReadOnly = true;
-            this.firstPerformerDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.firstPerformerDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // albumDataGridViewTextBoxColumn
-            // 
-            this.albumDataGridViewTextBoxColumn.DataPropertyName = "Album";
-            this.albumDataGridViewTextBoxColumn.HeaderText = "Album";
-            this.albumDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.albumDataGridViewTextBoxColumn.Name = "albumDataGridViewTextBoxColumn";
-            this.albumDataGridViewTextBoxColumn.ReadOnly = true;
-            this.albumDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.albumDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // titleDataGridViewTextBoxColumn
-            // 
-            this.titleDataGridViewTextBoxColumn.DataPropertyName = "Title";
-            this.titleDataGridViewTextBoxColumn.HeaderText = "Title";
-            this.titleDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.titleDataGridViewTextBoxColumn.Name = "titleDataGridViewTextBoxColumn";
-            this.titleDataGridViewTextBoxColumn.ReadOnly = true;
-            this.titleDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.titleDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // fileInfoDataGridViewTextBoxColumn
-            // 
-            this.fileInfoDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.fileInfoDataGridViewTextBoxColumn.DataPropertyName = "FileInfo";
-            this.fileInfoDataGridViewTextBoxColumn.HeaderText = "FileInfo";
-            this.fileInfoDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.fileInfoDataGridViewTextBoxColumn.Name = "fileInfoDataGridViewTextBoxColumn";
-            this.fileInfoDataGridViewTextBoxColumn.ReadOnly = true;
-            this.fileInfoDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // newBasePathDataGridViewTextBoxColumn
-            // 
-            this.newBasePathDataGridViewTextBoxColumn.DataPropertyName = "NewBasePath";
-            this.newBasePathDataGridViewTextBoxColumn.HeaderText = "NewBasePath";
-            this.newBasePathDataGridViewTextBoxColumn.MinimumWidth = 22;
-            this.newBasePathDataGridViewTextBoxColumn.Name = "newBasePathDataGridViewTextBoxColumn";
-            this.newBasePathDataGridViewTextBoxColumn.ReadOnly = true;
-            this.newBasePathDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.newBasePathDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // bindingSourceFiles
-            // 
-            this.bindingSourceFiles.DataSource = typeof(Logic.DataObjects.BaseInfoTag);
-            this.bindingSourceFiles.CurrentChanged += new System.EventHandler(this.bindingSourceFiles_CurrentChanged);
-            // 
-            // iD3Editor
-            // 
-            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iD3Editor.Enabled = false;
-            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
-            this.iD3Editor.Name = "iD3Editor";
-            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
-            this.iD3Editor.TabIndex = 12;
-            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
+            this.buttonRename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRename.Enabled = false;
+            this.buttonRename.Location = new System.Drawing.Point(971, 10);
+            this.buttonRename.Name = "buttonRename";
+            this.buttonRename.Size = new System.Drawing.Size(103, 23);
+            this.buttonRename.TabIndex = 16;
+            this.buttonRename.Text = "Rename Files";
+            this.buttonRename.UseVisualStyleBackColor = true;
+            this.buttonRename.Click += new System.EventHandler(this.buttonAction_Click);
             // 
             // DirCreatorForm
             // 
@@ -423,6 +436,7 @@ namespace AlbumDirectoryCreator
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1086, 655);
+            this.Controls.Add(this.buttonRename);
             this.Controls.Add(this.buttonSearchDestinyPath);
             this.Controls.Add(this.buttonSearchOriginPath);
             this.Controls.Add(this.splitContainer);
@@ -444,10 +458,10 @@ namespace AlbumDirectoryCreator
             this.tableLayoutPanelProgress.ResumeLayout(false);
             this.tableLayoutPanelProgress.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
             this.bindingNavigator.ResumeLayout(false);
             this.bindingNavigator.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFiles)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -486,6 +500,7 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.DataGridViewTextBoxColumn joinedPerformersDataGridViewTextBoxColumn;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelProgress;
         private System.Windows.Forms.Label labelPercentage;
+        private System.Windows.Forms.Button buttonRename;
     }
 }
 

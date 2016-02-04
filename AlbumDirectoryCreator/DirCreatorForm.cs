@@ -41,6 +41,7 @@ namespace AlbumDirectoryCreator
         {
             bindingSourceFiles.Sort = "";
             bindingSourceFiles.DataSource = null;
+            buttonMove.Enabled = buttonRename.Enabled = false;
             _fileInfos.Clear();
             _hashSet = new ConcurrentDictionary<string, BaseInfoTag>();
         }
@@ -66,6 +67,7 @@ namespace AlbumDirectoryCreator
             }
             else
                 bindingSourceFiles.Position = bindingSourceFiles.Find(nameof(BaseInfoTag.FileInfo), fileInfoOfEdited);
+            buttonMove.Enabled = buttonRename.Enabled = true;
         }
 
         private async void EnumerateFiles()
@@ -116,8 +118,64 @@ namespace AlbumDirectoryCreator
             _logger.Info($"{_hashSet.Count} files that are successfully read in within {_stopwatch.Elapsed} ({percentage}%)");
             // Show the stuff on the UI
             BindAndSort();
+        }
 
-            buttonMove.Enabled = true;
+        private async void RenameFiles()
+        {
+            if (_hashSet.Any())
+            {
+                _logger.Info(
+                    $"Renaming {_hashSet.Count} files ({string.Join("; ", _extensions)}) to \"Joined Performers - Titel\"");
+                var already = 0;
+                var successfully = 0;
+                var withException = 0;
+                var actionBlock = new ActionBlock<BaseInfoTag>(b =>
+                {
+                    PerformStep();
+                    var result = Helper.RenameFile(b);
+                    if (result.Equals("already"))
+                        already++;
+                    else if (result.Equals("exception"))
+                        withException++;
+                    else
+                    {
+                        var previous = _hashSet.First(x => x.Key.Equals(b.FileInfo));
+                        if (previous.Value != null)
+                        {
+                            var baseInfoTag = new BaseInfoTag(b.JoinedPerformers, b.FirstPerformer, b.Album, b.Title,
+                                result);
+                            BaseInfoTag crap;
+                            _hashSet.TryRemove(previous.Key, out crap);
+                            _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
+                            successfully++;
+                        }
+                    }
+                }, new ExecutionDataflowBlockOptions
+                {
+                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    MaxDegreeOfParallelism = _maxDegreeOfParallelism
+                });
+
+                StartOrStop(true, _hashSet.Count);
+                // Dateien durchgehen
+                Parallel.ForEach(_hashSet.Values, baseInfoTag =>
+                {
+                    actionBlock.Post(baseInfoTag);
+                });
+                actionBlock.Complete();
+                await actionBlock.Completion;
+                StartOrStop(false);
+
+                if (withException > 0)
+                    _logger.Info($"{withException} files that triggered an exception and are ignored");
+                if (already > 0)
+                    _logger.Info($"{already} files have already a fitting name and are ignored");
+                var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
+                _logger.Info(
+                    $"{successfully} files that are successfully renamed within {_stopwatch.Elapsed} ({percentage}%)");
+
+                BindAndSort();
+            }
         }
 
         private async void CreateFolderEtc()
@@ -159,7 +217,6 @@ namespace AlbumDirectoryCreator
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
                 Helper.DeleteEmptyFolders(_pathIn);
 
-                buttonMove.Enabled = false;
                 ClearBindingsEtc();
             }
         }
@@ -236,7 +293,7 @@ namespace AlbumDirectoryCreator
             var button = sender as Button;
             if (button != null)
             {
-                var path = button == buttonEnumerate ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
+                var path = button != buttonMove ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
                 if (button == buttonEnumerate)
                 {
                     if (SavePath(path, true))
@@ -246,6 +303,11 @@ namespace AlbumDirectoryCreator
                 {
                     if (SavePath(path, false))
                         CreateFolderEtc();
+                }
+                else if (button == buttonRename)
+                {
+                    if (SavePath(path, true))
+                        RenameFiles();
                 }
             }
         }
@@ -342,8 +404,9 @@ namespace AlbumDirectoryCreator
                     var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
                     var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
                         taglibFile.Name);
+                    BaseInfoTag crap;
+                    _hashSet.TryRemove(previous.Key, out crap);
                     _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
-                    _hashSet.TryRemove(previous.Key, out baseInfoTag);
 
                     BindAndSort(baseInfoTag.FileInfo);
                 }

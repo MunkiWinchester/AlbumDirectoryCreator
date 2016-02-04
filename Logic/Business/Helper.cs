@@ -145,12 +145,12 @@ namespace Logic.Business
                         }
                     }
                 }
-                return null;
+                return "already";
             }
             catch (Exception ex)
             {
                 Logger.Error($"{ex.Message} -> \"{baseInfoTag.FileInfo}\"", ex);
-                return null;
+                return "exception";
             }
         }
 
