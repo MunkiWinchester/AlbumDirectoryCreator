@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Business\Extensions.cs" />
     <Compile Include="Business\Helper.cs" />
+    <Compile Include="DataObjects\Actiontype.cs" />
     <Compile Include="DataObjects\Id3MultiEditHelp.cs" />
     <Compile Include="DataObjects\Performer.cs" />
     <Compile Include="DataObjects\Stars.cs" />

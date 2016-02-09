@@ -59,11 +59,12 @@ namespace AlbumDirectoryCreator
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.linkLabelLog = new System.Windows.Forms.LinkLabel();
-            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonSearchDestinyPath = new System.Windows.Forms.Button();
             this.buttonSearchOriginPath = new System.Windows.Forms.Button();
             this.buttonRename = new System.Windows.Forms.Button();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.iD3Editor = new AlbumDirectoryCreator.Components.Id3Editor();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -154,13 +155,15 @@ namespace AlbumDirectoryCreator
             this.tableLayoutPanelProgress.ColumnCount = 2;
             this.tableLayoutPanelProgress.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.tableLayoutPanelProgress.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85F));
+            this.tableLayoutPanelProgress.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelProgress.Controls.Add(this.progressBar, 1, 0);
             this.tableLayoutPanelProgress.Controls.Add(this.labelPercentage, 0, 0);
             this.tableLayoutPanelProgress.Location = new System.Drawing.Point(380, 553);
             this.tableLayoutPanelProgress.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelProgress.Name = "tableLayoutPanelProgress";
-            this.tableLayoutPanelProgress.RowCount = 1;
+            this.tableLayoutPanelProgress.RowCount = 2;
             this.tableLayoutPanelProgress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.tableLayoutPanelProgress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelProgress.Size = new System.Drawing.Size(398, 24);
             this.tableLayoutPanelProgress.TabIndex = 4;
             // 
@@ -386,16 +389,6 @@ namespace AlbumDirectoryCreator
             this.linkLabelLog.Text = "Open Logfile";
             this.linkLabelLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLog_LinkClicked);
             // 
-            // iD3Editor
-            // 
-            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iD3Editor.Enabled = false;
-            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
-            this.iD3Editor.Name = "iD3Editor";
-            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
-            this.iD3Editor.TabIndex = 12;
-            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
-            // 
             // buttonSearchDestinyPath
             // 
             this.buttonSearchDestinyPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -429,6 +422,20 @@ namespace AlbumDirectoryCreator
             this.buttonRename.Text = "Rename Files";
             this.buttonRename.UseVisualStyleBackColor = true;
             this.buttonRename.Click += new System.EventHandler(this.buttonAction_Click);
+            // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            // 
+            // iD3Editor
+            // 
+            this.iD3Editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iD3Editor.Enabled = false;
+            this.iD3Editor.Location = new System.Drawing.Point(0, 0);
+            this.iD3Editor.Name = "iD3Editor";
+            this.iD3Editor.Size = new System.Drawing.Size(279, 578);
+            this.iD3Editor.TabIndex = 12;
+            this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
             // 
             // DirCreatorForm
             // 
@@ -501,6 +508,7 @@ namespace AlbumDirectoryCreator
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelProgress;
         private System.Windows.Forms.Label labelPercentage;
         private System.Windows.Forms.Button buttonRename;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
 
