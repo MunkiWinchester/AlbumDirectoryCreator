@@ -81,7 +81,7 @@ namespace AlbumDirectoryCreator
 
             var actionBlock = new ActionBlock<string>(s =>
             {
-                PerformStep();
+                BeginInvoke((MethodInvoker)PerformStep);
                 var baseInfoTags = Helper.ReadMetaDatas(s);
                 if (baseInfoTags != null)
                     _hashSet.TryAdd(baseInfoTags.FileInfo, baseInfoTags);
@@ -92,7 +92,7 @@ namespace AlbumDirectoryCreator
                 }
             }, new ExecutionDataflowBlockOptions
             {
-                TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                TaskScheduler = TaskScheduler.Default,
                 MaxDegreeOfParallelism = _maxDegreeOfParallelism
             });
 
@@ -131,12 +131,22 @@ namespace AlbumDirectoryCreator
                 var withException = 0;
                 var actionBlock = new ActionBlock<BaseInfoTag>(b =>
                 {
-                    PerformStep();
+                    BeginInvoke((MethodInvoker)PerformStep);
                     var result = Helper.RenameFile(b);
-                    if (result.Equals("already"))
-                        already++;
-                    else if (result.Equals("exception"))
-                        withException++;
+                    Actiontype actiontypeResult;
+                    if (Enum.TryParse(result, out actiontypeResult))
+                    {
+                        switch (actiontypeResult)
+                        {
+                            case Actiontype.Already:
+                                already++;
+                                break;
+
+                            case Actiontype.Exception:
+                                withException++;
+                                break;
+                        }
+                    }
                     else
                     {
                         var previous = _hashSet.First(x => x.Key.Equals(b.FileInfo));
@@ -152,7 +162,7 @@ namespace AlbumDirectoryCreator
                     }
                 }, new ExecutionDataflowBlockOptions
                 {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    TaskScheduler = TaskScheduler.Default,
                     MaxDegreeOfParallelism = _maxDegreeOfParallelism
                 });
 
@@ -172,7 +182,7 @@ namespace AlbumDirectoryCreator
                     _logger.Info($"{already} files have already a fitting name and are ignored");
                 var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
                 _logger.Info(
-                    $"{successfully} files that are successfully renamed within {_stopwatch.Elapsed} ({percentage}%)");
+                    $"{successfully} files were renamed within {_stopwatch.Elapsed} ({percentage}%)");
 
                 BindAndSort();
             }
@@ -189,14 +199,14 @@ namespace AlbumDirectoryCreator
                 var withException = 0;
                 var actionBlock = new ActionBlock<BaseInfoTag>(b =>
                 {
-                    PerformStep();
+                    BeginInvoke((MethodInvoker)PerformStep);
                     if (Helper.MoveFile(b, _pathOut))
                         successfully++;
                     else
                         withException++;
                 }, new ExecutionDataflowBlockOptions
                 {
-                    TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext(),
+                    TaskScheduler = TaskScheduler.Default,
                     MaxDegreeOfParallelism = _maxDegreeOfParallelism
                 });
 
@@ -291,25 +301,32 @@ namespace AlbumDirectoryCreator
         private void buttonAction_Click(object sender, EventArgs e)
         {
             var button = sender as Button;
-            if (button != null)
+            if (button != null && !backgroundWorker.IsBusy)
             {
                 // TODO: Backgroundworker
                 var path = button != buttonMove ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
+                var pathSaved = false;
+                var actiontype = Actiontype.EnumerateFiles;
                 if (button == buttonEnumerate)
                 {
+                    actiontype = Actiontype.EnumerateFiles;
                     if (SavePath(path, true))
-                        EnumerateFiles();
+                        pathSaved = true;
                 }
                 else if (button == buttonMove)
                 {
+                    actiontype = Actiontype.MoveFiles;
                     if (SavePath(path, false))
-                        CreateFolderEtc();
+                        pathSaved = true;
                 }
                 else if (button == buttonRename)
                 {
+                    actiontype = Actiontype.RenameFiles;
                     if (SavePath(path, true))
-                        RenameFiles();
+                        pathSaved = true;
                 }
+                if (pathSaved)
+                    backgroundWorker.RunWorkerAsync(actiontype);
             }
         }
 
@@ -319,11 +336,13 @@ namespace AlbumDirectoryCreator
             if (button != null)
             {
                 var isOrigin = button == buttonSearchOriginPath;
+                var textBox = isOrigin ? textBoxPathOrigins : textBoxPathDestiny;
                 folderDialog.SelectedPath = isOrigin ? _pathIn : _pathOut;
                 folderDialog.Description = isOrigin ? Resources.InputHint : Resources.OutputHint;
                 var result = folderDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
+                    textBox.Text = folderDialog.SelectedPath;
                     SavePath(folderDialog.SelectedPath, isOrigin);
                 }
             }
@@ -410,6 +429,28 @@ namespace AlbumDirectoryCreator
                     _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
 
                     BindAndSort(baseInfoTag.FileInfo);
+                }
+            }
+        }
+
+        private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            if (e.Argument != null)
+            {
+                var actiontype = e.Argument as Actiontype? ?? Actiontype.EnumerateFiles;
+                switch (actiontype)
+                {
+                    case Actiontype.EnumerateFiles:
+                        BeginInvoke((MethodInvoker)(EnumerateFiles));
+                        break;
+
+                    case Actiontype.MoveFiles:
+                        BeginInvoke((MethodInvoker)(CreateFolderEtc));
+                        break;
+
+                    case Actiontype.RenameFiles:
+                        BeginInvoke((MethodInvoker)(RenameFiles));
+                        break;
                 }
             }
         }

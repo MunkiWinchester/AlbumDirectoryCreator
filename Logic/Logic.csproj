@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Business\Extensions.cs" />
     <Compile Include="Business\Helper.cs" />
+    <Compile Include="DataObjects\Actiontype.cs" />
     <Compile Include="DataObjects\Id3MultiEditHelp.cs" />
     <Compile Include="DataObjects\Performer.cs" />
     <Compile Include="DataObjects\Stars.cs" />
