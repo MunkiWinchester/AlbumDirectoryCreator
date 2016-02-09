@@ -170,6 +170,7 @@ namespace AlbumDirectoryCreator.Components
             if (rating != null)
                 rating.Rating = (byte)starsBoxRating.GetStars();
 
+            // TODO: Multi value handling
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
             if (performers != null)
                 tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();

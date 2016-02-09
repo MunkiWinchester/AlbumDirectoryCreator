@@ -293,6 +293,7 @@ namespace AlbumDirectoryCreator
             var button = sender as Button;
             if (button != null)
             {
+                // TODO: Backgroundworker
                 var path = button != buttonMove ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
                 if (button == buttonEnumerate)
                 {
