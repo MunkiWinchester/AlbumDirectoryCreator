@@ -170,20 +170,31 @@ namespace AlbumDirectoryCreator.Components
             if (rating != null)
                 rating.Rating = (byte)starsBoxRating.GetStars();
 
-            // TODO: Multi value handling
+            //TODO: Multivalue Handling
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
             if (performers != null)
                 tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
             tag.Album = textBoxAlbum.Text;
             tag.Title = textBoxTitle.Text;
             if (!string.IsNullOrWhiteSpace(textBoxTitleNr.Text))
-                tag.Track = uint.Parse(textBoxTitleNr.Text);
+            {
+                uint trackNo = 0;
+                uint.TryParse(textBoxTitleNr.Text, out trackNo);
+                if(trackNo != 0)
+                    tag.Track = trackNo;
+            }
             if (!string.IsNullOrWhiteSpace(textBoxYear.Text))
-                tag.Year = uint.Parse(textBoxYear.Text);
+            {
+                uint year = 0;
+                uint.TryParse(textBoxYear.Text, out year);
+                if(year != 0)
+                    tag.Year = year;
+            }
             tag.Comment = textBoxComment.Text;
             tag.Genres =
               (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
 
+            //TODO: Multivalue Saving
             if (Id3Handler.Save(file, _file))
             {
                 if (checkBoxRename.Checked)

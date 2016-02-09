@@ -98,7 +98,7 @@ namespace Logic.Business
                             {
                                 // Datei umbenennen
                                 Logger.Info(
-                                    $"Renaming \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
+                                    $"Renaming \"{oldFileInfo.FullName}\"\r\n                                    to \"{newFileInfo.FullName}\"");
                                 File.Move(baseInfoTag.FileInfo, newFileInfo.FullName);
                                 return newFileInfo.FullName;
                             }
@@ -166,7 +166,7 @@ namespace Logic.Business
             {
                 try
                 {
-                    Directory.Delete(directory, false);
+                    Directory.Delete(directory, true);
                 }
                 catch (Exception ex)
                 {

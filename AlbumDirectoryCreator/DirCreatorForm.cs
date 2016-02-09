@@ -303,7 +303,6 @@ namespace AlbumDirectoryCreator
             var button = sender as Button;
             if (button != null && !backgroundWorker.IsBusy)
             {
-                // TODO: Backgroundworker
                 var path = button != buttonMove ? textBoxPathOrigins.Text : textBoxPathDestiny.Text;
                 var pathSaved = false;
                 var actiontype = Actiontype.EnumerateFiles;

@@ -18,6 +18,8 @@ namespace Logic.Business
 
         public static string RemoveInvalidPathCharsAndToTitleCase(this string s)
         {
+            if (string.IsNullOrWhiteSpace(s))
+                return s;
             s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ");
             if (s.IndexOfAny(InvalidChars) != -1)
             {
