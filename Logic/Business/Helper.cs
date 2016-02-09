@@ -49,52 +49,10 @@ namespace Logic.Business
                     newFileInfo = new FileInfo(Path.Combine(path, $"{tempFileName}{oldFileInfo.Extension}"));
                 }
                 // Datei in neue Struktur kopieren
+                Logger.Info(
+                    $"Moving \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
                 oldFileInfo.MoveTo(newFileInfo.FullName);
                 return true;
-
-                //var path = $"{basePath}\\{baseInfoTag.NewBasePath}";
-                //Directory.CreateDirectory(path);
-                //var oldFileInfo = new FileInfo(baseInfoTag.FileInfo);
-
-                //// falls die Datei schon existiert
-                //string newFileName;
-                //if (!string.IsNullOrWhiteSpace(baseInfoTag.JoinedPerformers) &&
-                //    !string.IsNullOrWhiteSpace(baseInfoTag.Title))
-                //    newFileName = $"{baseInfoTag.JoinedPerformers} - {baseInfoTag.Title}";
-                //else
-                //    newFileName = oldFileInfo.Name.Replace(oldFileInfo.Extension, "");
-
-                //newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase().Trim();
-                //var newFileInfo =
-                //    new FileInfo(Path.Combine(path,
-                //        $"{newFileName}{oldFileInfo.Extension.ToLower()}"));
-                //if (!newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower()))
-                //{
-                //    var counter = 1;
-                //    var isTheSame = false;
-                //    while (newFileInfo.Exists)
-                //    {
-                //        isTheSame = newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower());
-                //        if (isTheSame)
-                //            break;
-
-                //        var tempFileName = $"{newFileName} ({counter++})";
-                //        newFileInfo =
-                //            new FileInfo(Path.Combine(path,
-                //                $"{tempFileName}{oldFileInfo.Extension.ToLower()}"));
-                //    }
-                //    if (!isTheSame)
-                //    {
-                //        var file = TagLib.File.Create(oldFileInfo.FullName);
-                //        file.Tag.Comment = $"Originname: \"{Path.GetFileName(oldFileInfo.Name)}\"";
-                //        file.Save();
-                //        // Datei in neue Struktur kopieren
-                //        Logger.Info(
-                //            $"Moving \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
-                //        oldFileInfo.MoveTo(newFileInfo.FullName);
-                //    }
-                //}
-                //return true;
             }
             catch (Exception ex)
             {
@@ -112,36 +70,38 @@ namespace Logic.Business
                 {
                     var oldFileInfo = new FileInfo(baseInfoTag.FileInfo);
                     var path = oldFileInfo.DirectoryName;
-
-                    var newFileName = $"{baseInfoTag.JoinedPerformers} - {baseInfoTag.Title}";
-                    newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase().Trim();
-
-                    var newFileInfo =
-                        new FileInfo(Path.Combine(path,
-                            $"{newFileName}{oldFileInfo.Extension.ToLower()}"));
-
-                    if (!newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower()))
+                    if (path != null)
                     {
-                        var counter = 1;
-                        var isTheSame = false;
-                        while (newFileInfo.Exists)
-                        {
-                            isTheSame = newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower());
-                            if (isTheSame)
-                                break;
+                        var newFileName = $"{baseInfoTag.JoinedPerformers} - {baseInfoTag.Title}";
+                        newFileName = newFileName.RemoveInvalidPathCharsAndToTitleCase().Trim();
 
-                            var tempFileName = $"{newFileName} ({counter++})";
-                            newFileInfo =
-                                new FileInfo(Path.Combine(path,
-                                    $"{tempFileName}{oldFileInfo.Extension.ToLower()}"));
-                        }
-                        if (!isTheSame)
+                        var newFileInfo =
+                            new FileInfo(Path.Combine(path,
+                                $"{newFileName}{oldFileInfo.Extension.ToLower()}"));
+
+                        if (!newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower()))
                         {
-                            // Datei in neue Struktur kopieren
-                            Logger.Info(
-                                $"Moving \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
-                            File.Move(baseInfoTag.FileInfo, newFileInfo.FullName);
-                            return newFileInfo.FullName;
+                            var counter = 1;
+                            var isTheSame = false;
+                            while (newFileInfo.Exists)
+                            {
+                                isTheSame = newFileInfo.FullName.ToLower().Equals(oldFileInfo.FullName.ToLower());
+                                if (isTheSame)
+                                    break;
+
+                                var tempFileName = $"{newFileName} ({counter++})";
+                                newFileInfo =
+                                    new FileInfo(Path.Combine(path,
+                                        $"{tempFileName}{oldFileInfo.Extension.ToLower()}"));
+                            }
+                            if (!isTheSame)
+                            {
+                                // Datei umbenennen
+                                Logger.Info(
+                                    $"Renaming \"{oldFileInfo.FullName}\"\r\n                                  to \"{newFileInfo.FullName}\"");
+                                File.Move(baseInfoTag.FileInfo, newFileInfo.FullName);
+                                return newFileInfo.FullName;
+                            }
                         }
                     }
                 }
