@@ -436,6 +436,7 @@ namespace AlbumDirectoryCreator
             this.iD3Editor.Size = new System.Drawing.Size(279, 578);
             this.iD3Editor.TabIndex = 12;
             this.iD3Editor.ItemSaved += new System.EventHandler(this.iD3Editor_ItemSaved);
+            this.iD3Editor.MultiItemSaved += new System.EventHandler(this.iD3Editor_MultiItemSaved);
             // 
             // DirCreatorForm
             // 

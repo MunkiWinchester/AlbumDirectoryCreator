@@ -18,6 +18,7 @@ namespace Logic.Business
 
         public static string RemoveInvalidPathCharsAndToTitleCase(this string s)
         {
+            var myTi = new CultureInfo("en-US", false).TextInfo;
             if (string.IsNullOrWhiteSpace(s))
                 return s;
             s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ");
@@ -34,11 +35,11 @@ namespace Logic.Business
                         temp1[index] = s1.Trim();
                 }
                 var sNew =
-                    System.Text.RegularExpressions.Regex.Replace(
-                        CultureInfo.CurrentCulture.TextInfo.ToTitleCase(string.Join(" ", temp1)), @"\s+", " ");
-                return sNew;
+                    System.Text.RegularExpressions.Regex.Replace((string.Join(" ", temp1)), @"\s+", " ");
+                return
+                    myTi.ToTitleCase(sNew);
             }
-            return s;
+            return myTi.ToTitleCase(s);
         }
 
         public static object GetPropertyValue(this object obj, string propertyName)

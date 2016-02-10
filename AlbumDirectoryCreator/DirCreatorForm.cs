@@ -411,6 +411,28 @@ namespace AlbumDirectoryCreator
             bindingSourceFiles.Sort = advancedDataGridView.SortString;
         }
 
+        private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            if (e.Argument != null)
+            {
+                var actiontype = e.Argument as Actiontype? ?? Actiontype.EnumerateFiles;
+                switch (actiontype)
+                {
+                    case Actiontype.EnumerateFiles:
+                        BeginInvoke((MethodInvoker)(EnumerateFiles));
+                        break;
+
+                    case Actiontype.MoveFiles:
+                        BeginInvoke((MethodInvoker)(CreateFolderEtc));
+                        break;
+
+                    case Actiontype.RenameFiles:
+                        BeginInvoke((MethodInvoker)(RenameFiles));
+                        break;
+                }
+            }
+        }
+
         private void iD3Editor_ItemSaved(object sender, EventArgs e)
         {
             var kvp = sender as KeyValuePair<string, File>? ?? new KeyValuePair<string, File>();
@@ -432,25 +454,29 @@ namespace AlbumDirectoryCreator
             }
         }
 
-        private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void iD3Editor_MultiItemSaved(object sender, EventArgs e)
         {
-            if (e.Argument != null)
+            var kvpReturnList = sender as List<KeyValuePair<string, File>> ?? new List<KeyValuePair<string, File>>();
+            if (kvpReturnList.Count != 0)
             {
-                var actiontype = e.Argument as Actiontype? ?? Actiontype.EnumerateFiles;
-                switch (actiontype)
+                var fileInfo = string.Empty;
+                foreach (var kvp in kvpReturnList)
                 {
-                    case Actiontype.EnumerateFiles:
-                        BeginInvoke((MethodInvoker)(EnumerateFiles));
-                        break;
-
-                    case Actiontype.MoveFiles:
-                        BeginInvoke((MethodInvoker)(CreateFolderEtc));
-                        break;
-
-                    case Actiontype.RenameFiles:
-                        BeginInvoke((MethodInvoker)(RenameFiles));
-                        break;
+                    var taglibFile = kvp.Value;
+                    var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(kvp.Key));
+                    if (previous.Value != null)
+                    {
+                        var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
+                        var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                            taglibFile.Name);
+                        BaseInfoTag crap;
+                        _hashSet.TryRemove(previous.Key, out crap);
+                        _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
+                        fileInfo = baseInfoTag.FileInfo;
+                    }
                 }
+
+                BindAndSort(fileInfo);
             }
         }
     }
