@@ -185,25 +185,7 @@ namespace AlbumDirectoryCreator.Components
 
             if (!_isMulti)
             {
-                var file = File.Create(_file.Name);
-                var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
-
-                var rating = tag.GetPopularimeterFrame();
-                if (rating != null)
-                    rating.Rating = stars;
-                if (performers != null)
-                    tag.Performers =
-                        performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
-                tag.Album = album;
-                tag.Title = textBoxTitle.Text;
-                if (trackNo != 0)
-                    tag.Track = trackNo;
-                if (year != 0)
-                    tag.Year = year;
-                tag.Comment = comment;
-                tag.Genres = genres;
-
-                var savedFile = SaveToFile(file, tag);
+                var savedFile = SaveToFile(_file.Name, stars, performers, album, trackNo, year, comment, genres);
                 if (savedFile != null)
                 {
                     ItemSaved?.Invoke(new KeyValuePair<string, File>(_file.Name, savedFile), new EventArgs());
@@ -216,24 +198,7 @@ namespace AlbumDirectoryCreator.Components
                 foreach (var filePath in _id3MultiEditHelp.TagList.Keys)
                 {
                     _file = File.Create(filePath);
-                    var file = File.Create(filePath);
-                    var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
-
-                    var rating = tag.GetPopularimeterFrame();
-                    if (rating != null)
-                        rating.Rating = stars;
-                    if (performers != null)
-                        tag.Performers =
-                            performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
-                    tag.Album = album;
-                    if (trackNo != 0)
-                        tag.Track = trackNo;
-                    if (year != 0)
-                        tag.Year = year;
-                    tag.Comment = comment;
-                    tag.Genres = genres;
-
-                    var savedFile = SaveToFile(file, tag);
+                    var savedFile = SaveToFile(filePath, stars, performers, album, trackNo, year, comment, genres);
                     if (savedFile != null)
                     {
                         returnList.Add(new KeyValuePair<string, File>(filePath, savedFile));
@@ -242,6 +207,29 @@ namespace AlbumDirectoryCreator.Components
                 MultiItemSaved?.Invoke(returnList, new EventArgs());
                 pictureBox.Show();
             }
+        }
+
+        private File SaveToFile(string filePath, byte stars, List<Performer> performers, string album, uint trackNo, uint year,
+            string comment, string[] genres)
+        {
+            var file = File.Create(filePath);
+            var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
+
+            var rating = tag.GetPopularimeterFrame();
+            if (rating != null)
+                rating.Rating = stars;
+            if (performers != null)
+                tag.Performers =
+                    performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
+            tag.Album = album;
+            if (trackNo != 0)
+                tag.Track = trackNo;
+            if (year != 0)
+                tag.Year = year;
+            tag.Comment = comment;
+            tag.Genres = genres;
+
+            return SaveToFile(file, tag);
         }
 
         private File SaveToFile(File file, Tag tag)
