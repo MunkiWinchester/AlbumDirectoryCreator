@@ -80,6 +80,16 @@ namespace AlbumDirectoryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Checked {
+            get {
+                object obj = ResourceManager.GetObject("Checked", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error!.
         /// </summary>
         internal static string Error {
@@ -94,16 +104,6 @@ namespace AlbumDirectoryCreator.Properties {
         internal static string ErrorOccured {
             get {
                 return ResourceManager.GetString("ErrorOccured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Harken1 {
-            get {
-                object obj = ResourceManager.GetObject("Harken1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -147,9 +147,9 @@ namespace AlbumDirectoryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Stars_0 {
+        internal static System.Drawing.Bitmap Stars_Grey {
             get {
-                object obj = ResourceManager.GetObject("Stars_0", resourceCulture);
+                object obj = ResourceManager.GetObject("Stars_Grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -157,9 +157,9 @@ namespace AlbumDirectoryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Stars_1 {
+        internal static System.Drawing.Bitmap Stars_Yellow {
             get {
-                object obj = ResourceManager.GetObject("Stars_1", resourceCulture);
+                object obj = ResourceManager.GetObject("Stars_Yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
