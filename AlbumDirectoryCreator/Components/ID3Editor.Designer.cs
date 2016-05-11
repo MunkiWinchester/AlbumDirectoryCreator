@@ -49,12 +49,12 @@
             this.labelPath = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.labelRating = new System.Windows.Forms.Label();
+            this.starsBoxRating = new AlbumDirectoryCreator.Components.StarsBox();
             this.checkedListBoxGenre = new System.Windows.Forms.CheckedListBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.checkBoxRename = new System.Windows.Forms.CheckBox();
-            this.starsBoxRating = new AlbumDirectoryCreator.Components.StarsBox();
             this.groupBoxEditor.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPerformers)).BeginInit();
@@ -320,6 +320,15 @@
             this.labelRating.TabIndex = 25;
             this.labelRating.Text = "Rating:";
             // 
+            // starsBoxRating
+            // 
+            this.starsBoxRating.Location = new System.Drawing.Point(83, 389);
+            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.Name = "starsBoxRating";
+            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
+            this.starsBoxRating.TabIndex = 26;
+            // 
             // checkedListBoxGenre
             // 
             this.tableLayoutPanel.SetColumnSpan(this.checkedListBoxGenre, 2);
@@ -376,15 +385,6 @@
             this.checkBoxRename.TabIndex = 29;
             this.checkBoxRename.Text = "Rename file?";
             this.checkBoxRename.UseVisualStyleBackColor = true;
-            // 
-            // starsBoxRating
-            // 
-            this.starsBoxRating.Location = new System.Drawing.Point(83, 389);
-            this.starsBoxRating.MaximumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.MinimumSize = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.Name = "starsBoxRating";
-            this.starsBoxRating.Size = new System.Drawing.Size(175, 22);
-            this.starsBoxRating.TabIndex = 26;
             // 
             // Id3Editor
             // 

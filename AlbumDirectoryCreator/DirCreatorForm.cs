@@ -236,7 +236,7 @@ namespace AlbumDirectoryCreator
         {
             if (start)
             {
-                LockUI(true);
+                LockUi(true);
                 _currentPercentage = 0;
                 labelPercentage.Text = "";
                 _stopwatch.Reset();
@@ -247,7 +247,7 @@ namespace AlbumDirectoryCreator
             else
             {
                 LoadingAnimation.End(advancedDataGridView);
-                LockUI(false);
+                LockUi(false);
                 _stopwatch.Stop();
             }
         }
@@ -289,7 +289,7 @@ namespace AlbumDirectoryCreator
             return false;
         }
 
-        private void LockUI(bool lockIt)
+        private void LockUi(bool lockIt)
         {
             var ctrlList = new List<Control>
             {
@@ -480,7 +480,10 @@ namespace AlbumDirectoryCreator
             var baseInfoTag = new BaseInfoTag();
             if (previous.Value != null)
             {
-                var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
+                var tag =
+                    taglibFile.TagTypes != TagTypes.Id3v2
+                        ? taglibFile.Tag
+                        : taglibFile.GetTag(TagTypes.Id3v2);
                 baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
                     taglibFile.Name);
                 BaseInfoTag crap;
