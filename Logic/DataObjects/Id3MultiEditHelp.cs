@@ -11,6 +11,8 @@ namespace Logic.DataObjects
         public string Comment { get; set; }
         public Stars? Rating { get; set; }
         public string[] Genres { get; set; }
+
+        // ReSharper disable once CollectionNeverQueried.Global
         public Dictionary<string, Tag> TagList { get; private set; }
 
         public Id3MultiEditHelp()

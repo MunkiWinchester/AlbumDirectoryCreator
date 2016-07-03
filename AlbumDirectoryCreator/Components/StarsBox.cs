@@ -35,25 +35,25 @@ namespace AlbumDirectoryCreator.Components
             }
             if (stars == Stars.One)
             {
-                pictureBox1.Image = Resources.Stars_1;
+                pictureBox1.Image = Resources.Stars_Yellow;
             }
             if (stars == Stars.Two)
             {
-                pictureBox1.Image = Resources.Stars_1;
-                pictureBox2.Image = Resources.Stars_1;
+                pictureBox1.Image = Resources.Stars_Yellow;
+                pictureBox2.Image = Resources.Stars_Yellow;
             }
             if (stars == Stars.Three)
             {
-                pictureBox1.Image = Resources.Stars_1;
-                pictureBox2.Image = Resources.Stars_1;
-                pictureBox3.Image = Resources.Stars_1;
+                pictureBox1.Image = Resources.Stars_Yellow;
+                pictureBox2.Image = Resources.Stars_Yellow;
+                pictureBox3.Image = Resources.Stars_Yellow;
             }
             if (stars == Stars.Four)
             {
-                pictureBox1.Image = Resources.Stars_1;
-                pictureBox2.Image = Resources.Stars_1;
-                pictureBox3.Image = Resources.Stars_1;
-                pictureBox4.Image = Resources.Stars_1;
+                pictureBox1.Image = Resources.Stars_Yellow;
+                pictureBox2.Image = Resources.Stars_Yellow;
+                pictureBox3.Image = Resources.Stars_Yellow;
+                pictureBox4.Image = Resources.Stars_Yellow;
             }
             if (stars == Stars.Five)
             {
@@ -63,7 +63,7 @@ namespace AlbumDirectoryCreator.Components
 
         private void SetAllStars(bool filled)
         {
-            var image = filled ? Resources.Stars_1 : Resources.Stars_0;
+            var image = filled ? Resources.Stars_Yellow : Resources.Stars_Grey;
             foreach (var box in Controls.OfType<PictureBox>())
             {
                 box.Image = image;

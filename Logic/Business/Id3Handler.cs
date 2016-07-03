@@ -117,8 +117,8 @@ namespace Logic.Business
                     .ToList();
 
             id3MultiEditHelp.Performers =
-                performers.Count == 0 
-                    ? new List<Performer> { new Performer(multiValues) } 
+                performers.Count == 0
+                    ? new List<Performer> { new Performer(multiValues) }
                     : performers.Max(k => k.Key) == fileInfos.Count
                         ? (from y in performers where y.Key.Equals(performers.Max(x => x.Key)) select new Performer(y.Value))
                         .ToList()

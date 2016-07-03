@@ -114,11 +114,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Components\ID3Editor.resx">
       <DependentUpon>ID3Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,6 +136,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -184,13 +184,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Stars_0.png" />
+    <None Include="Resources\Stars_Grey.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Stars_1.png" />
+    <None Include="Resources\Stars_Yellow.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Harken1.gif" />
+    <None Include="Resources\Checked.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

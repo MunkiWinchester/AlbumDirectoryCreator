@@ -16,8 +16,14 @@ namespace Logic.Business
     {
         private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).ToArray();
 
+        /// <summary>
+        /// Removes invalid chars from a string and puts it in title case
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static string RemoveInvalidPathCharsAndToTitleCase(this string s)
         {
+            var myTi = new CultureInfo("en-US", false).TextInfo;
             if (string.IsNullOrWhiteSpace(s))
                 return s;
             s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ");
@@ -29,23 +35,36 @@ namespace Logic.Business
                 {
                     var s1 = temp[index];
                     if (index != temp.Length - 1)
-                        temp1[index] = string.Format("{0} ", s1.Trim());
+                        temp1[index] = $"{s1.Trim()} ";
                     else
                         temp1[index] = s1.Trim();
                 }
                 var sNew =
-                    System.Text.RegularExpressions.Regex.Replace(
-                        CultureInfo.CurrentCulture.TextInfo.ToTitleCase(string.Join(" ", temp1)), @"\s+", " ");
-                return sNew;
+                    System.Text.RegularExpressions.Regex.Replace((string.Join(" ", temp1)), @"\s+", " ");
+                return
+                    myTi.ToTitleCase(sNew);
             }
-            return s;
+            return myTi.ToTitleCase(s);
         }
 
+        /// <summary>
+        /// Returns the property from a property by searching with its name
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         public static object GetPropertyValue(this object obj, string propertyName)
         {
             return obj.GetType().GetProperty(propertyName).GetValue(obj);
         }
 
+        /// <summary>
+        /// Compares two values with each other
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="newVal">First value</param>
+        /// <param name="oldVal">Second value</param>
+        /// <returns>Bool if they're equal</returns>
         public static bool Compare<T>(T newVal, T oldVal)
         {
             if (typeof(T) == typeof(string[]))
@@ -69,9 +88,15 @@ namespace Logic.Business
             return EqualityComparer<T>.Default.Equals(newVal, oldVal);
         }
 
-        public static string ToSeperatedString(this IEnumerable<string> iEnumerable)
+        /// <summary>
+        /// Returns a string with all values of a collection of type IEnumerable
+        /// Seperates the single values with a comma and puts them in quotation marks
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns>"Value 1", "Value 2", ...</returns>
+        public static string ToSeperatedString(this IEnumerable<string> collection)
         {
-            var list = iEnumerable.ToList();
+            var list = collection.ToList();
             if (!list.Any())
                 return "\"\"";
 
@@ -84,7 +109,7 @@ namespace Logic.Business
         }
 
         /// <summary>
-        /// Verwurstet eine Collection vom Typ IEnumerable zu einer DataTable
+        /// Converts a collection of type IEnumerable to a dataTable
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -121,6 +146,11 @@ namespace Logic.Business
             return dataTable;
         }
 
+        /// <summary>
+        /// Gets the Rating ("stars") of a given tag
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public static PopularimeterFrame GetPopularimeterFrame(this Tag tag)
         {
             if (tag.TagTypes != TagTypes.Id3v2)
@@ -134,6 +164,11 @@ namespace Logic.Business
                 true);
         }
 
+        /// <summary>
+        /// Changes a byte value into the amount of stars (enum)
+        /// </summary>
+        /// <param name="value">Byte value of the "stars"</param>
+        /// <returns>The amount of stars (enum)</returns>
         public static Stars ToStars(this byte value)
         {
             switch (value)

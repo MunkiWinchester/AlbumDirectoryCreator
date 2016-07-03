@@ -72,6 +72,7 @@ namespace AlbumDirectoryCreator
 
         private async void EnumerateFiles()
         {
+            StartOrStop(true);
             ClearBindingsEtc();
             _fileInfos = Helper.GetAllFiles(_pathIn, _extensions);
             _logger.Info(
@@ -96,7 +97,7 @@ namespace AlbumDirectoryCreator
                 MaxDegreeOfParallelism = _maxDegreeOfParallelism
             });
 
-            StartOrStop(true, _fileInfos.Count);
+            SetProgressBarUp(_fileInfos.Count);
             // Dateien durchgehen
             Parallel.ForEach(_fileInfos, fileInfo =>
             {
@@ -124,6 +125,7 @@ namespace AlbumDirectoryCreator
         {
             if (_hashSet.Any())
             {
+                StartOrStop(true);
                 _logger.Info(
                     $"Renaming {_hashSet.Count} files ({string.Join("; ", _extensions)}) to \"Joined Performers - Titel\"");
                 var already = 0;
@@ -166,18 +168,7 @@ namespace AlbumDirectoryCreator
                     MaxDegreeOfParallelism = _maxDegreeOfParallelism
                 });
 
-                StartOrStop(true, _hashSet.Count);
-                // Dateien durchgehen
-                Parallel.ForEach(_hashSet.Values, baseInfoTag =>
-                {
-                    actionBlock.Post(baseInfoTag);
-                });
-                actionBlock.Complete();
-                await actionBlock.Completion;
-                StartOrStop(false);
-
-                if (withException > 0)
-                    _logger.Info($"{withException} files that triggered an exception and are ignored");
+                await ExecuteActionBlock(actionBlock, withException);
                 if (already > 0)
                     _logger.Info($"{already} files have already a fitting name and are ignored");
                 var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
@@ -188,10 +179,24 @@ namespace AlbumDirectoryCreator
             }
         }
 
+        private async Task ExecuteActionBlock(ActionBlock<BaseInfoTag> actionBlock, int withException)
+        {
+            SetProgressBarUp(_hashSet.Count);
+            // Dateien durchgehen
+            Parallel.ForEach(_hashSet.Values, baseInfoTag => { actionBlock.Post(baseInfoTag); });
+            actionBlock.Complete();
+            await actionBlock.Completion;
+            StartOrStop(false);
+
+            if (withException > 0)
+                _logger.Info($"{withException} files that triggered an exception and are ignored");
+        }
+
         private async void CreateFolderEtc()
         {
             if (_hashSet.Any())
             {
+                StartOrStop(true);
                 _logger.Info($"Transfering {_hashSet.Count} files ({string.Join("; ", _extensions)}) " +
                         $"from \"{_pathIn}\" to \"{_pathOut}\" with artist/album structure");
 
@@ -210,18 +215,7 @@ namespace AlbumDirectoryCreator
                     MaxDegreeOfParallelism = _maxDegreeOfParallelism
                 });
 
-                StartOrStop(true, _hashSet.Count);
-                // Dateien durchgehen
-                Parallel.ForEach(_hashSet.Values, baseInfoTag =>
-                {
-                    actionBlock.Post(baseInfoTag);
-                });
-                actionBlock.Complete();
-                await actionBlock.Completion;
-                StartOrStop(false);
-
-                if (withException > 0)
-                    _logger.Info($"{withException} files that triggered an exception and are ignored");
+                await ExecuteActionBlock(actionBlock, withException);
                 var percentage = Helper.CalculatePercentage(successfully, _hashSet.Count);
                 _logger.Info($"{successfully} files that are successfully transfered within {_stopwatch.Elapsed} ({percentage}%)");
                 _logger.Info($"Deleting empty folders from the origin path \"{_pathIn}\"");
@@ -231,23 +225,29 @@ namespace AlbumDirectoryCreator
             }
         }
 
-        private void StartOrStop(bool start, int maximum = 0)
+        private void SetProgressBarUp(int maximum)
+        {
+            progressBar.Value = 0;
+            _stepValue = (float)100 / maximum;
+            progressBar.Maximum = maximum;
+        }
+
+        private void StartOrStop(bool start)
         {
             if (start)
             {
-                _stepValue = (float)100 / maximum;
-                progressBar.Value = 0;
+                LockUi(true);
                 _currentPercentage = 0;
                 labelPercentage.Text = "";
                 _stopwatch.Reset();
                 labelPercentage.Refresh();
-                progressBar.Maximum = maximum;
                 _stopwatch.Start();
                 LoadingAnimation.Start(advancedDataGridView);
             }
             else
             {
                 LoadingAnimation.End(advancedDataGridView);
+                LockUi(false);
                 _stopwatch.Stop();
             }
         }
@@ -287,6 +287,23 @@ namespace AlbumDirectoryCreator
             MessageBox.Show($"Your given path (\"{path}\") is not valid!", Resources.Error,
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
+        }
+
+        private void LockUi(bool lockIt)
+        {
+            var ctrlList = new List<Control>
+            {
+                buttonEnumerate,
+                buttonMove,
+                buttonRename,
+                iD3Editor,
+                advancedDataGridView,
+                bindingNavigator
+            };
+            foreach (var ctrl in ctrlList)
+            {
+                ctrl.Enabled = !lockIt;
+            }
         }
 
         private void DirCreatorForm_Load(object sender, EventArgs e)
@@ -411,27 +428,6 @@ namespace AlbumDirectoryCreator
             bindingSourceFiles.Sort = advancedDataGridView.SortString;
         }
 
-        private void iD3Editor_ItemSaved(object sender, EventArgs e)
-        {
-            var kvp = sender as KeyValuePair<string, File>? ?? new KeyValuePair<string, File>();
-            if (kvp.Key != null)
-            {
-                var taglibFile = kvp.Value;
-                var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(kvp.Key));
-                if (previous.Value != null)
-                {
-                    var tag = taglibFile.TagTypes != TagTypes.Id3v2 ? taglibFile.Tag : taglibFile.GetTag(TagTypes.Id3v2);
-                    var baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
-                        taglibFile.Name);
-                    BaseInfoTag crap;
-                    _hashSet.TryRemove(previous.Key, out crap);
-                    _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
-
-                    BindAndSort(baseInfoTag.FileInfo);
-                }
-            }
-        }
-
         private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             if (e.Argument != null)
@@ -452,6 +448,49 @@ namespace AlbumDirectoryCreator
                         break;
                 }
             }
+        }
+
+        private void iD3Editor_ItemSaved(object sender, EventArgs e)
+        {
+            var kvp = sender as KeyValuePair<string, File>? ?? new KeyValuePair<string, File>();
+            if (kvp.Key != null)
+            {
+                BindAndSort(EditBaseInfoTag(kvp.Value, kvp.Key));
+            }
+        }
+
+        private void iD3Editor_MultiItemSaved(object sender, EventArgs e)
+        {
+            var kvpReturnList = sender as List<KeyValuePair<string, File>> ?? new List<KeyValuePair<string, File>>();
+            if (kvpReturnList.Count != 0)
+            {
+                var fileInfo = string.Empty;
+                foreach (var kvp in kvpReturnList)
+                {
+                    fileInfo = EditBaseInfoTag(kvp.Value, kvp.Key);
+                }
+                BindAndSort(fileInfo);
+            }
+        }
+
+        private string EditBaseInfoTag(File file, string path)
+        {
+            var taglibFile = file;
+            var previous = _hashSet.First(x => taglibFile != null && x.Key.Equals(path));
+            var baseInfoTag = new BaseInfoTag();
+            if (previous.Value != null)
+            {
+                var tag =
+                    taglibFile.TagTypes != TagTypes.Id3v2
+                        ? taglibFile.Tag
+                        : taglibFile.GetTag(TagTypes.Id3v2);
+                baseInfoTag = new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
+                    taglibFile.Name);
+                BaseInfoTag crap;
+                _hashSet.TryRemove(previous.Key, out crap);
+                _hashSet.TryAdd(baseInfoTag.FileInfo, baseInfoTag);
+            }
+            return baseInfoTag.FileInfo;
         }
     }
 }

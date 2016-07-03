@@ -142,16 +142,16 @@
   <data name="TryAgain" xml:space="preserve">
     <value>Please try again!</value>
   </data>
-  <data name="Stars_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Stars_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Stars_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="multiValue" xml:space="preserve">
     <value>(multiple Values)</value>
   </data>
-  <data name="Harken1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Harken1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Checked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Checked.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_Grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Stars_Grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_Yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Stars_Yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

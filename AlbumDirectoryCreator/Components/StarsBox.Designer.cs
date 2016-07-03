@@ -42,7 +42,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_0;
+            this.pictureBox1.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_Grey;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
@@ -56,7 +56,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_0;
+            this.pictureBox2.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_Grey;
             this.pictureBox2.Location = new System.Drawing.Point(20, 0);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox2.Name = "pictureBox2";
@@ -70,7 +70,7 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_0;
+            this.pictureBox3.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_Grey;
             this.pictureBox3.Location = new System.Drawing.Point(40, 0);
             this.pictureBox3.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox3.Name = "pictureBox3";
@@ -84,7 +84,7 @@
             // 
             // pictureBox4
             // 
-            this.pictureBox4.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_0;
+            this.pictureBox4.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_Grey;
             this.pictureBox4.Location = new System.Drawing.Point(60, 0);
             this.pictureBox4.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox4.Name = "pictureBox4";
@@ -98,7 +98,7 @@
             // 
             // pictureBox5
             // 
-            this.pictureBox5.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_0;
+            this.pictureBox5.Image = global::AlbumDirectoryCreator.Properties.Resources.Stars_Grey;
             this.pictureBox5.Location = new System.Drawing.Point(80, 0);
             this.pictureBox5.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox5.Name = "pictureBox5";

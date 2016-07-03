@@ -19,6 +19,9 @@ namespace AlbumDirectoryCreator.Components
         [Browsable(true)]
         public event EventHandler ItemSaved;
 
+        [Browsable(true)]
+        public event EventHandler MultiItemSaved;
+
         private static readonly Logger Logger = new Logger();
         private File _file;
         private bool _isMulti;
@@ -163,50 +166,89 @@ namespace AlbumDirectoryCreator.Components
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            var file = File.Create(_file.Name);
-
-            var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
-            var rating = tag.GetPopularimeterFrame();
-            if (rating != null)
-                rating.Rating = (byte)starsBoxRating.GetStars();
-
-            //TODO: Multivalue Handling
+            var stars = (byte)starsBoxRating.GetStars();
             var performers = (List<Performer>)bindingSourcePerformers.DataSource;
-            if (performers != null)
-                tag.Performers = performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
-            tag.Album = textBoxAlbum.Text;
-            tag.Title = textBoxTitle.Text;
+            var album = textBoxAlbum.Text;
+            uint trackNo = 0;
             if (!string.IsNullOrWhiteSpace(textBoxTitleNr.Text))
             {
-                uint trackNo = 0;
                 uint.TryParse(textBoxTitleNr.Text, out trackNo);
-                if(trackNo != 0)
-                    tag.Track = trackNo;
             }
+            uint year = 0;
             if (!string.IsNullOrWhiteSpace(textBoxYear.Text))
             {
-                uint year = 0;
                 uint.TryParse(textBoxYear.Text, out year);
-                if(year != 0)
-                    tag.Year = year;
             }
-            tag.Comment = textBoxComment.Text;
-            tag.Genres =
-              (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
+            var comment = textBoxComment.Text;
+            var genres =
+                    (from object checkedItem in checkedListBoxGenre.CheckedItems select checkedItem.ToString()).ToArray();
 
-            //TODO: Multivalue Saving
+            if (!_isMulti)
+            {
+                var savedFile = SaveToFile(_file.Name, stars, performers, album, trackNo, year, comment, genres);
+                if (savedFile != null)
+                {
+                    ItemSaved?.Invoke(new KeyValuePair<string, File>(_file.Name, savedFile), new EventArgs());
+                    pictureBox.Show();
+                }
+            }
+            else
+            {
+                var returnList = new List<KeyValuePair<string, File>>();
+                foreach (var filePath in _id3MultiEditHelp.TagList.Keys)
+                {
+                    _file = File.Create(filePath);
+                    var savedFile = SaveToFile(filePath, stars, performers, album, trackNo, year, comment, genres);
+                    if (savedFile != null)
+                    {
+                        returnList.Add(new KeyValuePair<string, File>(filePath, savedFile));
+                    }
+                }
+                MultiItemSaved?.Invoke(returnList, new EventArgs());
+                pictureBox.Show();
+            }
+        }
+
+        private File SaveToFile(string filePath, byte stars, List<Performer> performers, string album, uint trackNo, uint year,
+            string comment, string[] genres)
+        {
+            var file = File.Create(filePath);
+            var tag = file.TagTypes != TagTypes.Id3v2 ? file.Tag : file.GetTag(TagTypes.Id3v2);
+
+            var rating = tag.GetPopularimeterFrame();
+            if (rating != null)
+                rating.Rating = stars;
+            if (performers != null)
+                tag.Performers =
+                    performers.Select(performer => performer.ToString()).Where(p => p != null).ToArray();
+            tag.Album = album;
+            if (trackNo != 0)
+                tag.Track = trackNo;
+            if (year != 0)
+                tag.Year = year;
+            tag.Comment = comment;
+            tag.Genres = genres;
+
+            return SaveToFile(file, tag);
+        }
+
+        private File SaveToFile(File file, Tag tag)
+        {
             if (Id3Handler.Save(file, _file))
             {
                 if (checkBoxRename.Checked)
                 {
-                    var filename = Helper.RenameFile(new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album, tag.Title,
-                        _file.Name));
-                    if (filename != null)
-                        file = File.Create(filename);
+                    var filename =
+                        Helper.RenameFile(new BaseInfoTag(tag.JoinedPerformers, tag.FirstPerformer, tag.Album,
+                            tag.Title,
+                            _file.Name));
+                    if (filename != Actiontype.Exception.ToString() &&
+                        filename != Actiontype.Already.ToString())
+                        return File.Create(filename);
                 }
-                ItemSaved?.Invoke(new KeyValuePair<string, File>(_file.Name, file), new EventArgs());
-                pictureBox.Show();
+                return file;
             }
+            return null;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)

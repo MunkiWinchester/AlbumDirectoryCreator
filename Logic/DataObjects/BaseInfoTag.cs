@@ -35,5 +35,9 @@ namespace Logic.DataObjects
             }
             NewBasePath = path;
         }
+
+        public BaseInfoTag()
+        {
+        }
     }
 }
