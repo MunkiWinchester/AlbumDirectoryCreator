@@ -11,6 +11,9 @@ namespace Logic.Business
     {
         private static readonly Logger Logger = new Logger();
 
+        /// <summary>
+        /// List of the properties which are important metadata
+        /// </summary>
         private static readonly List<string> Properties = new List<string>
         {
             "Album",
@@ -22,6 +25,12 @@ namespace Logic.Business
             "Genres"
         };
 
+        /// <summary>
+        /// Saves the new/changed values to the file
+        /// </summary>
+        /// <param name="id3">New values to be saved</param>
+        /// <param name="oldId3">Old values (needed for log file)</param>
+        /// <returns>Success or not</returns>
         public static bool Save(File id3, File oldId3)
         {
             try
@@ -54,6 +63,12 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Logs the differences of a given property
+        /// </summary>
+        /// <param name="newVal">New value for the property</param>
+        /// <param name="oldVal">Old value for the property</param>
+        /// <param name="property">Property which is changed</param>
         private static void LogDifferences(object newVal, object oldVal, string property)
         {
             if (!Extensions.Compare(newVal, oldVal))
@@ -62,6 +77,14 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Logs the differences of a given property
+        /// </summary>
+        /// <param name="newVal">New value for the property</param>
+        /// <param name="oldVal">Old value for the property</param>
+        /// <param name="property">Property which is changed</param>
+        /// <param name="newValArray">For multi fields</param>
+        /// <param name="oldValArray">For multi fields</param>
         private static void LogDifferences(object newVal, object oldVal, string property, object newValArray,
             object oldValArray)
         {
@@ -77,6 +100,11 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Returns the tags and the intersection of multiple files
+        /// </summary>
+        /// <param name="fileInfos">List of the fileinfos</param>
+        /// <returns>The multi edit help tags</returns>
         public static Id3MultiEditHelp GetTagsAndIntersectionFields(List<string> fileInfos)
         {
             var id3MultiEditHelp = new Id3MultiEditHelp();
@@ -120,24 +148,25 @@ namespace Logic.Business
                 performers.Count == 0
                     ? new List<Performer> { new Performer(multiValues) }
                     : performers.Max(k => k.Key) == fileInfos.Count
-                        ? (from y in performers where y.Key.Equals(performers.Max(x => x.Key)) select new Performer(y.Value))
+                        ? (from y in performers where y.Key.Equals(fileInfos.Count) select new Performer(y.Value))
                         .ToList()
                         : new List<Performer> { new Performer(multiValues) };
             id3MultiEditHelp.Albums =
                 albums.Count == 0
                     ? new[] { multiValues }
                     : albums.Max(k => k.Key) == fileInfos.Count
-                        ? (from y in albums where y.Key.Equals(albums.Max(x => x.Key)) select y.Value).ToArray()
+                        ? (from y in albums where y.Key.Equals(fileInfos.Count) select y.Value).ToArray()
                         : new[] { multiValues };
             id3MultiEditHelp.Genres =
                 genres.Count == 0
                     ? new string[0]
                     : genres.Max(k => k.Key) == fileInfos.Count
-                        ? (from y in genres where y.Key.Equals(genres.Max(x => x.Key)) select y.Value).ToArray()
+                        ? (from y in genres where y.Key.Equals(fileInfos.Count) select y.Value).ToArray()
                         : new string[0];
-            id3MultiEditHelp.Year = years.First(y => y.Key.Equals(years.Max(x => x.Key))).Value;
-            id3MultiEditHelp.Comment = comments.First(y => y.Key.Equals(comments.Max(x => x.Key))).Value;
-            id3MultiEditHelp.Rating = stars.First(y => y.Key.Equals(stars.Max(x => x.Key))).Value;
+            id3MultiEditHelp.Rating = stars.First(y => y.Key.Equals(fileInfos.Count)).Value;
+            id3MultiEditHelp.Year = years.FirstOrDefault(y => y.Key.Equals(fileInfos.Count)).Value;
+            id3MultiEditHelp.Comment = comments.FirstOrDefault(x => x.Key == fileInfos.Count).Value ?? multiValues;
+
             return id3MultiEditHelp;
         }
     }

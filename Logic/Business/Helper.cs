@@ -13,6 +13,11 @@ namespace Logic.Business
     {
         private static readonly Logger Logger = new Logger();
 
+        /// <summary>
+        /// Read metadata from a file info
+        /// </summary>
+        /// <param name="fileInfo">File info of the file, of which the metadata should be read</param>
+        /// <returns>The baseinfotag</returns>
         public static BaseInfoTag ReadMetaDatas(string fileInfo)
         {
             try
@@ -31,6 +36,12 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Moves the file and renames it to the new structure
+        /// </summary>
+        /// <param name="baseInfoTag">Metadatas of the file</param>
+        /// <param name="basePath">Path of the "music" folder</param>
+        /// <returns>Success or not</returns>
         public static bool MoveFile(BaseInfoTag baseInfoTag, string basePath)
         {
             try
@@ -61,6 +72,11 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Renames the file to the new structure
+        /// </summary>
+        /// <param name="baseInfoTag">Metadatas of the file</param>
+        /// <returns>The new full path of the file</returns>
         public static string RenameFile(BaseInfoTag baseInfoTag)
         {
             try
@@ -114,6 +130,12 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Get all files of the given folder which match the extensions
+        /// </summary>
+        /// <param name="folder">Folder where the files should be read in (recursiv)</param>
+        /// <param name="extensions">Extension of files which should be read in</param>
+        /// <returns>List with the paths of the files</returns>
         public static List<string> GetAllFiles(string folder, List<string> extensions)
         {
             var files = (from file in Directory.GetFiles(folder)
@@ -137,6 +159,10 @@ namespace Logic.Business
             return files;
         }
 
+        /// <summary>
+        /// Deletes empty folders (recursiv)
+        /// </summary>
+        /// <param name="startLocation">Folder in which the sub folders are checked</param>
         public static void DeleteEmptyFolders(string startLocation)
         {
             try
@@ -155,6 +181,10 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Checks if the folder is empty (just hidden files equal empty) and deletes them if empty
+        /// </summary>
+        /// <param name="directory">Folder which should be checked</param>
         private static void DeleteFolderIfEmpty(string directory)
         {
             var files = Directory.GetFiles(directory).ToList();
@@ -175,6 +205,12 @@ namespace Logic.Business
             }
         }
 
+        /// <summary>
+        /// Calculates how many percent where successfull
+        /// </summary>
+        /// <param name="successfully">Count of successfull items</param>
+        /// <param name="total">Total count of items</param>
+        /// <returns>Success percentage</returns>
         public static float CalculatePercentage(int successfully, int total)
         {
             var number = (float)successfully / total;

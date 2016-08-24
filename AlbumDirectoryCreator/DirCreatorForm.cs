@@ -98,7 +98,7 @@ namespace AlbumDirectoryCreator
             });
 
             SetProgressBarUp(_fileInfos.Count);
-            // Dateien durchgehen
+            // Iterate through the files
             Parallel.ForEach(_fileInfos, fileInfo =>
             {
                 actionBlock.Post(fileInfo);
@@ -112,7 +112,7 @@ namespace AlbumDirectoryCreator
                     $"{Resources.ErrorOccured}\r\n{withException} files caused an exception.\r\n(View Logfile to see which files)",
                     Resources.Error,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Logfile schreiben
+            // Write log file
             if (withException > 0)
                 _logger.Info($"{withException} files that triggered an exception and were ignored");
             var percentage = Helper.CalculatePercentage(_hashSet.Count, _fileInfos.Count);
@@ -182,7 +182,7 @@ namespace AlbumDirectoryCreator
         private async Task ExecuteActionBlock(ActionBlock<BaseInfoTag> actionBlock, int withException)
         {
             SetProgressBarUp(_hashSet.Count);
-            // Dateien durchgehen
+            // Iterate through the files
             Parallel.ForEach(_hashSet.Values, baseInfoTag => { actionBlock.Post(baseInfoTag); });
             actionBlock.Complete();
             await actionBlock.Completion;
